@@ -74,9 +74,15 @@ const AI_TIER = soft('MAKE_AI_TIER', 'large');
 // puts a "thinking" block in front of the "text" one whenever it reasons about
 // the day. So content[1] is sometimes the thinking block and its text is empty,
 // which is why this picks the text block by its type instead of by position.
-const AI_OUTPUT = AI_PROVIDER_CONN
-  ? '{{5.answer}}'
-  : '{{first(map(5.content; "text"; "type"; "text"))}}';
+const AI_EXPR = AI_PROVIDER_CONN
+  ? '5.answer'
+  : 'first(map(5.content; "text"; "type"; "text"))';
+
+// Now and again a model wraps its JSON in a markdown fence even when the prompt
+// says not to, and Parse JSON answers "Source is not valid JSON". Stripping the
+// fence costs nothing and turns an intermittent failure into a non event.
+const FENCE = String.fromCharCode(96, 96, 96);
+const AI_OUTPUT = '{{trim(replace(' + AI_EXPR + '; "/' + FENCE + '(json)?/g"; emptystring))}}';
 
 const repoRoot = path.resolve(import.meta.dirname, '..');
 const interviewPrompt = fs.readFileSync(
@@ -185,7 +191,13 @@ function scoutFourBlueprint() {
       metadata: {},
       // Numbers, not strings. make's own template writes these as strings and
       // Anthropic rejects that with "Input should be a valid integer".
-      max_tokens: 600,
+      //
+      // Task G7 says 600, which was right before the model had a thinking
+      // block. Thinking tokens are spent out of this same budget, so on a long
+      // interview 600 ran out mid thought and no text block was ever emitted.
+      // The reply itself is still two or three lines; this is headroom, not a
+      // longer answer, and the turns still come back in three to four seconds.
+      max_tokens: Number(soft('MAKE_MAX_TOKENS', '2000')),
       temperature: 0.2,
     },
     metadata: at(300, 0, 'write the next question'),
@@ -248,7 +260,10 @@ function scoutFourBlueprint() {
   // said, unparsed, so a parse failure can actually be read.
   const routeAsksQuestion = process.env.DEBUG_RAW ? [
     claude,
-    respond({ id: 9, x: 600, y: 0, name: 'echo the raw reply', bodyRef: AI_OUTPUT }),
+    respond({ id: 9, x: 600, y: 0, name: 'echo the raw reply', bodyRef:
+      'TYPES=[{{join(map(5.content; "type"); ",")}}] STOP=[{{5.stop_reason}}] ' +
+      'TEXT=[{{first(map(5.content; "text"; "type"; "text"))}}]' }),
+    // (DEBUG_RAW only)
   ] : [
     claude,
     parseJson({ id: 6, x: 600, y: 0, name: "read the model's reply", ds: DS_REPLY, source: AI_OUTPUT }),

@@ -8,13 +8,23 @@ blueprint to `make/blueprints/` under the same name.
 ## The model we use
 `AGENTS.md` section 3 says the model is recorded here.
 
-**Model: `claude-sonnet-5`.** Set it in every Anthropic Claude module. It is a
-newer Sonnet than the `claude-sonnet-4-5` this file first named, so under
-`make/specs/00_connections.md` section 2 we took it. Recorded as decision 17.
+**Model: `claude-sonnet-4-5`.** Set it in every Anthropic Claude module.
+`claude-sonnet-5` was tried and taken back out: it thinks before it answers,
+which put one interview turn at 118 seconds against a 12 second limit. Measured
+both ways in decision 21.
 
-Two things the module needs that make.com's own public template gets wrong:
-`messages[].content[]` must carry `"type": "text"`, and `max_tokens` and
-`temperature` must be numbers rather than strings. Decision 18.
+Three things to get right, all found the hard way:
+
+- `messages[].content[]` must carry `"type": "text"`. make.com's own public
+  template leaves it out and Anthropic refuses the call. Decision 18.
+- `max_tokens` and `temperature` must be numbers, not strings. Same template,
+  same problem. Decision 18.
+- Read the reply out of the `content` list **by block type**, not by position:
+  `{{first(map(5.content; "text"; "type"; "text"))}}`. A model that thinks puts
+  a `thinking` block first and `content[1].text` is then empty. Decision 19.
+
+Strip markdown fences before Parse JSON. Every prompt says JSON only and Claude
+almost always obeys, but "almost" is not a thing to demo on. Decision 21.
 
 ## The scenarios
 

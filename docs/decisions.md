@@ -233,3 +233,41 @@ cut down route that answers with whatever the model said, unparsed. make.com's
 API does not hand back the bundles of a finished run, so without this there is
 no way to see what a model actually replied when the parse step rejects it.
 Decision 19 was found in one run with it. Leave it in.
+
+## 21. Back to `claude-sonnet-4-5`, because `claude-sonnet-5` thinks (task G7, 20 September)
+Decision 17 took `claude-sonnet-5` because `00_connections.md` section 2 says to
+take the newest Sonnet. Measured on the real interview, it is the wrong choice
+here, and decision 17 is reversed.
+
+`claude-sonnet-5` reasons before it answers, and those thinking tokens come out
+of `max_tokens` and out of the clock. At 600 tokens it ran out mid thought and
+returned no text block at all. Raised to 2000 it answered correctly but one turn
+took **118 seconds** against a 12 second limit, and another took 17.
+
+`claude-sonnet-4-5` returns a single `text` block, no thinking. The same
+interview, same prompt, same answers:
+
+| Turn | `claude-sonnet-5` | `claude-sonnet-4-5` |
+|---|---|---|
+| 1, the 09:00 to 11:00 gap | 3.8s | 5.7s |
+| 3, the Friday report block | 118.8s | 2.7s |
+| 5, closing | 17.3s | 2.3s |
+
+Both get the content right and both finish in five turns. Only one of them can
+be demoed. `max_tokens` is 1500, set with `MAKE_MAX_TOKENS`, which is more than
+600 because nothing is gained by cutting it fine and a truncated reply is a dead
+interview.
+
+The note in `00_connections.md` about taking the newest Sonnet should be read as
+"if it is faster", not "always".
+
+## 22. Markdown fences are stripped before Parse JSON (task G7, 20 September)
+Every prompt ends by saying to reply with JSON only, and Claude almost always
+does. Once in about five runs `claude-sonnet-4-5` wrapped the object in a
+markdown fence anyway, and Parse JSON answered "Source is not valid JSON".
+
+So the parse reads
+`{{trim(replace(<the text block>; "/```(json)?/g"; emptystring))}}`.
+
+This is not a replacement for the retry route in the shared pattern, which is
+still to build. It removes the common case for the cost of one function call.
