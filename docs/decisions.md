@@ -120,3 +120,35 @@ what the manager reads. Nothing depends on the percentages summing, there is no
 database constraint on them, and giving the largest row the leftover hundredth
 would need a second pass over the array in IML for a difference nobody can see.
 For Elena's Friday the five rows come to exactly 100.00.
+
+## 13. The scenarios are built through the make.com API, not by hand (task G7, 19 September)
+Task G7 allows it: "If Gerson connects the make.com MCP server or gives you an
+API token, you may build scenarios through the API, but ask him first." Gerson
+gave the token at 18:25 on the Saturday, with the account still empty and the
+20:00 checkpoint ninety minutes away.
+
+`scripts/make_build.mjs` generates the blueprint and creates or updates the
+scenario in place. No secret is in the file: the token, the Supabase address,
+the service key and the shared secret all come from the environment, and the
+placeholders say `REPLACE-ME` so a half built scenario cannot quietly point at
+the wrong database. Re-running it after a value changes is one command.
+
+The build sheets in `make/specs/` stay. They are what a human reads to
+understand or repair a scenario, and task G17 still wants exported blueprints.
+
+## 14. Supabase is reached over HTTP, not through the Supabase app (task G7, 19 September)
+The sheets say to prefer the Supabase modules because they read clearly in the
+run history. The account has no Supabase connection and building one needs the
+project keys, which do not exist yet either.
+
+The HTTP module needs no connection at all. Using it for every Supabase read
+and write means the only connection scenario four needs is Anthropic Claude,
+which takes the number of things blocking the checkpoint from two to one. The
+run history is still readable: every HTTP module is named in plain English.
+
+## 15. The Anthropic module has no system prompt field (task G7, 19 September)
+Read from a real blueprint: `anthropic-claude:createAMessage` version 1 takes
+`model`, `messages`, `max_tokens` and `temperature`. There is no `system`.
+
+So each prompt file goes at the top of the user message with the input after
+it. Claude treats it the same. The build sheets say so now.

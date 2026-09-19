@@ -183,8 +183,14 @@ normally stops itself; this is what happens when it does not.
 | Model | as at the top of `make/specs/README.md` |
 | Max tokens | **600** |
 | Temperature | 0.2 |
-| System prompt | the whole of `prompts/02_interview_turn.md`, pasted in |
-| Messages | one message. Role `User`, Content `{{3.data.prompt_input}}` |
+| Messages | one message. Role `User`. See below. |
+
+**The module has no system prompt field.** Checked against a real blueprint:
+`anthropic-claude:createAMessage` version 1 takes `model`, `messages`,
+`max_tokens` and `temperature`, and nothing else. So the whole of
+`prompts/02_interview_turn.md` goes at the top of the user message, then a
+blank line, then `Here is the input for this turn:`, then
+`{{3.data.prompt_input}}`. Claude reads it the same way.
 
 600 is deliberate. One question is two or three lines and a bigger budget only
 buys a slower reply.
