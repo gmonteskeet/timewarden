@@ -20,7 +20,7 @@ export default async function CheckInPage({ params }: PageProps<"/check-in/[id]"
   const summaryPath = `/check-in/${encodeURIComponent(id)}/summary`;
   // Only the employee takes their own interview. Anyone else allowed to see the day sees the summary.
   if (view.person.id !== session.person_id) redirect(summaryPath);
-  if (["summarised", "submitted", "approved"].includes(view.check_in.status)) redirect(summaryPath);
+  if (["summarised", "submitted", "approved", "returned"].includes(view.check_in.status)) redirect(summaryPath);
 
   const suggestion = await orRefuse(getSuggestedAnswer(id));
   const firstName = view.person.full_name.split(" ")[0];

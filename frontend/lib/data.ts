@@ -11,6 +11,7 @@ import 'server-only';
 import { cookies } from 'next/headers';
 import type {
   Candidate,
+  CandidateStatus,
   CheckIn,
   CheckInStatus,
   DayAllocation,
@@ -75,6 +76,29 @@ async function asManager(): Promise<Session> {
 export interface RoleWithTopics {
   role: Role;
   topics: Topic[];
+  /** Who approved the split, when it is approved. */
+  approved_by: Person | null;
+}
+
+/** One person's week in the manager's weekly approval view. Only submitted and approved days appear. */
+export interface TeamWeek {
+  person: Person;
+  week_start: IsoDate;
+  week_end: IsoDate;
+  topics: Topic[];
+  /** Allocations of the week's submitted and approved days. */
+  allocations: DayAllocation[];
+  submitted_ids: Uuid[];
+  approved_count: number;
+}
+
+/** The approved history behind the suggestions, for the team bars. */
+export interface TeamHistory {
+  period_start: IsoDate;
+  period_end: IsoDate;
+  members: { person: Person; topics: Topic[]; allocations: DayAllocation[]; approved_days: number }[];
+  /** Rows the employees corrected before submitting, across the period. */
+  corrected_rows: number;
 }
 
 export interface CheckInView {
@@ -128,10 +152,18 @@ interface DemoCheckInState {
   adj?: Record<string, number>;
   /** When the day was submitted, in milliseconds. */
   sub?: number;
+  /** The manager's decision on the submitted day. */
+  dec?: { d: DayDecision; at: number; by: Uuid; c: string | null };
 }
 interface DemoState {
   v: 1;
   c: Record<string, DemoCheckInState>;
+  /** Approved role splits: expected percents in topic order, when and by whom. */
+  r?: Record<string, { p: number[]; at: number; by: Uuid }>;
+  /** When the manager asked Scout to review the history. */
+  rv?: number;
+  /** Decisions on suggestions. */
+  cd?: Record<string, { s: CandidateStatus; url: string | null; at: number; by: Uuid }>;
 }
 
 function emptyDemoState(): DemoState {
@@ -168,14 +200,20 @@ async function writeDemoState(state: DemoState): Promise<void> {
 function withDemoProgress(base: CheckIn, state: DemoState, now = Date.now()): CheckIn {
   const st = state.c[base.id];
   if (!st) return base;
+  // A decision counts only if it came after the latest submission (a returned day can be sent again).
+  const decision = st.dec && st.dec.at >= (st.sub ?? 0) ? st.dec : undefined;
   let status: CheckInStatus = base.status;
-  if (st.sub) status = 'submitted';
+  if (decision) status = decision.d;
+  else if (st.sub) status = 'submitted';
   else if (st.d && now - st.d >= FIXTURE_SUMMARY_DELAY_MS) status = 'summarised';
   else if (st.n > 0) status = 'in_progress';
   const summarised = SUMMARISED_OR_LATER.includes(status);
   return {
     ...base,
     status,
+    approved_by: decision?.d === 'approved' ? decision.by : base.approved_by,
+    approved_at: decision?.d === 'approved' ? new Date(decision.at).toISOString() : base.approved_at,
+    manager_comment: decision ? decision.c : base.manager_comment,
     summary_text: summarised ? (fx.scriptedSummaryFor(base.id) ?? base.summary_text) : base.summary_text,
     submitted_at: st.sub ? new Date(st.sub).toISOString() : base.submitted_at,
   };
@@ -251,12 +289,15 @@ function fxView(checkIn: CheckIn, state: DemoState): CheckInView {
   };
 }
 
-/** Rights for one check in: the owner, or the owner's manager. */
+/** Days a manager may see: only once the employee has submitted them (rule 12 in AGENTS.md). */
+const VISIBLE_TO_MANAGER: CheckInStatus[] = ['submitted', 'approved', 'returned'];
+
+/** Rights for one check in: the owner, or the owner's manager once the day has been submitted. */
 function mayReadCheckIn(session: Session, checkIn: CheckIn): boolean {
   if (checkIn.person_id === session.person_id) return true;
   if (session.app_role !== 'manager') return false;
   const owner = fx.people.find((p) => p.id === checkIn.person_id);
-  return owner?.manager_id === session.person_id;
+  return owner?.manager_id === session.person_id && VISIBLE_TO_MANAGER.includes(checkIn.status);
 }
 
 function fxTeam(managerId: Uuid): Person[] {
@@ -348,11 +389,24 @@ export async function listMyCheckIns(): Promise<CheckIn[]> {
     .sort((a, b) => b.day.localeCompare(a.day));
 }
 
-/** Every role in the manager's company with its topics. */
+function fxRolesWithTopics(state: DemoState): RoleWithTopics[] {
+  return fx.roles.map((base) => {
+    const approval = state.r?.[base.id];
+    const baseTopics = fxTopics(base.id);
+    if (!approval) return { role: base, topics: baseTopics, approved_by: null };
+    return {
+      role: { ...base, split_status: 'approved', split_approved_by: approval.by, split_approved_at: new Date(approval.at).toISOString() },
+      topics: baseTopics.map((t, i) => ({ ...t, expected_percent: approval.p[i] ?? t.expected_percent })),
+      approved_by: fx.people.find((p) => p.id === approval.by) ?? null,
+    };
+  });
+}
+
+/** Every role in the manager's company with its topics and who approved the split. */
 export async function listRolesWithTopics(): Promise<RoleWithTopics[]> {
   await asManager();
   if (!fixturesMode()) notWiredYet();
-  return fx.roles.map((role) => ({ role, topics: fxTopics(role.id) }));
+  return fxRolesWithTopics(await readDemoState());
 }
 
 /** The manager's team. */
@@ -373,6 +427,66 @@ export async function listDaysAwaitingApproval(): Promise<CheckInView[]> {
     .map((c) => fxView(c, state));
 }
 
+function mondayOf(day: IsoDate): IsoDate {
+  const d = new Date(`${day}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7));
+  return d.toISOString().slice(0, 10);
+}
+
+function addDays(day: IsoDate, n: number): IsoDate {
+  const d = new Date(`${day}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * The weekly approval view: for each person with a submitted day, the week (Monday to Friday) that
+ * contains it, built only from submitted and approved days. Days not yet submitted never appear.
+ */
+export async function listTeamWeeks(): Promise<TeamWeek[]> {
+  const session = await asManager();
+  if (!fixturesMode()) notWiredYet();
+  const state = await readDemoState();
+  const all = fxCheckIns(state);
+  const team = fxTeam(session.person_id);
+  const weeks: TeamWeek[] = [];
+  for (const person of team) {
+    const starts = [...new Set(all.filter((c) => c.person_id === person.id && c.status === 'submitted').map((c) => mondayOf(c.day)))].sort();
+    for (const week_start of starts) {
+      const week_end = addDays(week_start, 4);
+      const days = all.filter((c) => c.person_id === person.id && c.day >= week_start && c.day <= week_end && (c.status === 'submitted' || c.status === 'approved'));
+      weeks.push({
+        person,
+        week_start,
+        week_end,
+        topics: fxTopics(person.role_id),
+        allocations: days.flatMap((c) => fxAllocations(c, state)),
+        submitted_ids: days.filter((c) => c.status === 'submitted').map((c) => c.id),
+        approved_count: days.filter((c) => c.status === 'approved').length,
+      });
+    }
+  }
+  return weeks;
+}
+
+/** The team's approved days in a period, for the team bars and the "employees came first" line. */
+export async function getTeamHistory(periodStart: IsoDate, periodEnd: IsoDate): Promise<TeamHistory> {
+  const session = await asManager();
+  if (!fixturesMode()) notWiredYet();
+  const state = await readDemoState();
+  const approved = fxCheckIns(state).filter((c) => c.status === 'approved' && c.day >= periodStart && c.day <= periodEnd);
+  const members = fxTeam(session.person_id).map((person) => {
+    const days = approved.filter((c) => c.person_id === person.id);
+    return { person, topics: fxTopics(person.role_id), allocations: days.flatMap((c) => fxAllocations(c, state)), approved_days: days.length };
+  });
+  return {
+    period_start: periodStart,
+    period_end: periodEnd,
+    members,
+    corrected_rows: members.reduce((s, m) => s + m.allocations.filter((a) => a.employee_adjusted).length, 0),
+  };
+}
+
 /** Approved allocations for the manager's team in a period, for the team bars on Suggestions. */
 export async function getTeamAllocations(periodStart: IsoDate, periodEnd: IsoDate): Promise<DayAllocation[]> {
   const session = await asManager();
@@ -383,11 +497,36 @@ export async function getTeamAllocations(periodStart: IsoDate, periodEnd: IsoDat
   return approved.flatMap((c) => fxAllocations(c, state));
 }
 
-/** Suggested workflows for the company, ranked. */
+function fxCandidates(state: DemoState): Candidate[] {
+  if (!state.rv) return [];
+  return fx.candidates
+    .map((c) => {
+      const d = state.cd?.[c.id];
+      return d ? { ...c, status: d.s, make_scenario_url: d.url, make_scenario_id: d.url ? `draft-${c.id}` : null } : c;
+    })
+    .sort((a, b) => a.rank - b.rank);
+}
+
+/** The period Suggestions reviews: from the Monday two weeks before the demo day's week to the demo day. */
+export async function reviewPeriod(): Promise<{ period_start: IsoDate; period_end: IsoDate }> {
+  const end = process.env.NEXT_PUBLIC_DEMO_DAY || fx.DEMO_DAY;
+  return { period_start: addDays(mondayOf(end), -14), period_end: end };
+}
+
+/** Suggested workflows for the company, ranked. Empty until Scout has reviewed the history. */
 export async function listCandidates(): Promise<Candidate[]> {
   await asManager();
   if (!fixturesMode()) notWiredYet();
-  return [...fx.candidates].sort((a, b) => a.rank - b.rank);
+  return fxCandidates(await readDemoState());
+}
+
+/** One suggestion, for polling until its draft link appears. */
+export async function getCandidate(candidateId: Uuid): Promise<Candidate> {
+  await asManager();
+  if (!fixturesMode()) notWiredYet();
+  const candidate = fxCandidates(await readDemoState()).find((c) => c.id === candidateId);
+  if (!candidate) throw new AccessDenied();
+  return candidate;
 }
 
 // ---------------------------------------------------------------------------
@@ -484,13 +623,28 @@ export async function submitCheckIn(checkInId: Uuid, adjustments: { allocation_i
 export async function decideOnDays(checkInIds: Uuid[], decision: DayDecision, comment: string | null): Promise<void> {
   const session = await asManager();
   if (!fixturesMode()) notWiredYet();
+  const text = comment?.trim() || null;
+  if (decision !== 'approved' && decision !== 'returned') throw new InvalidRequest('Please choose approve or return.');
+  if (decision === 'returned' && !text) throw new InvalidRequest('Please say what needs changing before you return the day.');
+  if (checkInIds.length === 0) throw new InvalidRequest('Please choose at least one day.');
   const state = await readDemoState();
   const all = fxCheckIns(state);
   for (const id of checkInIds) {
     const checkIn = all.find((c) => c.id === id);
-    if (!checkIn || !mayReadCheckIn(session, checkIn) || checkIn.person_id === session.person_id) throw new AccessDenied();
+    // A day that is not waiting for approval is refused like any other day the manager cannot act on,
+    // so the reply never reveals anything about days the employee has not submitted.
+    if (!checkIn || !mayReadCheckIn(session, checkIn) || checkIn.person_id === session.person_id || checkIn.status !== 'submitted') {
+      throw new AccessDenied();
+    }
   }
-  await make.decideDays({ check_in_ids: checkInIds, approver_id: session.person_id, decision, comment });
+  await make.decideDays({ check_in_ids: checkInIds, approver_id: session.person_id, decision, comment: text });
+  const at = Date.now();
+  for (const id of checkInIds) {
+    const st: DemoCheckInState = state.c[id] ?? { n: 0, a: [] };
+    st.dec = { d: decision, at, by: session.person_id, c: text };
+    state.c[id] = st;
+  }
+  await writeDemoState(state);
 }
 
 /** The manager approves a role's split. The percents must add up to 100. */
@@ -498,9 +652,20 @@ export async function approveRoleSplit(roleId: Uuid, topics: { topic_id: Uuid; e
   const session = await asManager();
   if (!fixturesMode()) notWiredYet();
   if (!fx.roles.some((r) => r.id === roleId)) throw new AccessDenied();
+  const roleTopics = fxTopics(roleId);
+  const byId = new Map(topics.map((t) => [t.topic_id, t.expected_percent]));
+  if (topics.length !== roleTopics.length || roleTopics.some((t) => !byId.has(t.id))) {
+    throw new InvalidRequest('Every topic of the role needs a number.');
+  }
+  if (topics.some((t) => !Number.isInteger(t.expected_percent) || t.expected_percent < 0 || t.expected_percent > 100)) {
+    throw new InvalidRequest('Each share must be a whole number from 0 to 100.');
+  }
   const total = topics.reduce((s, t) => s + t.expected_percent, 0);
-  if (total !== 100) throw new InvalidRequest(`The split adds up to ${total}, not 100.`);
+  if (total !== 100) throw new InvalidRequest(`The split adds up to ${total} percent. It needs to add up to 100.`);
   await make.approveSplit({ role_id: roleId, approver_id: session.person_id, topics });
+  const state = await readDemoState();
+  state.r = { ...(state.r ?? {}), [roleId]: { p: roleTopics.map((t) => byId.get(t.id)!), at: Date.now(), by: session.person_id } };
+  await writeDemoState(state);
 }
 
 /** Asks Scout to read the role documents again and propose splits. */
@@ -521,13 +686,25 @@ export async function runMorningRoutine(day: IsoDate): Promise<MorningRunReply> 
 export async function reviewHistory(periodStart: IsoDate, periodEnd: IsoDate): Promise<SuggestReply> {
   await asManager();
   if (!fixturesMode()) notWiredYet();
-  return make.suggestWorkflows({ company_id: fx.company.id, period_start: periodStart, period_end: periodEnd });
+  const reply = await make.suggestWorkflows({ company_id: fx.company.id, period_start: periodStart, period_end: periodEnd });
+  const state = await readDemoState();
+  state.rv = Date.now();
+  await writeDemoState(state);
+  return reply;
 }
 
 /** The manager approves or rejects a suggestion. Approval returns the draft scenario link. */
 export async function decideOnCandidate(candidateId: Uuid, decision: Decision, comment: string | null): Promise<DecisionReply> {
   const session = await asManager();
   if (!fixturesMode()) notWiredYet();
-  if (!fx.candidates.some((c) => c.id === candidateId)) throw new AccessDenied();
-  return make.decideCandidate({ candidate_id: candidateId, approver_id: session.person_id, decision, comment });
+  if (decision !== 'approved' && decision !== 'rejected') throw new InvalidRequest('Please choose approve or not now.');
+  const state = await readDemoState();
+  const candidate = fxCandidates(state).find((c) => c.id === candidateId);
+  if (!candidate) throw new AccessDenied();
+  if (candidate.status === 'drafted') return { ok: true, make_scenario_url: candidate.make_scenario_url ?? undefined };
+  const reply = await make.decideCandidate({ candidate_id: candidateId, approver_id: session.person_id, decision, comment });
+  const status: CandidateStatus = decision === 'rejected' ? 'rejected' : reply.make_scenario_url ? 'drafted' : 'approved';
+  state.cd = { ...(state.cd ?? {}), [candidateId]: { s: status, url: reply.make_scenario_url ?? null, at: Date.now(), by: session.person_id } };
+  await writeDemoState(state);
+  return reply;
 }
