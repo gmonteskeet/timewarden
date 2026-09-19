@@ -68,3 +68,55 @@ The morning routine creates a check in for every employee, so the script
 deletes every check in for 18 September instead. Anything less would leave
 Priya's and Jonas's half finished days behind on a second rehearsal. The three
 weeks of history, which end on 17 September, are untouched.
+
+## 8. Migration `0003` is the interview context, not `team_history` (task G7, 19 September)
+`docs/BUILD_GERSON.md` task G11 says to create the `team_history` view in a
+migration `0003`. Task G7 came first and needed a migration of its own, so
+`0003_interview_context.sql` is the interview and summary context and
+`team_history` becomes `0004` when G11 is built. Nothing else changes.
+
+## 9. The interview context comes from one database function (task G7, 19 September)
+Task G7 allows this: "Use one HTTP call to a Supabase view or RPC to fetch the
+context in one go if separate selects are too slow." Scenario four has twelve
+seconds for the whole run, and the check in, the person, the role, the topics,
+the day's activities and the interview so far are six round trips before Claude
+is even asked.
+
+`public.scout_interview_context` and `public.scout_summary_context` do it in
+one, and hand back `prompt_input`: the user message for the Claude module,
+already written as JSON text with exactly the fields `prompts/README.md` lists.
+make.com maps one field instead of eight, which also removes the commonest way
+to break a prompt, a mistyped field name.
+
+Measured on a local Postgres with the real demo data: 6 milliseconds.
+
+## 10. The database function records the employee's answer (task G7, 19 September)
+Task G7 lists "insert the employee turn" and "set the check in to in_progress"
+as their own steps. They are folded into `scout_interview_context` instead,
+because the model must see the answer it is replying to, so the insert has to
+happen before the context is read. Doing it in one call rather than three saves
+two round trips out of the twelve seconds.
+
+Nothing that decides anything moved. The six question cap, the Claude call, the
+branching, the arithmetic on the minutes and every other write are all still
+make.com modules, and all still readable in the run history during the demo.
+
+## 11. The three context functions are `security definer` (task G7, 19 September)
+Checked on a real Postgres: with `security invoker`, the functions only work if
+the calling role also holds grants on every table they touch. Supabase gives
+`service_role` those grants, but the functions should not depend on it, and a
+`security definer` function with a fixed `search_path` does not. Execute is
+revoked from `public`, so only `service_role` can call them, and the anonymous
+role is refused twice over: no execute on the function, and no usage on the
+schema from decision 5.
+
+## 12. A day allocation's `percent` can be 0.01 off 100 (task G7, 19 September)
+`AGENTS.md` section 5 says a check in's percentages add up to 100. Scenario five
+works each one out as `round(minutes / working_minutes * 10000) / 100`, two
+decimal places, and rounding five or six of those can land on 99.99 or 100.01.
+
+The minutes are exact, which is what the constraint is really protecting and
+what the manager reads. Nothing depends on the percentages summing, there is no
+database constraint on them, and giving the largest row the leftover hundredth
+would need a second pass over the array in IML for a difference nobody can see.
+For Elena's Friday the five rows come to exactly 100.00.
