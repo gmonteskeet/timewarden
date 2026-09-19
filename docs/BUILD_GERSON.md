@@ -51,8 +51,8 @@ Flags: `--with-splits` also loads `data/expected_splits.json` into `topics` as `
 At the end write `docs/demo_links.md`, **which must be in `.gitignore`**, listing each person's id and their `/enter/<access_token>` link for Marcus. Tokens are secrets.
 Checks: run twice, row counts unchanged. `git status` shows `docs/demo_links.md` ignored.
 
-### G7. Scenario 4: Interview turn, and scenario 5: Day summary (60 minutes). Build these first of all scenarios. They are the heart of the demo.
-Branch `gerson/g7-interview`. Needs `prompts/02_interview_turn.md` and `prompts/03_day_summary.md` from Marcus's task M4. If they are not merged yet, build against the input and output shapes in `docs/BUILD_MARCUS.md` task M4 and paste the prompts in when they land.
+### G7. Scenario 4: Interview turn, and scenario 5: Day summary (60 minutes). Build these first of all scenarios. They are the heart of the demo. [build sheets done, Gerson to do the clicking]
+Branch `gerson/g7-interview`. Both sheets are written and migration `0003_interview_context.sql` is tested. What is left is building the two scenarios in the make.com editor from the sheets, and the end to end check below. Needs `prompts/02_interview_turn.md` and `prompts/03_day_summary.md` from Marcus's task M4. If they are not merged yet, build against the input and output shapes in `docs/BUILD_MARCUS.md` task M4 and paste the prompts in when they land.
 `make/specs/04_interview_turn.md`. Webhook `MAKE_WEBHOOK_INTERVIEW`, body `{ check_in_id, employee_text }`.
 1. Shared secret filter.
 2. Select the check in, the person, their role and approved topics, the day's `activities`, and all `interview_turns` so far in `turn_no` order.
