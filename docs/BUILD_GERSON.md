@@ -23,7 +23,7 @@ Time boxes are Madrid time, Saturday 19 September unless stated.
 - Root files already present: `AGENTS.md`, `CLAUDE.md`, `.gitignore`, `.env.example`, and both build files in `docs/`. Check the `.gitignore` (must include `.env*`, `!.env.example`, `node_modules`, `.next`, `.vercel`), `.env.example` with the names from `AGENTS.md` section 7 and empty values, `docs/BUILD_MARCUS.md`, `docs/BUILD_GERSON.md`.
 - Checks: fresh clone, `cd frontend && npm install && npm run build` passes. Tell Marcus the repository is ready.
 
-### G2. Supabase project and schema (25 minutes)
+### G2. Supabase project and schema (25 minutes) [done]
 - Gerson creates the Supabase project by hand and gives you the URL and keys through `.env.local` only.
 - Write `supabase/migrations/0001_init.sql` creating every table in `AGENTS.md` section 5, exactly those names and columns, with foreign keys, `check` constraints for every listed text value set, and indexes on `person_id` and `week_start`.
 - Row level security on for all tables, one policy per table allowing `select` to `anon`. No insert, update or delete policies (the service key bypasses row level security).
