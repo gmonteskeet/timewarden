@@ -16,7 +16,7 @@ Times are Madrid time, Saturday 19 September unless stated.
 
 ## Phase 1: to checkpoint one at 20:00
 
-### G4. Migration to the version 2 schema (30 minutes, 17:15 to 17:45)
+### G4. Migration to the version 2 schema (30 minutes, 17:15 to 17:45) [done]
 Branch `gerson/g4-schema-v2`. Write `supabase/migrations/0002_version_2.sql` that takes the database from migration `0001` to the tables in `AGENTS.md` section 5:
 - Create `roles`, `topics`, `check_ins`, `interview_turns`, `day_allocations`.
 - `people`: add `role_id`, `email`, `app_role`, `access_token` (unique, default `encode(gen_random_bytes(24), 'hex')`), `working_minutes_per_day`. Drop `role_title`, `job_description`, `performance_criteria`.

@@ -1,38 +1,54 @@
--- Clean start for a demo rehearsal.
--- Removes everything the agent produced during a run and leaves the seeded
--- data in place: companies, people, transcripts, and the activities that came
--- from the calendar and from the transcripts.
--- Run this before each judging round (task G19).
+-- Clean start: puts the database back to the morning of the demo.
+-- Run this before each judging round, then run the morning routine once so a
+-- fresh email is waiting.
+--
+-- It removes everything the demo itself produces and keeps everything that was
+-- seeded: the company, the roles and their topics, the four people, the three
+-- weeks of approved history, and the calendar and transcript activities.
+--
+-- The demo day is Friday 18 September 2026, the same value as
+-- NEXT_PUBLIC_DEMO_DAY. Change it in one place here if that ever moves.
 
 begin;
 
+-- 1. The demo day check ins, for everyone, not only Elena.
+--    interview_turns and day_allocations go with them, by foreign key.
+delete from public.check_ins where day = date '2026-09-18';
+
+-- 2. The activities the day summary wrote back from the interview.
+--    Calendar and transcript activities stay: the morning routine replaces
+--    those itself, and they are what Scout is supposed to already know.
+delete from public.activities
+  where source = 'interview' and day = date '2026-09-18';
+
+-- 3. Suggestions and the decisions taken on them.
 delete from public.approvals;
 delete from public.candidates;
-delete from public.findings;
-delete from public.interview_questions;
-delete from public.voice_notes;
-delete from public.activities where source = 'voice';
 
--- The scoring scenario writes a category onto every activity it looks at.
--- Clear it so the next run starts from nothing.
-update public.activities set category = null where category is not null;
+-- 4. Every role goes back to a proposed split, waiting for the manager.
+--    This is the first human approval the judges see, so it has to be there.
+update public.topics t
+  set expected_percent = t.proposed_percent
+  where t.expected_percent is distinct from t.proposed_percent;
+
+update public.roles
+  set split_status = 'proposed',
+      split_approved_by = null,
+      split_approved_at = null;
 
 commit;
 
--- Deeper reset, normally not needed.
--- Scenario one deletes and rewrites the calendar activities on every run, so
--- those look after themselves. Scenario two adds transcript activities without
--- clearing the old ones first, so uncomment this if a rehearsal shows the same
--- call twice.
--- delete from public.activities where source = 'transcript';
-
--- What is left after a reset. Expect the seeded counts and nothing else.
-select 'companies'   as table_name, count(*) from public.companies
-union all select 'people',              count(*) from public.people
-union all select 'transcripts',         count(*) from public.transcripts
-union all select 'activities',          count(*) from public.activities
-union all select 'voice_notes',         count(*) from public.voice_notes
-union all select 'interview_questions', count(*) from public.interview_questions
-union all select 'findings',            count(*) from public.findings
-union all select 'candidates',          count(*) from public.candidates
-union all select 'approvals',           count(*) from public.approvals;
+-- What is left. The history and the seeded data should be untouched, and the
+-- four demo day columns should all be zero.
+select 'companies'              as table_name, count(*) from public.companies
+union all select 'roles',              count(*) from public.roles
+union all select 'topics',             count(*) from public.topics
+union all select 'people',             count(*) from public.people
+union all select 'transcripts',        count(*) from public.transcripts
+union all select 'activities kept',    count(*) from public.activities
+union all select 'history check ins',  count(*) from public.check_ins
+union all select 'demo day check ins', count(*) from public.check_ins where day = date '2026-09-18'
+union all select 'interview turns',    count(*) from public.interview_turns
+union all select 'candidates',         count(*) from public.candidates
+union all select 'approvals',          count(*) from public.approvals
+union all select 'roles awaiting approval', count(*) from public.roles where split_status = 'proposed';
