@@ -1,0 +1,50 @@
+[
+  {
+    "key": "elena",
+    "full_name": "Elena Ruiz",
+    "role_key": "senior_client_consultant",
+    "email": "elena.ruiz@brightline.example",
+    "app_role": "employee",
+    "team": "Client Delivery",
+    "manager_key": "tomas",
+    "hourly_cost_eur": 85,
+    "calendar_id": null,
+    "working_minutes_per_day": 480
+  },
+  {
+    "key": "tomas",
+    "full_name": "Tomas Berg",
+    "role_key": "head_of_client_delivery",
+    "email": "tomas.berg@brightline.example",
+    "app_role": "manager",
+    "team": "Client Delivery",
+    "manager_key": null,
+    "hourly_cost_eur": 140,
+    "calendar_id": null,
+    "working_minutes_per_day": 480
+  },
+  {
+    "key": "priya",
+    "full_name": "Priya Nair",
+    "role_key": "consultant",
+    "email": "priya.nair@brightline.example",
+    "app_role": "employee",
+    "team": "Client Delivery",
+    "manager_key": "tomas",
+    "hourly_cost_eur": 60,
+    "calendar_id": null,
+    "working_minutes_per_day": 480
+  },
+  {
+    "key": "jonas",
+    "full_name": "Jonas Weber",
+    "role_key": "business_analyst",
+    "email": "jonas.weber@brightline.example",
+    "app_role": "employee",
+    "team": "Client Delivery",
+    "manager_key": "tomas",
+    "hourly_cost_eur": 45,
+    "calendar_id": null,
+    "working_minutes_per_day": 480
+  }
+]

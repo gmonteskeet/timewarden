@@ -51,7 +51,7 @@ Branch `marcus/m4-prompts`. Each prompt file is complete and standalone: role, i
 
 Checks: field names match `AGENTS.md` exactly. Each prompt has a worked example. **Tell Marcus to send Gerson the pull request link the moment it merges.**
 
-### M5. Interface foundations on fake data (60 minutes, 19:00 to 20:00)
+### M5. Interface foundations on fake data (60 minutes, 19:00 to 20:00) [done]
 Branch `marcus/m5-interface-foundations`. `frontend/` exists from Gerson's task G1. Read `frontend/AGENTS.md` first and follow it.
 
 - `frontend/lib/contract.ts`: TypeScript types for every table and webhook body in `AGENTS.md` version 2. Shared file: after this task, no field name changes without both humans agreeing.
