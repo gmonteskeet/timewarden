@@ -11,7 +11,8 @@ export interface RoleCardData {
   title: string;
   document_name: string;
   document_url: string | null;
-  read_label: string;
+  /** When Scout last read the document, in words, or null if it has not read it yet. */
+  read_label: string | null;
   approved_label: string | null;
   topics: { id: string; name: string; reasoning: string; expected: number; proposed: number }[];
 }
@@ -66,26 +67,37 @@ function RoleCard({ role }: { role: RoleCardData }) {
             {role.title}
           </h2>
           <p className="mt-1 text-lg text-muted">
-            Role document:{' '}
-            {role.document_url ? (
-              <a href={role.document_url} target="_blank" rel="noopener noreferrer" className="font-medium text-accent underline focus-visible:outline-3 focus-visible:outline-accent">
-                {role.document_name}
-              </a>
-            ) : (
-              <span className="font-medium text-ink">{role.document_name}</span>
+            {role.document_name && (
+              <>
+                Role document:{' '}
+                {role.document_url ? (
+                  <a href={role.document_url} target="_blank" rel="noopener noreferrer" className="font-medium text-accent underline focus-visible:outline-3 focus-visible:outline-accent">
+                    {role.document_name}
+                  </a>
+                ) : (
+                  <span className="font-medium text-ink">{role.document_name}</span>
+                )}
+                .{' '}
+              </>
             )}
-            . Scout last read this on {role.read_label}.
+            {role.read_label ? `Scout last read this on ${role.read_label}.` : 'Scout has not read this document yet.'}
           </p>
         </div>
         {approvedLabel && !editing && (
           <div className="text-right">
             <p className="rounded bg-track px-4 py-2 text-lg font-semibold text-accent">{approvedLabel}</p>
-            <button type="button" onClick={() => setEditing(true)} className="mt-2 text-base font-medium text-accent underline focus-visible:outline-3 focus-visible:outline-accent">
-              Edit again
-            </button>
+            {role.topics.length > 0 && (
+              <button type="button" onClick={() => setEditing(true)} className="mt-2 text-base font-medium text-accent underline focus-visible:outline-3 focus-visible:outline-accent">
+                Edit again
+              </button>
+            )}
           </div>
         )}
       </header>
+
+      {role.topics.length === 0 && (
+        <p className="border-t border-line py-4 text-lg">Scout has not proposed a split for this role yet. Press Read the role documents again.</p>
+      )}
 
       <ul>
         {role.topics.map((t) => {
@@ -94,7 +106,7 @@ function RoleCard({ role }: { role: RoleCardData }) {
             <li key={t.id} className="flex flex-wrap items-center justify-between gap-4 border-t border-line py-4">
               <div className="min-w-0 flex-1">
                 <p className="text-xl font-semibold">{t.name}</p>
-                <p className="text-base text-muted">{t.reasoning}</p>
+                {t.reasoning && <p className="text-base text-muted">{t.reasoning}</p>}
               </div>
               {editing ? (
                 <div className="flex items-center gap-2">
@@ -129,6 +141,7 @@ function RoleCard({ role }: { role: RoleCardData }) {
         })}
       </ul>
 
+      {role.topics.length > 0 && (
       <footer className="mt-2 flex flex-wrap items-center justify-between gap-4 border-t-2 border-line pt-4">
         <p className={`text-xl font-semibold tabular-nums ${total === 100 ? 'text-ink' : 'text-outside'}`}>Total {total}%</p>
         {editing && (
@@ -145,6 +158,7 @@ function RoleCard({ role }: { role: RoleCardData }) {
           </div>
         )}
       </footer>
+      )}
       {problem && (
         <p role="alert" className="mt-4 rounded bg-note px-5 py-3 text-lg">
           {problem}

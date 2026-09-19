@@ -44,7 +44,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
               >
                 <span className="block text-xl font-semibold">{p.full_name}</span>
                 <span className="block text-lg text-muted">
-                  {p.role_title}, {p.app_role === "manager" ? "manager" : "employee"}
+                  {[p.role_title, p.app_role === "manager" ? "manager" : "employee"].filter(Boolean).join(", ")}
                 </span>
               </a>
             </li>

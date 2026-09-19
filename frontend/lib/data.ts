@@ -855,7 +855,11 @@ async function run<T>(what: string, query: PromiseLike<{ data: T | null; error: 
 
 type Row = Record<string, unknown>;
 const str = (v: unknown) => (typeof v === 'string' ? v : v === null || v === undefined ? '' : String(v));
-const num = (v: unknown) => (typeof v === 'number' ? v : Number(v ?? 0));
+/** A number from the database, or 0 when the column is empty or not a number. Never NaN. */
+const num = (v: unknown) => {
+  const n = typeof v === 'number' ? v : Number(v ?? 0);
+  return Number.isFinite(n) ? n : 0;
+};
 const strOrNull = (v: unknown) => (v === null || v === undefined ? null : String(v));
 
 function toPerson(r: Row): Person {
@@ -972,7 +976,11 @@ function toCandidate(r: Row): Candidate {
     total_score: num(r.total_score),
     rank: num(r.rank),
     reasoning: str(r.reasoning),
-    proposed_steps: Array.isArray(r.proposed_steps) ? (r.proposed_steps as Candidate['proposed_steps']) : [],
+    proposed_steps: Array.isArray(r.proposed_steps)
+      ? (r.proposed_steps as Row[])
+          .filter((step) => step && typeof step === 'object')
+          .map((step) => ({ app: str(step.app), action: str(step.action), note: str(step.note) }))
+      : [],
     status: (str(r.status) || 'proposed') as CandidateStatus,
     make_scenario_id: strOrNull(r.make_scenario_id),
     make_scenario_url: strOrNull(r.make_scenario_url),
@@ -1179,5 +1187,6 @@ async function liveApproveSplit(session: Session, roleId: Uuid, topics: { topic_
 async function liveCandidates(session: Session): Promise<Candidate[]> {
   const companyId = await liveManagerCompany(session);
   const rows = await run<Row[]>('read the suggestions', db().from('candidates').select('*').eq('company_id', companyId).order('rank', { nullsFirst: false }));
-  return rows.map(toCandidate);
+  // A suggestion with no rank yet still gets a position, so the screen never shows rank 0.
+  return rows.map(toCandidate).map((c, i) => (c.rank > 0 ? c : { ...c, rank: i + 1 }));
 }

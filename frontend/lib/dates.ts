@@ -1,33 +1,64 @@
 // Dates as people read them, in British English. Days are stored as YYYY-MM-DD.
+// Every function here copes with an empty, missing or unreadable value: it returns null or a plain
+// fallback and never throws, because live data can leave any of these columns empty.
 
-/** "Friday 18 September" */
-export function dayLabel(day: string): string {
-  return new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`));
+type MaybeText = string | null | undefined;
+
+/** A YYYY-MM-DD day as a Date at midday UTC, or null. */
+function parseDay(day: MaybeText): Date | null {
+  if (!day || !/^\d{4}-\d{2}-\d{2}/.test(day)) return null;
+  const d = new Date(`${day.slice(0, 10)}T12:00:00Z`);
+  return Number.isNaN(d.getTime()) ? null : d;
 }
 
-/** "Saturday 19 September at 16:05", in Madrid time, for a timestamp. */
-export function timeLabel(iso: string): string {
+/** A timestamp as a Date, or null. */
+function parseTime(iso: MaybeText): Date | null {
+  if (!iso) return null;
   const d = new Date(iso);
-  const day = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Madrid" }).format(d);
-  const time = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "Europe/Madrid" }).format(d);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+const utc = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("en-GB", { ...opts, timeZone: "UTC" });
+const madrid = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("en-GB", { ...opts, timeZone: "Europe/Madrid" });
+
+/** "Friday 18 September", or "this day" when the day is missing. */
+export function dayLabel(day: MaybeText): string {
+  const d = parseDay(day);
+  return d ? utc({ weekday: "long", day: "numeric", month: "long" }).format(d) : "this day";
+}
+
+/** "Saturday 19 September at 16:05", in Madrid time, or null when there is no usable time. */
+export function timeLabel(iso: MaybeText): string | null {
+  const d = parseTime(iso);
+  if (!d) return null;
+  const day = madrid({ weekday: "long", day: "numeric", month: "long" }).format(d);
+  const time = madrid({ hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(d);
   return `${day} at ${time}`;
 }
 
-/** "31 August to 18 September" */
-export function periodLabel(start: string, end: string): string {
-  const f = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", timeZone: "UTC" });
-  return `${f.format(new Date(`${start}T12:00:00Z`))} to ${f.format(new Date(`${end}T12:00:00Z`))}`;
+/** "31 August to 18 September", with plain wording when either end is missing. */
+export function periodLabel(start: MaybeText, end: MaybeText): string {
+  const f = utc({ day: "numeric", month: "long" });
+  const a = parseDay(start);
+  const b = parseDay(end);
+  if (a && b) return `${f.format(a)} to ${f.format(b)}`;
+  if (a) return `from ${f.format(a)}`;
+  if (b) return `up to ${f.format(b)}`;
+  return "the period";
 }
 
-/** "Approved by Tomas Berg on Saturday 19 September at 16:05" */
-export function approvedText(name: string | null, at: string | null): string {
-  return `Approved by ${name ?? "the manager"}${at ? ` on ${timeLabel(at)}` : ""}`;
+/** "Approved by Tomas Berg on Saturday 19 September at 16:05". Leaves out what is missing. */
+export function approvedText(name: MaybeText, at: MaybeText): string {
+  const when = timeLabel(at);
+  return `Approved by ${name?.trim() || "the manager"}${when ? ` on ${when}` : ""}`;
 }
 
-/** "Monday 14 to Friday 18 September", for a Monday to Friday week. */
-export function weekLabel(monday: string, friday: string): string {
-  const day = (d: string, opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("en-GB", { ...opts, timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`));
-  const sameMonth = monday.slice(0, 7) === friday.slice(0, 7);
-  const start = day(monday, sameMonth ? { weekday: "long", day: "numeric" } : { weekday: "long", day: "numeric", month: "long" });
-  return `${start} to ${day(friday, { weekday: "long", day: "numeric", month: "long" })}`;
+/** "Monday 14 to Friday 18 September", for a Monday to Friday week, or "this week". */
+export function weekLabel(monday: MaybeText, friday: MaybeText): string {
+  const a = parseDay(monday);
+  const b = parseDay(friday);
+  if (!a || !b) return "this week";
+  const sameMonth = a.getUTCMonth() === b.getUTCMonth() && a.getUTCFullYear() === b.getUTCFullYear();
+  const start = utc(sameMonth ? { weekday: "long", day: "numeric" } : { weekday: "long", day: "numeric", month: "long" }).format(a);
+  return `${start} to ${utc({ weekday: "long", day: "numeric", month: "long" }).format(b)}`;
 }
