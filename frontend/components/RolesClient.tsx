@@ -2,6 +2,7 @@
 
 // Role cards: Scout's proposed split per role, which the manager can adjust and approve.
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { approvedText } from '@/lib/dates';
 
@@ -153,23 +154,57 @@ function RoleCard({ role }: { role: RoleCardData }) {
   );
 }
 
+const POLL_EVERY_MS = 2_000;
+const POLL_LIMIT_MS = 60_000;
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+const resultLine = (roles: number, topics: number) => `${plural(roles, 'role document')} read, ${plural(topics, 'topic')} proposed. Approved splits are kept as they are.`;
+
+/** When make.com answers before it has finished, wait for the database to show a newer read. */
+async function waitForRead(startedAt: number): Promise<string | null> {
+  const since = startedAt - 5_000;
+  while (Date.now() - startedAt < POLL_LIMIT_MS) {
+    await new Promise((resolve) => setTimeout(resolve, POLL_EVERY_MS));
+    try {
+      const res = await fetch('/api/manager/roles/status', { cache: 'no-store' });
+      const data = (await res.json()) as { ok: boolean; last_read_at?: string | null; roles?: number; topics?: number };
+      if (data.ok && data.last_read_at && Date.parse(data.last_read_at) >= since) return resultLine(data.roles ?? 0, data.topics ?? 0);
+    } catch {
+      // A missed poll is fine: the next one tries again.
+    }
+  }
+  return null;
+}
+
 export default function RolesClient({ roles }: { roles: RoleCardData[] }) {
+  const router = useRouter();
   const [syncing, setSyncing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
 
   async function sync() {
     setSyncing(true);
     setResult(null);
+    setFailed(false);
+    const startedAt = Date.now();
     try {
       const res = await fetch('/api/manager/roles/sync', { method: 'POST', signal: AbortSignal.timeout(40_000) });
       const data = (await res.json()) as { ok: boolean; message?: string; roles_read?: number; topics_proposed?: number };
-      setResult(
-        data.ok
-          ? `${data.roles_read} role document${data.roles_read === 1 ? '' : 's'} read, ${data.topics_proposed} topic${data.topics_proposed === 1 ? '' : 's'} proposed. Approved splits are kept as they are.`
-          : (data.message ?? 'Scout could not read the role documents just now. Please try again.'),
-      );
+      if (!res.ok || !data.ok) {
+        setFailed(true);
+        setResult(data.message ?? 'Scout could not read the role documents just now.');
+        return;
+      }
+      const line = typeof data.roles_read === 'number' && typeof data.topics_proposed === 'number' ? resultLine(data.roles_read, data.topics_proposed) : await waitForRead(startedAt);
+      if (!line) {
+        setFailed(true);
+        setResult('Scout is taking longer than usual to read the role documents.');
+        return;
+      }
+      setResult(line);
+      router.refresh();
     } catch {
-      setResult('Scout could not read the role documents just now. Please try again.');
+      setFailed(true);
+      setResult('Scout could not read the role documents just now.');
     } finally {
       setSyncing(false);
     }
@@ -189,6 +224,11 @@ export default function RolesClient({ roles }: { roles: RoleCardData[] }) {
         <p aria-live="polite" className={`text-lg ${syncing ? 'animate-pulse text-accent' : 'text-muted'}`}>
           {syncing ? 'Scout is reading the role documents in the document store' : result}
         </p>
+        {failed && !syncing && (
+          <button type="button" onClick={() => void sync()} className="text-lg font-semibold text-accent underline focus-visible:outline-3 focus-visible:outline-accent">
+            Try again
+          </button>
+        )}
       </div>
       {roles.map((role) => (
         <RoleCard key={role.id} role={role} />

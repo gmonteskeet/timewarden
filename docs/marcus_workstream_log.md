@@ -14,10 +14,11 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - Sunday 20 September, 10:30: code freeze. 11:30: submit. 12:00: deadline.
 
 ## Current position
-- Last update: Saturday 19 September 2026, 18:15 Madrid (task M6 reviewed).
+- Last update: Saturday 19 September 2026, 18:40 Madrid (task M7 reviewed).
 - The plan changed to version 2 at 17:00 after the make.com mentor session. Read `docs/CHANGES_V2.md` first, then `AGENTS.md` and `docs/BUILD_MARCUS.md`.
-- Next: Marcus looks at the app on his own screen and tries Speak mode in Chrome, then merges pull request 15, then task M7, the manager screens, on branch `marcus/m7-manager`. The prompt is ready in `cli_prompts/m7_manager_screens.md`.
-- Against the plan: about two hours ahead. Task M7 was planned for 21:00.
+- Where we are: the whole story now runs on fake data, which is the first half of checkpoint one, 80 minutes early. The second half, one real interview turn through make.com, waits on Gerson finishing his interview turn scenario in make.com.
+- Next: Marcus looks at the three manager screens in Chrome, merges pull request 18, then task M8, real data, on branch `marcus/m8-real-data`. The prompt is ready in `cli_prompts/m8_real_data.md`.
+- Marcus has an SLNG API key in his own note for task M9, the voice upgrade. It has not been put anywhere yet.
 - The long CLI prompts are kept outside the repository, in the workspace folder `02_projects/timewarden/cli_prompts/`, because long pastes into the CLI get cut off. Marcus pastes one line telling the CLI to read the file.
 
 ## Task record
@@ -73,7 +74,15 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - Not yet tested by anyone: Speak mode in a real browser, and how the screens look. Marcus to try both.
 - Next: task M7, the manager screens.
 
+### Task M7, the manager screens
+- Status: reviewed, pass. Pull request 18, branch `marcus/m7-manager`. Marcus to merge after his own look.
+- Checked in the actual files: six manager routes, each checking for a manager first. A manager sees a team member's day only once it is submitted, approved or returned, and can decide only on submitted days that are not their own. The CLI found and closed a privacy gap from task M6, where a manager could open an unsubmitted day by typing its address. No "being built today" lines left. The voice now prefers Chrome's "Google UK English". No new packages, no secrets, no em dashes, only `frontend/` and `docs/` touched. The CLI reports lint, build and the whole story passing on fake data.
+- Not yet tested by anyone: how the three manager screens look in a real browser.
+- Next: task M8, real data.
+
 ## Parked
+- Polish for Sunday: after a correction on the summary page, the sentence above the bars still quotes Scout's original minutes while the bar shows the corrected ones.
+- Polish for Sunday: Marcus has other aesthetic points to list.
 - The pitch outline. A first draft from Marcus's own answers is in the workspace at `02_projects/timewarden/pitch_outline_draft.md`, outside the repository. Marcus still has to read it aloud with a timer and choose the closing line. It goes into the repository in task M10.
 
 ## Waiting on Gerson
