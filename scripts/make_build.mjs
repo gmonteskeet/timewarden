@@ -68,9 +68,15 @@ const AI_PROVIDER_CONN = process.env.MAKE_AI_PROVIDER_CONNECTION
   : null;
 const AI_TIER = soft('MAKE_AI_TIER', 'large');
 
-// Where each module puts its reply. Both were read off a real run, not guessed:
-// ai-tools:Ask answers in "answer", the Anthropic module in content[1].text.
-const AI_OUTPUT = AI_PROVIDER_CONN ? '{{5.answer}}' : '{{5.content[1].text}}';
+// Where each module puts its reply. Both read off real runs, not guessed.
+// ai-tools:Ask answers in "answer".
+// The Anthropic module returns a list of content blocks, and claude-sonnet-5
+// puts a "thinking" block in front of the "text" one whenever it reasons about
+// the day. So content[1] is sometimes the thinking block and its text is empty,
+// which is why this picks the text block by its type instead of by position.
+const AI_OUTPUT = AI_PROVIDER_CONN
+  ? '{{5.answer}}'
+  : '{{first(map(5.content; "text"; "type"; "text"))}}';
 
 const repoRoot = path.resolve(import.meta.dirname, '..');
 const interviewPrompt = fs.readFileSync(
@@ -238,7 +244,12 @@ function scoutFourBlueprint() {
       body: JSON.stringify({ check_in_id: '{{1.check_in_id}}' }),
     });
 
-  const routeAsksQuestion = [
+  // DEBUG_RAW builds a cut down route A that answers with whatever the model
+  // said, unparsed, so a parse failure can actually be read.
+  const routeAsksQuestion = process.env.DEBUG_RAW ? [
+    claude,
+    respond({ id: 9, x: 600, y: 0, name: 'echo the raw reply', bodyRef: AI_OUTPUT }),
+  ] : [
     claude,
     parseJson({ id: 6, x: 600, y: 0, name: "read the model's reply", ds: DS_REPLY, source: AI_OUTPUT }),
     insertTurn(7, 900, "save Scout's question", '{{6.question}}', '{{6.kind}}', '{{6.evidence}}'),

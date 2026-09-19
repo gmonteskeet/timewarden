@@ -205,3 +205,31 @@ evening:
 - `max_tokens` and `temperature` must be numbers. The same template writes them
   as strings and Anthropic answers
   `max_tokens: Input should be a valid integer`.
+
+## 19. `claude-sonnet-5` returns a thinking block before the text (task G7, 20 September)
+The worst bug of the night, because it looked intermittent. The first turn of
+an interview worked and every later turn failed with
+`BundleValidationError: Validation failed for 1 parameter(s)`.
+
+The Anthropic module returns `content` as a list of blocks. With a short
+context `claude-sonnet-5` answers with one `text` block, so `content[1].text`
+is the reply. Once there is an interview to reason about, it puts a `thinking`
+block first, `content[1]` is that block, its `text` is empty, and the Parse JSON
+module is handed nothing.
+
+Echoed straight off a real run: `LEN=[2] TYPES=[thinking,text]`.
+
+So the reply is picked by block type rather than by position:
+`{{first(map(5.content; "text"; "type"; "text"))}}`. That works whether or not
+a thinking block is there, and it is the same `map` trick that reads the shared
+secret out of the request headers.
+
+Worth knowing for scenarios five, seven and eight: they all parse a Claude
+reply and all need this, not `content[1].text`.
+
+## 20. `DEBUG_RAW` in the builder (task G7, 20 September)
+`node scripts/make_build.mjs` with `DEBUG_RAW=1` rebuilds the interview with a
+cut down route that answers with whatever the model said, unparsed. make.com's
+API does not hand back the bundles of a finished run, so without this there is
+no way to see what a model actually replied when the parse step rejects it.
+Decision 19 was found in one run with it. Leave it in.
