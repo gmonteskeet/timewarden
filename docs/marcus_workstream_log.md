@@ -14,10 +14,10 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - Sunday 20 September, 10:30: code freeze. 11:30: submit. 12:00: deadline.
 
 ## Current position
-- Last update: Saturday 19 September 2026, 17:10 Madrid (task M2 reviewed).
-- The plan changed to version 2 at 17:00 after the make.com mentor session. Read `docs/CHANGES_V2.md` first, then `AGENTS.md` and `docs/BUILD_MARCUS.md`. Task numbers restarted: task M2 is now the version 2 demo data.
-- Next task: task M3, the calendar file and the role documents into Google. Branch `marcus/m3-calendar-ics`. The CLI writes the calendar file script, then Marcus does three steps by hand.
-- Against the plan: about 45 minutes ahead. Task M2 was planned to end at 17:55 and was reviewed at 17:10.
+- Last update: Saturday 19 September 2026, 17:15 Madrid (task M3 code part reviewed).
+- The plan changed to version 2 at 17:00 after the make.com mentor session. Read `docs/CHANGES_V2.md` first, then `AGENTS.md` and `docs/BUILD_MARCUS.md`.
+- In progress: task M4, the prompts, running in the CLI on branch `marcus/m4-prompts`, while Marcus does the three manual Google steps of task M3 with the development manager.
+- Against the plan: about one hour ahead. Task M4 was planned for 18:15 to 19:00.
 
 ## Task record
 
@@ -42,6 +42,14 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - Team average in the history: 6.9 hours a week of manual status reporting, 2.4 hours of timesheet reconciliation.
 - To carry forward: `data/interview_script.md` puts Elena's Friday at 230 minutes of manual status reporting (80 minutes fixing last week's pack plus the 150 minute send out). The demo story text in `AGENTS.md` says two and a half hours. The fake data in task M5 must use the 230 minute figure from the script. The interview prompt in task M4 must not treat the 12:00 to 13:00 lunch hour as a gap worth a question unless nothing else is left to ask.
 - Next: task M3, the calendar file and the role documents into Google.
+
+### Task M3, the calendar file and the role documents into Google
+- Code part: reviewed, pass. Pull request 8, branch `marcus/m3-calendar-ics`. `data/elena_week.ics` has 25 events, a Europe/Madrid timezone block, correct line endings, no line over 75 bytes, no description on "Sync" and "Catch up", and only made up `@brightline.example` addresses.
+- Manual steps for Marcus, tick each when done:
+  - [ ] Step 1: in Google Calendar create the calendar "Scout demo: Elena Ruiz" and import `data/elena_week.ics` into it.
+  - [ ] Step 2: in Google Drive create the folder "Brightline Advisory role documents" and upload the four files from `data/role_documents/` as Google Docs.
+  - [ ] Step 3: send Gerson the calendar ID and the Drive folder link by direct message. Never put them in the repository.
+- Next: task M4, the prompts.
 
 ## Parked
 - Nothing yet.

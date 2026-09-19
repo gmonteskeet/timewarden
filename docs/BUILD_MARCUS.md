@@ -34,7 +34,7 @@ Then give Marcus these manual steps **one at a time, waiting for him to confirm 
 2. In Google Drive create a folder called "Brightline Advisory role documents" and upload the four files from `data/role_documents/` as Google Docs.
 3. Send Gerson the calendar ID and the Drive folder link by direct message.
 
-### M4. Prompts (45 minutes, 18:15 to 19:00). Gerson is waiting on these.
+### M4. Prompts (45 minutes, 18:15 to 19:00). Gerson is waiting on these. [done]
 Branch `marcus/m4-prompts`. Each prompt file is complete and standalone: role, inputs by exact name, JSON only output, exact output shape using the field names in `AGENTS.md`, rules, and one worked example using Brightline data. Delete any version 1 prompt files.
 
 - `prompts/01_propose_role_split.md`: input `role_title`, `job_description`, `kpis`. Output `{ topics: [{ name, description, proposed_percent, reasoning }] }`. Five or six topics. Percents are whole numbers that add up to 100. Always include one topic for internal meetings and administration, between 5 and 15. Topic names are short and plain. `reasoning` is one sentence that points at the job description or a performance measure.
