@@ -29,12 +29,14 @@ function sign(payload: string): string {
   return createHmac('sha256', secret()).update(payload).digest('base64url');
 }
 
-export function encodeSession(session: Session): string {
-  const payload = Buffer.from(JSON.stringify({ ...session, iat: Math.floor(Date.now() / 1000) })).toString('base64url');
+/** Any JSON value as a signed cookie value: base64url payload, a dot, then the signature. */
+export function signValue(value: unknown): string {
+  const payload = Buffer.from(JSON.stringify(value)).toString('base64url');
   return `${payload}.${sign(payload)}`;
 }
 
-export function decodeSession(value: string | undefined): Session | null {
+/** The JSON value inside a signed cookie value, or null if it is missing or has been changed. */
+export function verifyValue(value: string | undefined): unknown {
   if (!value) return null;
   const [payload, signature, extra] = value.split('.');
   if (!payload || !signature || extra !== undefined) return null;
@@ -42,14 +44,23 @@ export function decodeSession(value: string | undefined): Session | null {
   const given = Buffer.from(signature);
   if (expected.length !== given.length || !timingSafeEqual(expected, given)) return null;
   try {
-    const data = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
-    if (typeof data.person_id !== 'string') return null;
-    if (data.app_role !== 'manager' && data.app_role !== 'employee') return null;
-    if (typeof data.iat !== 'number' || Date.now() / 1000 - data.iat > MAX_AGE_SECONDS) return null;
-    return { person_id: data.person_id, app_role: data.app_role };
+    return JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
   } catch {
     return null;
   }
+}
+
+export function encodeSession(session: Session): string {
+  return signValue({ ...session, iat: Math.floor(Date.now() / 1000) });
+}
+
+export function decodeSession(value: string | undefined): Session | null {
+  const data = verifyValue(value) as { person_id?: unknown; app_role?: unknown; iat?: unknown } | null;
+  if (!data) return null;
+  if (typeof data.person_id !== 'string') return null;
+  if (data.app_role !== 'manager' && data.app_role !== 'employee') return null;
+  if (typeof data.iat !== 'number' || Date.now() / 1000 - data.iat > MAX_AGE_SECONDS) return null;
+  return { person_id: data.person_id, app_role: data.app_role };
 }
 
 export const sessionCookieOptions = {

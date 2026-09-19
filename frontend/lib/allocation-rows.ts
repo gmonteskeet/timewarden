@@ -73,6 +73,6 @@ export function formatMinutes(minutes: number): string {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   const hours = h === 0 ? '' : h === 1 ? '1 hour' : `${h} hours`;
-  const mins = m === 0 ? '' : `${m} min`;
-  return [hours, mins].filter(Boolean).join(' ') || '0 min';
+  const mins = m === 0 ? '' : `${m} minutes`;
+  return [hours, mins].filter(Boolean).join(' ') || '0 minutes';
 }

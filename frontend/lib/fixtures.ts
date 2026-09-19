@@ -233,14 +233,14 @@ const fridayCheckIns: CheckIn[] = [
     id: ELENA_FRIDAY_ID,
     person_id: personId('elena'),
     day: DEMO_DAY,
-    status: 'summarised',
+    // Starts as invited: the demo walks through the interview. data.ts moves it on from the demo state cookie.
+    status: 'invited',
     invited_at: '2026-09-19T07:30:00+02:00',
     submitted_at: null,
     approved_by: null,
     approved_at: null,
     manager_comment: null,
-    summary_text:
-      'Most of your in role time on Friday went to Northmere Foods, with Sophie Lindqvist\'s call and the steering group, plus coaching Jonas and the weekly team review. You spent 230 minutes, just under four hours, on manual status reporting: fixing two figures in last week\'s pack and the Friday report send out.',
+    summary_text: null,
     created_at: '2026-09-19T07:30:00+02:00',
   },
   ...(['priya', 'jonas'] as const).map<CheckIn>((key) => ({
@@ -311,12 +311,12 @@ const elenaFridayTurns: Omit<InterviewTurn, 'id' | 'check_in_id' | 'created_at'>
   },
 ];
 
-const interviewTurns: InterviewTurn[] = elenaFridayTurns.map((t) => ({
-  ...t,
-  id: `it-elena-${DEMO_DAY}-${t.turn_no}`,
-  check_in_id: ELENA_FRIDAY_ID,
-  created_at: '2026-09-19T08:05:00+02:00',
-}));
+/** The summary Scout writes for Elena's Friday once the interview is done. */
+export const ELENA_FRIDAY_SUMMARY =
+  'Most of your in role time on Friday went to Northmere Foods, with Sophie Lindqvist\'s call and the steering group, plus coaching Jonas and the weekly team review. You spent 230 minutes, just under four hours, on manual status reporting: fixing two figures in last week\'s pack and the Friday report send out.';
+
+/** No interview is stored up front: the turns come from the demo state as the interview runs. */
+const interviewTurns: InterviewTurn[] = [];
 
 /** Percents to one decimal place, with the largest row adjusted so the total is exactly 100. */
 export function withPercents<T extends { minutes: number }>(rows: T[], totalMinutes: number): (T & { percent: number })[] {
@@ -385,6 +385,17 @@ export function scoutScriptFor(checkInIdValue: string): ScriptedScoutLine[] {
       .map((t) => ({ question: t.text, kind: t.kind as TurnKind, evidence: t.evidence ?? '' }));
   }
   return genericScript;
+}
+
+/** The scripted answers, in order, offered as "Use the scripted answer". Empty when there is no script. */
+export function scriptedAnswersFor(checkInIdValue: string): string[] {
+  if (checkInIdValue !== ELENA_FRIDAY_ID) return [];
+  return elenaFridayTurns.filter((t) => t.speaker === 'employee').map((t) => t.text);
+}
+
+/** The summary text Scout writes when the interview for this check in is done. */
+export function scriptedSummaryFor(checkInIdValue: string): string | null {
+  return checkInIdValue === ELENA_FRIDAY_ID ? ELENA_FRIDAY_SUMMARY : null;
 }
 
 // ---------------------------------------------------------------------------

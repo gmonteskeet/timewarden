@@ -1,13 +1,9 @@
 import { redirect } from "next/navigation";
-import AllocationBars from "@/components/AllocationBars";
-import { rowsFromAllocations } from "@/lib/allocation-rows";
-import { getCheckIn, listMyCheckIns } from "@/lib/data";
+import InterviewClient from "@/components/InterviewClient";
+import { getCheckIn, getSuggestedAnswer, listMyCheckIns } from "@/lib/data";
+import { dayLabel } from "@/lib/dates";
 import { orRefuse } from "@/lib/guard";
 import { requireSession } from "@/lib/session";
-
-function dayLabel(day: string): string {
-  return new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`));
-}
 
 export default async function CheckInPage({ params }: PageProps<"/check-in/[id]">) {
   const session = await requireSession();
@@ -21,25 +17,31 @@ export default async function CheckInPage({ params }: PageProps<"/check-in/[id]"
   }
 
   const view = await orRefuse(getCheckIn(id));
-  const own = view.person.id === session.person_id;
-  const when = dayLabel(view.check_in.day);
-  const rows = rowsFromAllocations(view.topics, view.allocations);
+  const summaryPath = `/check-in/${encodeURIComponent(id)}/summary`;
+  // Only the employee takes their own interview. Anyone else allowed to see the day sees the summary.
+  if (view.person.id !== session.person_id) redirect(summaryPath);
+  if (["summarised", "submitted", "approved"].includes(view.check_in.status)) redirect(summaryPath);
+
+  const suggestion = await orRefuse(getSuggestedAnswer(id));
+  const firstName = view.person.full_name.split(" ")[0];
 
   return (
     <div className="space-y-8">
       <header className="space-y-3">
-        <h1 className="text-4xl font-bold">{own ? `Your last working day: ${when}` : `${view.person.full_name}: ${when}`}</h1>
-        {own && (
-          <p className="max-w-4xl rounded-lg bg-track px-5 py-4 text-lg">
-            This is for finding work to automate, not for judging people. Your manager sees a day only after you submit it.
-          </p>
-        )}
-        <p className="text-lg text-muted">This screen is being built today.</p>
+        <h1 className="text-4xl font-bold">Tell Scout about your last working day: {dayLabel(view.check_in.day)}</h1>
+        <p className="max-w-4xl rounded-lg bg-track px-5 py-4 text-lg">
+          This is for finding work to automate, not for judging people. Your manager sees a day only after you submit it.
+        </p>
+        <p className="text-lg text-muted">
+          Hello {firstName}. Scout has your calendar and recorded calls for the day, and will ask a few short questions about what it cannot see.
+        </p>
       </header>
 
-      {view.check_in.summary_text && <p className="max-w-4xl text-xl leading-relaxed">{view.check_in.summary_text}</p>}
-
-      {view.allocations.length > 0 && <AllocationBars rows={rows} periodLabel={when} audience={own ? "self" : "manager"} />}
+      <InterviewClient
+        checkInId={view.check_in.id}
+        initialTurns={view.turns.map((t) => ({ turn_no: t.turn_no, speaker: t.speaker, text: t.text, kind: t.kind, evidence: t.evidence }))}
+        initialSuggestion={suggestion}
+      />
     </div>
   );
 }

@@ -26,25 +26,30 @@ function Bar({ percent, tone, text }: { percent: number; tone: 'expected' | 'act
       <div className="h-5 flex-1 rounded bg-track">
         <div className={`h-5 rounded ${colour}`} style={{ width: `${width}%` }} />
       </div>
-      <span className="w-72 shrink-0 text-lg tabular-nums text-ink">{text}</span>
+      <span className="w-80 shrink-0 text-lg tabular-nums text-ink">{text}</span>
     </div>
   );
 }
 
-function Row({ row, editable, step, onMinutesChange }: { row: AllocationRow; editable: boolean; step: number; onMinutesChange?: (key: string, minutes: number) => void }) {
+function Row({ row, editable, step, audience, onMinutesChange }: { row: AllocationRow; editable: boolean; step: number; audience: 'self' | 'manager'; onMinutesChange?: (key: string, minutes: number) => void }) {
+  const canEdit = editable && onMinutesChange && row.allocationId !== undefined;
   return (
     <li className="border-t border-line py-4 first:border-t-0">
       <div className="mb-2 flex flex-wrap items-baseline justify-between gap-3">
         <p className="text-xl font-semibold text-ink">
           {row.label}
-          {row.employeeAdjusted && <span className="ml-3 rounded bg-note px-2 py-0.5 text-sm font-medium text-ink">Corrected by the employee</span>}
+          {row.employeeAdjusted && (
+            <span className="ml-3 rounded bg-note px-2 py-0.5 text-base font-medium text-ink">
+              {audience === 'self' ? 'You corrected this' : 'Corrected by the employee'}
+            </span>
+          )}
         </p>
-        {editable && onMinutesChange && (
+        {canEdit && (
           <div className="flex items-center gap-2">
             <button
               type="button"
-              className="rounded border border-line px-3 py-1 text-lg hover:bg-track disabled:opacity-40"
-              onClick={() => onMinutesChange(row.key, Math.max(0, row.minutes - step))}
+              className="rounded border border-line bg-white px-4 py-2 text-lg font-medium hover:bg-track focus-visible:outline-3 focus-visible:outline-accent disabled:opacity-40"
+              onClick={() => onMinutesChange!(row.key, Math.max(0, row.minutes - step))}
               disabled={row.minutes === 0}
               aria-label={`Take ${step} minutes off ${row.label}`}
             >
@@ -52,8 +57,8 @@ function Row({ row, editable, step, onMinutesChange }: { row: AllocationRow; edi
             </button>
             <button
               type="button"
-              className="rounded border border-line px-3 py-1 text-lg hover:bg-track"
-              onClick={() => onMinutesChange(row.key, row.minutes + step)}
+              className="rounded border border-line bg-white px-4 py-2 text-lg font-medium hover:bg-track focus-visible:outline-3 focus-visible:outline-accent"
+              onClick={() => onMinutesChange!(row.key, row.minutes + step)}
               aria-label={`Add ${step} minutes to ${row.label}`}
             >
               + {step} min
@@ -71,8 +76,8 @@ function Row({ row, editable, step, onMinutesChange }: { row: AllocationRow; edi
       </div>
       {row.evidence.length > 0 && (
         <details className="mt-2 text-base text-muted">
-          <summary className="cursor-pointer select-none">What Scout saw</summary>
-          <ul className="mt-1 list-disc pl-6">
+          <summary className="inline-block cursor-pointer select-none rounded px-1 font-medium text-accent underline focus-visible:outline-3 focus-visible:outline-accent">Why?</summary>
+          <ul className="mt-1 list-disc pl-6" aria-label="What Scout saw">
             {row.evidence.map((e) => (
               <li key={e}>{e}</li>
             ))}
@@ -100,7 +105,7 @@ export default function AllocationBars({ rows, periodLabel, audience = 'self', e
 
       <ul>
         {inRole.map((row) => (
-          <Row key={row.key} row={row} editable={editable} step={stepMinutes} onMinutesChange={onMinutesChange} />
+          <Row key={row.key} row={row} editable={editable} step={stepMinutes} audience={audience} onMinutesChange={onMinutesChange} />
         ))}
       </ul>
 
@@ -111,7 +116,7 @@ export default function AllocationBars({ rows, periodLabel, audience = 'self', e
           </h3>
           <ul>
             {outside.map((row) => (
-              <Row key={row.key} row={row} editable={editable} step={stepMinutes} onMinutesChange={onMinutesChange} />
+              <Row key={row.key} row={row} editable={editable} step={stepMinutes} audience={audience} onMinutesChange={onMinutesChange} />
             ))}
           </ul>
         </>
