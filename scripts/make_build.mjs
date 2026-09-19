@@ -321,12 +321,13 @@ function scoutFourBlueprint() {
             p_employee_text: '{{1.employee_text}}',
           },
         }),
-        // A custom webhook with "get request headers" on hands the headers
-        // back as a list of name and value pairs, not as a keyed collection,
-        // so this picks the one we want out of the list.
+        // A custom webhook with "get request headers" on puts them in
+        // __IMTHEADERS__, not in "headers", as a list of name and value pairs
+        // rather than a keyed collection. Both of those were read off a real
+        // run. This picks the one header we care about out of the list.
         ...(process.env.SKIP_SECRET_FILTER ? {} : { filter: filter(
           'only our own interface',
-          '{{first(map(1.headers; "value"; "name"; "x-scout-key"))}}',
+          '{{first(map(1.__IMTHEADERS__; "value"; "name"; "x-scout-key"))}}',
           'text:equal',
           SHARED_SECRET
         ) }),
