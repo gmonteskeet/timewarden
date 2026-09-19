@@ -30,7 +30,7 @@ Time boxes are Madrid time, Saturday 19 September unless stated.
 - Write `supabase/reset.sql` that empties the run time tables (`activities` where source is `voice`, `voice_notes`, `interview_questions`, `findings`, `candidates`, `approvals`) but keeps people, calendar and transcript data. This is the "clean start" for demo rehearsals.
 - Checks: migration runs clean on the empty project. Anonymous read works, anonymous insert is refused.
 
-### G3. Secrets and connections (10 minutes, Gerson by hand)
+### G3. Secrets and connections (10 minutes, Gerson by hand) [build sheet written, Gerson to do the clicking]
 Build sheet `make/specs/00_connections.md` listing what Gerson must create in make.com: Anthropic Claude connection (Marcus's key), Google Calendar connection (the Google account that holds the "Scout demo: Elena Ruiz" calendar), Supabase connection (service key), a make.com API token with scopes to create scenarios, and one shared secret value for `SCOUT_SHARED_SECRET`. He sends Marcus the public Supabase URL and anon key, and later the four webhook addresses, by direct message.
 
 ---
