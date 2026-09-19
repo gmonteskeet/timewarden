@@ -271,3 +271,42 @@ So the parse reads
 
 This is not a replacement for the retry route in the shared pattern, which is
 still to build. It removes the common case for the cost of one function call.
+
+## 23. Rows are built with Create JSON, not written into a raw body (task G7, 20 September)
+Scenario five's inserts ran, the run went green, and nothing appeared in
+`day_allocations`. Three things were wrong at once and each hid the next.
+
+1. `http:ActionSendData` does not stop on a 4xx unless it is told to, so five
+   failed inserts per run looked like a success. `stopOnHttpError` is now on
+   everywhere.
+2. A `topic_id` written into a raw JSON body as
+   `{{ifempty(<expression>; null)}}` comes out as `""`, and Postgres answers
+   `400 invalid input syntax for type uuid: ""`. The row is now built by a
+   **Create JSON** module against a data structure, where the IML keyword
+   `null` really does become a JSON null. `emptystring` does not: it produces
+   `""` again and the row is refused.
+3. `map(topic_map; "topic_id"; "name"; <empty>)` has nothing to filter on and
+   returns **every** topic, so `first()` quietly gave work outside the role the
+   first topic of the role. It is now guarded on `in_role`.
+
+The third was the dangerous one. It did not fail, it wrote a plausible wrong
+answer, and the only reason it was caught is that the check reads `topic_id`
+rather than trusting the row count.
+
+## 24. Scenario five is proved against the demo day (task G7, 20 September)
+Elena's Friday, interviewed with the answers in `data/interview_script.md` and
+summarised:
+
+| Label | In role | Minutes | Percent |
+|---|---|---|---|
+| Client delivery and workshops | yes | 60 | 12.5 |
+| Client relationships | yes | 40 | 8.33 |
+| Coaching juniors | yes | 60 | 12.5 |
+| Internal meetings and administration | yes | 90 | 18.75 |
+| Manual status reporting | **no** | 230 | 47.92 |
+| | | **480** | **100.00** |
+
+The same table as the bottom of `data/interview_script.md`, to the minute. The
+percentages add to exactly 100, so decision 12's worry about a hundredth of a
+point did not arise here. Run twice, the row counts do not move and the
+calendar activities are untouched.

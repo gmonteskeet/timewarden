@@ -48,6 +48,11 @@ const HOOK_SUMMARY_URL = need('MAKE_HOOK_SUMMARY_URL');
 const DS_REQ = Number(need('MAKE_DS_RPC_REQUEST'));
 const DS_REPLY = Number(need('MAKE_DS_INTERVIEW_REPLY'));
 const DS_RESP = Number(need('MAKE_DS_INTERVIEW_RESPONSE'));
+const HOOK_SUMMARY = Number(soft('MAKE_HOOK_SUMMARY', '0'));
+const DS_SUMMARY = Number(soft('MAKE_DS_SUMMARY', '0'));
+const DS_SUMMARY_REQ = Number(soft('MAKE_DS_SUMMARY_REQUEST', '0'));
+const DS_ALLOC_ROW = Number(soft('MAKE_DS_ALLOC_ROW', '0'));
+const DS_ACT_ROW = Number(soft('MAKE_DS_ACT_ROW', '0'));
 
 // These three are the ones that are still missing while the accounts are being
 // set up. Obvious placeholders, so a half built scenario cannot quietly point
@@ -89,6 +94,10 @@ const interviewPrompt = fs.readFileSync(
   path.join(repoRoot, 'prompts', '02_interview_turn.md'),
   'utf8'
 );
+const summaryPrompt = fs.readFileSync(
+  path.join(repoRoot, 'prompts', '03_day_summary.md'),
+  'utf8'
+);
 
 // ---------------------------------------------------------------------------
 // Small helpers for the bits of a blueprint that repeat
@@ -117,6 +126,10 @@ function http({ id, x, y, name, url, method, headers = [], body, parse = false }
       qs: [],
       bodyType: body === undefined ? 'raw' : 'raw',
       parseResponse: parse,
+      // Without this a 4xx is ignored and the run goes green while nothing is
+      // written. That cost an hour: the summary said "summarised" with no
+      // allocations behind it.
+      stopOnHttpError: true,
       authUser: '',
       authPass: '',
       timeout: '',
@@ -167,6 +180,37 @@ const respond = ({ id, x, y, name, bodyRef }) => ({
 });
 
 const filter = (name, a, o, b) => ({ name, conditions: [[{ a, o, b }]] });
+
+/**
+ * The model call, with everything learned the hard way baked in: the block type
+ * on the content, numbers for max_tokens and temperature, and the prompt at the
+ * top of the user message because the module has no system prompt field.
+ */
+function askModel({ id, x, y, name, prompt, inputRef, maxTokens }) {
+  const text = prompt + '\n\nHere is the input:\n\n' + inputRef;
+  return AI_PROVIDER_CONN
+    ? { id, module: 'ai-tools:Ask', version: 2,
+        parameters: { model: AI_TIER, makeConnectionId: AI_PROVIDER_CONN },
+        mapper: { input: text }, metadata: at(x, y, name) }
+    : { id, module: 'anthropic-claude:createAMessage', version: 1,
+        parameters: ANTHROPIC_CONN ? { __IMTCONN__: ANTHROPIC_CONN } : {},
+        mapper: {
+          model: MODEL,
+          messages: [{ role: 'user', content: [{ type: 'text', text }] }],
+          metadata: {},
+          max_tokens: maxTokens,
+          temperature: 0.2,
+        },
+        metadata: at(x, y, name) };
+}
+
+/** Where a given model module put its reply, fences stripped. */
+function modelOutput(moduleId) {
+  const expr = AI_PROVIDER_CONN
+    ? moduleId + '.answer'
+    : 'first(map(' + moduleId + '.content; "text"; "type"; "text"))';
+  return '{{trim(replace(' + expr + '; "/' + FENCE + '(json)?/g"; emptystring))}}';
+}
 
 // ---------------------------------------------------------------------------
 // Scout 4: Interview turn
@@ -402,6 +446,122 @@ function scoutFourBlueprint() {
 }
 
 // ---------------------------------------------------------------------------
+// Scout 5: Day summary
+// ---------------------------------------------------------------------------
+
+function scoutFiveBlueprint() {
+  // The model divides the day. Every sum below is make.com's, as task G7 asks.
+  const allocs = '5.allocations';
+  const working = '3.data.working_minutes';
+  // What the day is short by, normally zero.
+  const diff = '(' + working + ' - sum(map(' + allocs + '; "minutes")))';
+  // The row that absorbs it: a five minute correction to a 230 minute block
+  // changes nothing anyone can see.
+  const largest = 'get(first(sort(' + allocs + '; "desc"; "minutes")); "label")';
+  const rowMinutes = 'if(8.label = ' + largest + '; 8.minutes + ' + diff + '; 8.minutes)';
+  const rowPercent = 'round((' + rowMinutes + ') / ' + working + ' * 10000) / 100';
+
+  return {
+    name: 'Scout 5: Day summary',
+    flow: [
+      { id: 1, module: 'gateway:CustomWebHook', version: 1,
+        parameters: { hook: HOOK_SUMMARY, maxResults: 1 }, mapper: {},
+        metadata: at(0, 0, 'Scout 5 day summary') },
+
+      createJson({ id: 2, x: 300, y: 0, name: 'build the database call',
+        ds: DS_SUMMARY_REQ, values: { p_check_in_id: '{{1.check_in_id}}' } }),
+
+      http({ id: 3, x: 600, y: 0, name: 'read the day and the interview',
+        url: SUPABASE_URL + '/rest/v1/rpc/scout_summary_context',
+        method: 'post', headers: supabaseHeaders(), body: '{{2.json}}', parse: true }),
+
+      askModel({ id: 4, x: 900, y: 0, name: 'write the day summary',
+        prompt: summaryPrompt, inputRef: '{{3.data.prompt_input}}', maxTokens: 4000 }),
+
+      parseJson({ id: 5, x: 1200, y: 0, name: "read the model's reply",
+        ds: DS_SUMMARY, source: modelOutput(4) }),
+
+      // A model that is an hour out has misread the day, and nudging one row
+      // would hide that rather than fix it. The run stops and says why.
+      { ...http({ id: 6, x: 1500, y: 0, name: 'clear the old allocations',
+          url: SUPABASE_URL + '/rest/v1/day_allocations?check_in_id=eq.{{1.check_in_id}}',
+          method: 'delete', headers: supabaseHeaders() }),
+        filter: filter('the minutes are close enough',
+          '{{abs(' + diff + ')}}', 'number:lessorequal', '60') },
+
+      http({ id: 7, x: 1800, y: 0, name: 'clear the old interview activities',
+        url: SUPABASE_URL + '/rest/v1/activities?person_id=eq.{{3.data.person_id}}'
+             + '&day=eq.{{3.data.day}}&source=eq.interview',
+        method: 'delete', headers: supabaseHeaders() }),
+
+      { id: 8, module: 'builtin:BasicFeeder', version: 1,
+        mapper: { array: '{{5.allocations}}' },
+        metadata: at(2100, 0, 'each allocation') },
+
+      // Built with Create JSON rather than by hand. A topic_id written straight
+      // into a raw body comes out as "" for work outside a role, and Postgres
+      // answers 400 invalid input syntax for type uuid. Create JSON leaves an
+      // empty field out altogether, which is what the column wants.
+      createJson({ id: 9, x: 2400, y: 0, name: 'build the allocation row',
+        ds: DS_ALLOC_ROW, values: {
+          check_in_id: '{{1.check_in_id}}',
+          person_id: '{{3.data.person_id}}',
+          day: '{{3.data.day}}',
+          // Guarded on in_role. With an empty topic_name the map has nothing to
+          // filter on and hands back every topic, so first() would quietly give
+          // work outside the role the first topic of the role.
+          topic_id: '{{if(8.in_role; first(map(3.data.topic_map; "topic_id"; "name"; 8.topic_name)); null)}}',
+          label: '{{8.label}}',
+          in_role: '{{8.in_role}}',
+          minutes: '{{' + rowMinutes + '}}',
+          percent: '{{' + rowPercent + '}}',
+          evidence: '{{8.evidence}}',
+          employee_adjusted: false,
+        } }),
+
+      http({ id: 10, x: 2700, y: 0, name: 'save one allocation',
+        url: SUPABASE_URL + '/rest/v1/day_allocations', method: 'post',
+        headers: supabaseHeaders(), body: '{{9.json}}' }),
+
+      createJson({ id: 11, x: 3000, y: 0, name: 'build the activity row',
+        ds: DS_ACT_ROW, values: {
+          person_id: '{{3.data.person_id}}',
+          day: '{{3.data.day}}',
+          source: 'interview',
+          title: '{{8.label}}',
+          description: '{{8.evidence}}',
+          minutes: '{{' + rowMinutes + '}}',
+        } }),
+
+      http({ id: 12, x: 3300, y: 0, name: 'save one activity',
+        url: SUPABASE_URL + '/rest/v1/activities', method: 'post',
+        headers: supabaseHeaders(), body: '{{11.json}}' }),
+
+      // Collapses the loop back to one bundle, so the check in is marked once
+      // and only after every row is written.
+      { id: 13, module: 'builtin:BasicAggregator', version: 1,
+        parameters: { feeder: 8 }, mapper: {},
+        metadata: at(3600, 0, 'wait for every allocation') },
+
+      http({ id: 14, x: 3900, y: 0, name: 'mark the check in summarised',
+        url: SUPABASE_URL + '/rest/v1/check_ins?id=eq.{{1.check_in_id}}',
+        method: 'patch', headers: supabaseHeaders(),
+        body: JSON.stringify({
+          summary_text: process.env.DEBUG_ALLOCS
+            ? 'ALLOCS={{length(5.allocations)}}'
+            : '{{5.summary_text}}',
+          status: 'summarised' }) }),
+    ],
+    metadata: {
+      instant: true, version: 1,
+      scenario: { roundtrips: 1, maxErrors: 3, autoCommit: true, autoCommitTriggerLast: true,
+        sequential: false, confidential: false, dataloss: false, dlq: false, freshVariables: false },
+      designer: { orphans: [] }, zone: ZONE + '.make.com',
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
 
 async function call(pathname, method = 'GET', body) {
   const res = await fetch(`${API}${pathname}`, {
@@ -439,23 +599,36 @@ async function upsertScenario(name, blueprint) {
   return { action: 'created', id: res.json.scenario?.id, res };
 }
 
-const blueprint = scoutFourBlueprint();
+// Which scenarios to build. Default is both.
+const only = process.argv.find((a) => a.startsWith('--only='))?.split('=')[1];
+const wanted = [
+  { key: 'four', make: scoutFourBlueprint },
+  { key: 'five', make: scoutFiveBlueprint, needs: HOOK_SUMMARY && DS_SUMMARY && DS_SUMMARY_REQ },
+].filter((b) => (only ? b.key === only : true));
 
-if (dry) {
-  console.log(JSON.stringify(blueprint, null, 2));
-  process.exit(0);
+for (const b of wanted) {
+  if (b.needs === 0) {
+    console.log(`skipping Scout ${b.key}: set MAKE_HOOK_SUMMARY, MAKE_DS_SUMMARY and MAKE_DS_SUMMARY_REQUEST first.`);
+    continue;
+  }
+  const blueprint = b.make();
+  if (dry) {
+    console.log(JSON.stringify(blueprint, null, 2));
+    continue;
+  }
+  const result = await upsertScenario(blueprint.name, blueprint);
+  console.log(`${result.action} "${blueprint.name}" id=${result.id} http=${result.res.status}`);
+  if (result.res.status >= 400) {
+    console.log(JSON.stringify(result.res.json, null, 1).slice(0, 1200));
+    process.exitCode = 1;
+    continue;
+  }
+  const check = await call(`/scenarios/${result.id}`);
+  const sc = check.json.scenario ?? {};
+  console.log(`  invalid=${sc.isinvalid}  modules=${(sc.usedPackages ?? []).length}`);
 }
-
-const result = await upsertScenario(blueprint.name, blueprint);
-console.log(`${result.action} "${blueprint.name}" id=${result.id} http=${result.res.status}`);
-if (result.res.status >= 400) {
-  console.log(JSON.stringify(result.res.json, null, 1).slice(0, 1500));
-  process.exit(1);
-}
-
-const check = await call(`/scenarios/${result.id}`);
-const s = check.json.scenario ?? {};
-console.log(`  invalid=${s.isinvalid}  packages=${(s.usedPackages ?? []).join(', ')}`);
+if (dry) process.exit(0);
+const s = {};
 if (AI_PROVIDER_CONN) {
   console.log(`  note: using Make's own AI provider at the "${AI_TIER}" tier, not Claude.`);
 } else if (!ANTHROPIC_CONN) {
