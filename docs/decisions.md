@@ -176,3 +176,32 @@ watch: the prompts were written and worked through against Claude, so a
 different model may follow the JSON rules less reliably, which makes the retry
 route matter more than it did; and "Claude" should come out of any slide that
 names it.
+
+## 17. Back to Claude, and the model is `claude-sonnet-5` (task G7, 19 September)
+Decision 16 put the interview on Make's own AI provider because there was no
+Anthropic key. Gerson got one at about 23:20 and the connection `Scout Claude`
+now exists in make.com, created through the API. Decision 16 is therefore
+reversed: `AGENTS.md` section 3 stands unchanged and nothing needs to come out
+of the pitch.
+
+`make/specs/00_connections.md` section 2 says to take a newer Sonnet than
+`claude-sonnet-4-5` if the module offers one, so the model is
+**`claude-sonnet-5`**. `make/specs/README.md` needs the same edit.
+
+It was worth the wait. On Make's provider the first question put the empty
+block at 11:00 to 12:00, which is actually the Northmere steering group, and a
+later turn asked about 12:00 to 13:00, which rule 2 of the prompt calls lunch
+and forbids asking about. On `claude-sonnet-5` the first question named the
+09:00 to 11:00 gap and Sophie Lindqvist's call, almost word for word like the
+worked example in the prompt. It was also faster: 3.9 seconds against 10.1.
+
+## 18. Two things make.com's own template gets wrong for the Anthropic module (task G7, 19 September)
+Both found by reading the error off a failed run, and both would waste anyone's
+evening:
+
+- `messages[].content[]` needs `"type": "text"`. The public template make.com
+  ships leaves it out and Anthropic answers
+  `messages.0.content.0.type: Field required`.
+- `max_tokens` and `temperature` must be numbers. The same template writes them
+  as strings and Anthropic answers
+  `max_tokens: Input should be a valid integer`.

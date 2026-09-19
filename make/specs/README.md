@@ -8,9 +8,13 @@ blueprint to `make/blueprints/` under the same name.
 ## The model we use
 `AGENTS.md` section 3 says the model is recorded here.
 
-**Model: `claude-sonnet-4-5`.** Set it in every Anthropic Claude module. If the
-account offers a newer Sonnet, take it, change this line, and add a note to
-`docs/decisions.md`.
+**Model: `claude-sonnet-5`.** Set it in every Anthropic Claude module. It is a
+newer Sonnet than the `claude-sonnet-4-5` this file first named, so under
+`make/specs/00_connections.md` section 2 we took it. Recorded as decision 17.
+
+Two things the module needs that make.com's own public template gets wrong:
+`messages[].content[]` must carry `"type": "text"`, and `max_tokens` and
+`temperature` must be numbers rather than strings. Decision 18.
 
 ## The scenarios
 

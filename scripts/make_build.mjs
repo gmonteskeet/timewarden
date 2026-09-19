@@ -174,10 +174,13 @@ function scoutFourBlueprint() {
     parameters: ANTHROPIC_CONN ? { __IMTCONN__: ANTHROPIC_CONN } : {},
     mapper: {
       model: MODEL,
-      messages: [{ role: 'user', content: [{ text: promptText }] }],
+      // Anthropic requires the block type, even though make's own template omits it.
+      messages: [{ role: 'user', content: [{ type: 'text', text: promptText }] }],
       metadata: {},
-      max_tokens: '600',
-      temperature: '0.2',
+      // Numbers, not strings. make's own template writes these as strings and
+      // Anthropic rejects that with "Input should be a valid integer".
+      max_tokens: 600,
+      temperature: 0.2,
     },
     metadata: at(300, 0, 'write the next question'),
   };
