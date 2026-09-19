@@ -14,10 +14,10 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - Sunday 20 September, 10:30: code freeze. 11:30: submit. 12:00: deadline.
 
 ## Current position
-- Last update: Saturday 19 September 2026, 17:10 Madrid.
+- Last update: Saturday 19 September 2026, 17:10 Madrid (task M2 reviewed).
 - The plan changed to version 2 at 17:00 after the make.com mentor session. Read `docs/CHANGES_V2.md` first, then `AGENTS.md` and `docs/BUILD_MARCUS.md`. Task numbers restarted: task M2 is now the version 2 demo data.
-- Next task: task M2, the version 2 demo data. Branch `marcus/m2-demo-data-v2`. Time box 17:15 to 17:55.
-- Against the plan: on time.
+- Next task: task M3, the calendar file and the role documents into Google. Branch `marcus/m3-calendar-ics`. The CLI writes the calendar file script, then Marcus does three steps by hand.
+- Against the plan: about 45 minutes ahead. Task M2 was planned to end at 17:55 and was reviewed at 17:10.
 
 ## Task record
 
@@ -35,6 +35,13 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - Status: merged into `main` as pull request 6 (commit `cb58aa2`, merge `e77d320`). Replaced `AGENTS.md`, `.env.example`, both build files, the one page brief and the project plan, and added `docs/CHANGES_V2.md`.
 - Open point: `AGENTS.md` and `docs/BUILD_GERSON.md` changed without Gerson having seen them. Marcus must tell Gerson before Gerson starts his next task.
 - Next: task M2, the version 2 demo data.
+
+### Task M2, the version 2 demo data
+- Status: reviewed, pass. Pull request 7, branch `marcus/m2-demo-data-v2`. Marcus to merge.
+- Checked in the actual files: five JSON files parse. `data/history.json` has 42 approved check ins, every day totals 480 minutes and 100 percent, no weekends, every topic name matches `data/expected_splits.json`, and the only outside role labels are "Manual status reporting" and "Timesheet reconciliation". Every role split adds up to 100. No em dashes. The role documents mention reporting only on the Business Analyst's line. `data/calendar_week.json` unchanged. Only `data/` and `docs/` touched. No secrets.
+- Team average in the history: 6.9 hours a week of manual status reporting, 2.4 hours of timesheet reconciliation.
+- To carry forward: `data/interview_script.md` puts Elena's Friday at 230 minutes of manual status reporting (80 minutes fixing last week's pack plus the 150 minute send out). The demo story text in `AGENTS.md` says two and a half hours. The fake data in task M5 must use the 230 minute figure from the script. The interview prompt in task M4 must not treat the 12:00 to 13:00 lunch hour as a gap worth a question unless nothing else is left to ask.
+- Next: task M3, the calendar file and the role documents into Google.
 
 ## Parked
 - Nothing yet.

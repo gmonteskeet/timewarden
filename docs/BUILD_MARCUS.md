@@ -27,6 +27,7 @@ Branch `marcus/m2-demo-data-v2`. Extend the task M1 files. British English, real
 Checks: all JSON parses. Run `make_history.mjs` twice and confirm identical output. Print for Marcus: average weekly hours of "Manual status reporting" per person and for the team. **Then tell Marcus to message Gerson that the data files are ready.**
 
 ### M3. Calendar and role documents into Google (20 minutes, mostly Marcus by hand)
+**Calendar file written. Manual steps pending.**
 Branch `marcus/m3-calendar-ics`. Write `data/make_ics.mjs` (Node, no dependencies): reads `data/calendar_week.json`, writes `data/elena_week.ics` in valid iCalendar format, timezone Europe/Madrid, one event per entry with description and attendees. Check the event count matches.
 Then give Marcus these manual steps **one at a time, waiting for him to confirm each**:
 1. In Google Calendar create a calendar called "Scout demo: Elena Ruiz" and import `data/elena_week.ics` into it.
