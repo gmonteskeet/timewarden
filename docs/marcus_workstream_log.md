@@ -14,10 +14,11 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - Sunday 20 September, 10:30: code freeze. 11:30: submit. 12:00: deadline.
 
 ## Current position
-- Last update: Saturday 19 September 2026, 17:15 Madrid (task M3 code part reviewed).
+- Last update: Saturday 19 September 2026, 17:25 Madrid (task M4 reviewed).
 - The plan changed to version 2 at 17:00 after the make.com mentor session. Read `docs/CHANGES_V2.md` first, then `AGENTS.md` and `docs/BUILD_MARCUS.md`.
-- In progress: task M4, the prompts, running in the CLI on branch `marcus/m4-prompts`, while Marcus does the three manual Google steps of task M3 with the development manager.
-- Against the plan: about one hour ahead. Task M4 was planned for 18:15 to 19:00.
+- In progress: task M5, the interface foundations on fake data, in the CLI on branch `marcus/m5-interface-foundations`. Marcus is doing the three manual Google steps of task M3 at the same time.
+- Against the plan: about 95 minutes ahead. Task M5 was planned for 19:00 to 20:00.
+- The long CLI prompts are kept outside the repository, in the workspace folder `02_projects/timewarden/cli_prompts/`, because long pastes into the CLI get cut off. Marcus pastes one line telling the CLI to read the file.
 
 ## Task record
 
@@ -50,6 +51,12 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
   - [ ] Step 2: in Google Drive create the folder "Brightline Advisory role documents" and upload the four files from `data/role_documents/` as Google Docs.
   - [ ] Step 3: send Gerson the calendar ID and the Drive folder link by direct message. Never put them in the repository.
 - Next: task M4, the prompts.
+
+### Task M4, the prompts
+- Status: reviewed, pass. Pull request 10, branch `marcus/m4-prompts`. Marcus to merge and send Gerson the link.
+- Checked in the actual files: five prompts and a README. Each has role, inputs, output shape, rules and a worked example, and demands JSON only at the top and the end. No code fences and no em dashes. The interview prompt has the lunch rule, the six question limit and two worked examples built on Elena's Friday. The day summary example totals 480 with 230 minutes of "Manual status reporting". The suggestion prompt never outputs the total score, the rank or the annual cost. Only `prompts/` and `docs/` touched.
+- Gerson needs to know: three prompts expect inputs beyond the build file. The suggestion prompt takes `working_days_in_period` and a `sample_evidence` list on each history row. The draft fill prompt takes `contacts`. Each transcript activity carries `in_calendar`. All are listed in `prompts/README.md`.
+- Next: task M5, the interface foundations on fake data.
 
 ## Parked
 - Nothing yet.
