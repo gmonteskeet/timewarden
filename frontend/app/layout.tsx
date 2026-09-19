@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Link from "next/link";
 import NavLinks from "@/components/NavLinks";
-import { getCurrentPerson } from "@/lib/data";
+import { dataModeLabel, getCurrentPerson } from "@/lib/data";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -55,12 +55,22 @@ async function TopBar() {
   );
 }
 
+async function Footer() {
+  const label = await dataModeLabel();
+  return (
+    <footer className="border-t border-line bg-white">
+      <p className="mx-auto max-w-6xl px-8 py-3 text-base text-muted">{label}</p>
+    </footer>
+  );
+}
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en-GB" className={`${geistSans.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <TopBar />
         <main className="mx-auto w-full max-w-6xl flex-1 px-8 py-10">{children}</main>
+        <Footer />
       </body>
     </html>
   );

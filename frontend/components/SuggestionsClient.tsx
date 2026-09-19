@@ -192,6 +192,22 @@ export default function SuggestionsClient({ initialCandidates, periodStart, peri
   );
   const drafting = Object.values(states).some((s) => s.kind === 'drafting');
 
+  /** When make.com answers before it has finished, wait for new suggestions to appear. */
+  async function waitForSuggestions(since: string): Promise<Candidate[] | null> {
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < POLL_LIMIT_MS) {
+      await new Promise((resolve) => setTimeout(resolve, POLL_EVERY_MS));
+      try {
+        const res = await fetch(`/api/manager/suggestions?since=${encodeURIComponent(since)}`, { cache: 'no-store' });
+        const data = (await res.json()) as { ok: boolean; candidates?: Candidate[]; complete?: boolean };
+        if (data.ok && data.complete) return data.candidates ?? [];
+      } catch {
+        // A missed poll is fine: the next one tries again.
+      }
+    }
+    return null;
+  }
+
   async function review() {
     setReviewing(true);
     setProblem(null);
@@ -202,9 +218,14 @@ export default function SuggestionsClient({ initialCandidates, periodStart, peri
         body: JSON.stringify({ period_start: periodStart, period_end: periodEnd }),
         signal: AbortSignal.timeout(DECISION_TIMEOUT_MS),
       });
-      const data = (await res.json()) as { ok: boolean; message?: string; candidates?: Candidate[] };
-      if (!res.ok || !data.ok) setProblem(data.message ?? 'Scout could not review the history just now. Please try again.');
-      else setCandidates(data.candidates ?? []);
+      const data = (await res.json()) as { ok: boolean; message?: string; candidates?: Candidate[]; complete?: boolean; since?: string };
+      if (!res.ok || !data.ok) {
+        setProblem(`${data.message ?? 'Scout could not review the history just now.'} Please try again.`);
+        return;
+      }
+      const list = data.complete ? (data.candidates ?? []) : await waitForSuggestions(data.since ?? new Date().toISOString());
+      if (!list) setProblem('Scout is taking longer than usual to review the history. Please try again.');
+      else setCandidates(list);
     } catch {
       setProblem('Scout could not review the history just now. Please try again.');
     } finally {

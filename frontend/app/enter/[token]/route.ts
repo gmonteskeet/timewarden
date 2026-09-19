@@ -6,7 +6,13 @@ import { encodeSession, safeNextPath, SESSION_COOKIE, sessionCookieOptions } fro
 
 export async function GET(request: NextRequest, ctx: RouteContext<"/enter/[token]">) {
   const { token } = await ctx.params;
-  const person = await findPersonByToken(token);
+  let person;
+  try {
+    person = await findPersonByToken(token);
+  } catch (error) {
+    console.error("[enter] Sign in lookup failed:", error instanceof Error ? error.message : "unknown error");
+    return NextResponse.redirect(new URL("/?signin=unavailable", request.url), 303);
+  }
   if (!person) {
     return NextResponse.redirect(new URL("/?signin=unknown", request.url), 303);
   }

@@ -1,8 +1,9 @@
-import { canResetDemo, listDemoSignIns } from "@/lib/data";
+import { canResetDemo, demoResetNote, listDemoSignIns } from "@/lib/data";
 
 export default async function Home({ searchParams }: PageProps<"/">) {
   const people = await listDemoSignIns();
   const resettable = await canResetDemo();
+  const resetNote = await demoResetNote();
   const { signin } = await searchParams;
 
   return (
@@ -21,16 +22,24 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         <p className="mt-2 text-lg text-muted">
           There are no passwords in this demo. In real use each person signs in from the personal link in their morning email. Choose a person to see Scout as they would.
         </p>
+        {signin === "unavailable" && (
+          <p role="alert" className="mt-4 rounded bg-note px-4 py-3 text-lg">
+            Signing in is not available just now. Please try again in a moment.
+          </p>
+        )}
         {signin === "unknown" && (
           <p role="alert" className="mt-4 rounded bg-note px-4 py-3 text-lg">
             That sign in link is not valid. Choose a person below.
           </p>
         )}
+        {people.length === 0 && (
+          <p className="mt-4 text-lg">Demo sign in is switched off here. Please open the personal link from your morning email.</p>
+        )}
         <ul className="mt-6 grid gap-4 sm:grid-cols-2">
           {people.map((p) => (
-            <li key={p.access_token}>
+            <li key={p.href}>
               <a
-                href={`/enter/${encodeURIComponent(p.access_token)}`}
+                href={p.href}
                 className="block rounded-lg border border-line px-6 py-5 hover:border-accent hover:bg-track"
               >
                 <span className="block text-xl font-semibold">{p.full_name}</span>
@@ -46,7 +55,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
             <button type="submit" className="text-base font-medium text-muted underline hover:text-accent focus-visible:outline-3 focus-visible:outline-accent">
               Reset the demo
             </button>
-            <span className="ml-2 text-base text-muted">clears the interview, corrections and approvals made in this browser.</span>
+            <span className="ml-2 text-base text-muted">{resetNote}</span>
           </form>
         )}
       </section>

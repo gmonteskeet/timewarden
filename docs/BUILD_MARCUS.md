@@ -83,6 +83,7 @@ Branch `marcus/m7-manager`.
 - `/manager/suggestions`: a button "Review the last three weeks" calls the suggest function. Ranked cards: title, people affected, team hours per week, annual cost, the four scores with their names spelt out, reasoning, proposed steps as a numbered flow. Approve or Not now. Approve shows "Scout is drafting this in make.com", then a panel with "Open the draft in make.com". Above the cards, a team `AllocationBars` for the period, so the manager sees where the suggestions come from.
 
 ### M8. Real data (30 minutes, as soon as Gerson's webhooks exist)
+**Code written. Live test pending.**
 Branch `marcus/m8-real-data`. Marcus puts real values in `frontend/.env.local`. Set `NEXT_PUBLIC_USE_FIXTURES=false`. Only `frontend/lib/data.ts` and `frontend/lib/make.ts` should need changes. Run the whole story twice. Fixtures mode must still work: it is the safety net for the live demo.
 
 ### M9. SLNG voice (time boxed to 45 minutes, first thing to cut)
