@@ -1,0 +1,88 @@
+{
+  "_readme": "Template for the drafts that Scout 8 creates. Replace every {{placeholder}} with a JSON escaped value (quotation marks, backslashes and new lines escaped). \"{{schedule_day}}\" is replaced together with its quotation marks by a weekday number, 1 Monday to 5 Friday. {{recipients}} becomes the addresses joined by a quotation mark, a comma, a space and a quotation mark, so the list stays valid JSON. The Anthropic Claude connection id is left as a placeholder; Google Sheets and Gmail have none on purpose, so the draft asks a person to connect them. Delete this _readme key before sending.",
+  "description": "{{proposed_steps_note}}",
+  "scheduling": {
+    "type": "weekly",
+    "days": ["{{schedule_day}}"],
+    "time": "{{schedule_time}}"
+  },
+  "blueprint": {
+    "name": "{{scenario_name}}",
+    "flow": [
+      {
+        "id": 1,
+        "module": "google-sheets:filterRows",
+        "version": 2,
+        "parameters": {},
+        "mapper": {
+          "from": "drive",
+          "spreadsheetId": "",
+          "sheetId": "{{source_sheet_name}}",
+          "includesHeaders": true,
+          "tableFirstRow": "A1:Z1",
+          "limit": 200
+        },
+        "metadata": { "designer": { "x": 0, "y": 0, "name": "read the source sheet" } }
+      },
+      {
+        "id": 2,
+        "module": "util:TextAggregator",
+        "version": 1,
+        "parameters": { "feeder": 1, "rowSeparator": "\n" },
+        "mapper": {
+          "value": "{{1.`0`}} | {{1.`1`}} | {{1.`2`}} | {{1.`3`}} | {{1.`4`}} | {{1.`5`}} | {{1.`6`}} | {{1.`7`}}"
+        },
+        "metadata": { "designer": { "x": 300, "y": 0, "name": "every row as one block of text" } }
+      },
+      {
+        "id": 3,
+        "module": "anthropic-claude:createAMessage",
+        "version": 1,
+        "parameters": { "__IMTCONN__": "<ANTHROPIC_CONNECTION_ID>" },
+        "mapper": {
+          "model": "claude-sonnet-5",
+          "max_tokens": 2000,
+          "temperature": 0.2,
+          "messages": [
+            {
+              "role": "user",
+              "inputType": "single",
+              "content": "{{summary_prompt}}\n\nThe rows from the sheet, one per line:\n{{2.text}}"
+            }
+          ]
+        },
+        "metadata": { "designer": { "x": 600, "y": 0, "name": "write the summary" } }
+      },
+      {
+        "id": 4,
+        "module": "google-email:createADraft",
+        "version": 4,
+        "parameters": {},
+        "mapper": {
+          "to": ["{{recipients}}"],
+          "subject": "{{scenario_name}}: draft for checking",
+          "bodyType": "rawHtml",
+          "content": "{{3.content[1].text}}"
+        },
+        "metadata": { "designer": { "x": 900, "y": 0, "name": "save the summary as a draft email" } }
+      }
+    ],
+    "metadata": {
+      "instant": false,
+      "version": 1,
+      "scenario": {
+        "roundtrips": 1,
+        "maxErrors": 3,
+        "autoCommit": true,
+        "autoCommitTriggerLast": true,
+        "sequential": false,
+        "confidential": false,
+        "dataloss": false,
+        "dlq": false,
+        "freshVariables": false
+      },
+      "designer": { "orphans": [] },
+      "zone": "eu1.make.com"
+    }
+  }
+}
