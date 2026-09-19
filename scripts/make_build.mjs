@@ -68,6 +68,10 @@ const AI_PROVIDER_CONN = process.env.MAKE_AI_PROVIDER_CONNECTION
   : null;
 const AI_TIER = soft('MAKE_AI_TIER', 'large');
 
+// Where each module puts its reply. Both were read off a real run, not guessed:
+// ai-tools:Ask answers in "answer", the Anthropic module in content[1].text.
+const AI_OUTPUT = AI_PROVIDER_CONN ? '{{5.answer}}' : '{{5.content[1].text}}';
+
 const repoRoot = path.resolve(import.meta.dirname, '..');
 const interviewPrompt = fs.readFileSync(
   path.join(repoRoot, 'prompts', '02_interview_turn.md'),
@@ -128,12 +132,12 @@ const createJson = ({ id, x, y, name, ds, values }) => ({
   metadata: at(x, y, name),
 });
 
-const parseJson = ({ id, x, y, name, ds }) => ({
+const parseJson = ({ id, x, y, name, ds, source }) => ({
   id,
   module: 'json:ParseJSON',
   version: 1,
   parameters: { type: ds },
-  mapper: { json: '{{5.result}}' },
+  mapper: { json: source },
   metadata: at(x, y, name),
 });
 
@@ -233,7 +237,7 @@ function scoutFourBlueprint() {
 
   const routeAsksQuestion = [
     claude,
-    parseJson({ id: 6, x: 600, y: 0, name: "read Claude's reply", ds: DS_REPLY }),
+    parseJson({ id: 6, x: 600, y: 0, name: "read the model's reply", ds: DS_REPLY, source: AI_OUTPUT }),
     insertTurn(7, 900, "save Scout's question", '{{6.question}}', '{{6.kind}}', '{{6.evidence}}'),
     createJson({
       id: 8,
@@ -317,12 +321,15 @@ function scoutFourBlueprint() {
             p_employee_text: '{{1.employee_text}}',
           },
         }),
-        filter: filter(
+        // A custom webhook with "get request headers" on hands the headers
+        // back as a list of name and value pairs, not as a keyed collection,
+        // so this picks the one we want out of the list.
+        ...(process.env.SKIP_SECRET_FILTER ? {} : { filter: filter(
           'only our own interface',
-          '{{1.headers.`x-scout-key`}}',
+          '{{first(map(1.headers; "value"; "name"; "x-scout-key"))}}',
           'text:equal',
           SHARED_SECRET
-        ),
+        ) }),
       },
       http({
         id: 3,
