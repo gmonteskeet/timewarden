@@ -152,3 +152,27 @@ Read from a real blueprint: `anthropic-claude:createAMessage` version 1 takes
 
 So each prompt file goes at the top of the user message with the input after
 it. Claude treats it the same. The build sheets say so now.
+
+## 16. The model is Make's own AI provider, not Anthropic Claude (task G7, 19 September)
+`AGENTS.md` section 3 says the model is Anthropic Claude, called through
+make.com's Anthropic app. There is no Anthropic key: the account had no
+connections at all, and `make/specs/00_connections.md` section 2 expected the
+key to come from Marcus, which was an assumption about who had credits rather
+than a rule. Gerson has credits on make.com and chose at 19:00 to use Make's
+own AI provider instead, so that nothing waits on a key.
+
+What this changes: `ai-tools:Ask` version 2 replaces
+`anthropic-claude:createAMessage`, the whole prompt goes in one `input` field,
+and the model is whatever tier Make routes to rather than Sonnet. The prompts
+are unchanged and still ask for JSON only.
+
+`scripts/make_build.mjs` can build either. Set `MAKE_ANTHROPIC_CONNECTION` and
+it goes back to Claude with no other change, so this is reversible the moment a
+key appears.
+
+**This needs Marcus to agree.** `AGENTS.md` is a shared file under rule 3, and
+the change affects what the pitch can claim about the model. Two things to
+watch: the prompts were written and worked through against Claude, so a
+different model may follow the JSON rules less reliably, which makes the retry
+route matter more than it did; and "Claude" should come out of any slide that
+names it.

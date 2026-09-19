@@ -60,6 +60,14 @@ const ANTHROPIC_CONN = process.env.MAKE_ANTHROPIC_CONNECTION
   : null;
 const MODEL = soft('MAKE_CLAUDE_MODEL', 'claude-sonnet-4-5');
 
+// Two ways to reach a model. Anthropic Claude is what AGENTS.md section 3 asks
+// for. Make's own AI provider needs no key at all and is what we fall back to
+// while there is no Anthropic key. See docs/decisions.md.
+const AI_PROVIDER_CONN = process.env.MAKE_AI_PROVIDER_CONNECTION
+  ? Number(process.env.MAKE_AI_PROVIDER_CONNECTION)
+  : null;
+const AI_TIER = soft('MAKE_AI_TIER', 'large');
+
 const repoRoot = path.resolve(import.meta.dirname, '..');
 const interviewPrompt = fs.readFileSync(
   path.join(repoRoot, 'prompts', '02_interview_turn.md'),
@@ -149,32 +157,38 @@ const filter = (name, a, o, b) => ({ name, conditions: [[{ a, o, b }]] });
 // ---------------------------------------------------------------------------
 
 function scoutFourBlueprint() {
-  const claude = {
+  // Neither module has a system prompt field, so the whole prompt goes first
+  // and the turn's input follows it.
+  const promptText =
+    `${interviewPrompt}\n\n` +
+    `Here is the input for this turn:\n\n{{3.data.prompt_input}}`;
+
+  const askClaude = {
     id: 5,
     module: 'anthropic-claude:createAMessage',
     version: 1,
     parameters: ANTHROPIC_CONN ? { __IMTCONN__: ANTHROPIC_CONN } : {},
-    // The module has no system prompt field, so the whole prompt goes at the
-    // top of the user message and the input follows it.
     mapper: {
       model: MODEL,
-      messages: [
-        {
-          role: 'user',
-          content: [
-            {
-              text:
-                `${interviewPrompt}\n\n` +
-                `Here is the input for this turn:\n\n{{3.data.prompt_input}}`,
-            },
-          ],
-        },
-      ],
+      messages: [{ role: 'user', content: [{ text: promptText }] }],
       metadata: {},
       max_tokens: '600',
       temperature: '0.2',
     },
     metadata: at(300, 0, 'write the next question'),
+  };
+
+  const askMakeAi = {
+    id: 5,
+    module: 'ai-tools:Ask',
+    version: 2,
+    parameters: { model: AI_TIER, makeConnectionId: AI_PROVIDER_CONN },
+    mapper: { input: promptText },
+    metadata: at(300, 0, 'write the next question'),
+  };
+
+  const claude = {
+    ...(AI_PROVIDER_CONN ? askMakeAi : askClaude),
     filter: filter(
       'Scout still has questions',
       '{{3.data.scout_turns_asked}}',
@@ -405,7 +419,9 @@ if (result.res.status >= 400) {
 const check = await call(`/scenarios/${result.id}`);
 const s = check.json.scenario ?? {};
 console.log(`  invalid=${s.isinvalid}  packages=${(s.usedPackages ?? []).join(', ')}`);
-if (!ANTHROPIC_CONN) {
+if (AI_PROVIDER_CONN) {
+  console.log(`  note: using Make's own AI provider at the "${AI_TIER}" tier, not Claude.`);
+} else if (!ANTHROPIC_CONN) {
   console.log('  note: no Anthropic connection yet, so the Claude module still needs one picking.');
 }
 if (SUPABASE_URL.includes('REPLACE-ME')) {
