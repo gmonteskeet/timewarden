@@ -24,7 +24,7 @@ account offers a newer Sonnet, take it, change this line, and add a note to
 | `04_interview_turn.md` | `Scout 4: Interview turn` | `MAKE_WEBHOOK_INTERVIEW` |
 | `05_day_summary.md` | `Scout 5: Day summary` | called by scenario four |
 | `06_submit_and_day_approval.md` | `Scout 6: Submit and day approval` | `MAKE_WEBHOOK_SUBMIT`, `MAKE_WEBHOOK_DAY_APPROVAL` |
-| `07_suggest_workflows.md` | `Scout 7: Suggest workflows` | `MAKE_WEBHOOK_SUGGEST`, and weekly |
+| `07_suggest_workflows.md` | `Scout 7: Suggest workflows` | `MAKE_WEBHOOK_SUGGEST` |
 | `08_decision_and_draft.md` | `Scout 8: Decision and draft creation` | `MAKE_WEBHOOK_DECISION` |
 
 `00_connections.md` is the setup Gerson does by hand before any of this.
