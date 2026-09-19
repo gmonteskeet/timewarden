@@ -45,7 +45,7 @@ Branch `gerson/g5-connections-v2`. Update `make/specs/00_connections.md`: add Go
 | `07_suggest_workflows.md` | `Scout 7: Suggest workflows` | `MAKE_WEBHOOK_SUGGEST`, and weekly |
 | `08_decision_and_draft.md` | `Scout 8: Decision and draft creation` | `MAKE_WEBHOOK_DECISION` |
 
-### G6. Seed script (30 minutes)
+### G6. Seed script (30 minutes) [done]
 Branch `gerson/g6-seed`. `scripts/seed.mjs` (Node, `@supabase/supabase-js`, service key from the environment). Idempotent upserts. Loads: `data/company.json`; roles from `data/role_documents/*.md` (title from the first heading, body into `job_description`, the performance measures list into `kpis`); `data/people.json` (link `role_key` and `manager_key`); `data/transcripts/*.txt`; `data/history.json` (check ins with status `approved`, approved by Tomas, plus their `day_allocations`, linking `person_key` and `topic_name`).
 Flags: `--with-splits` also loads `data/expected_splits.json` into `topics` as `proposed`, for use only if reading the document store live is cut. `--with-calendar` loads `data/calendar_week.json` into `activities`, for use only if the Google Calendar connection fails. Without flags, topics and calendar activities come from make.com.
 At the end write `docs/demo_links.md`, **which must be in `.gitignore`**, listing each person's id and their `/enter/<access_token>` link for Marcus. Tokens are secrets.
