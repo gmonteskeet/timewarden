@@ -14,6 +14,42 @@ Times are Madrid time, Saturday 19 September unless stated.
 
 ---
 
+## Where we are
+
+Updated Saturday 19 September, 18:25. Checkpoint one is at 20:00.
+
+**Done and merged**
+
+- Repository set up, and the database schema in two migrations.
+- A third migration holding the two functions the interview and the summary read.
+- The seed script, which loads the company, people, roles, calls and three weeks of history.
+- Connection notes, for the accounts and keys you set up by hand.
+- Build sheets for five scenarios: the interview, the day summary, the morning run, the calendar intake and the call intake.
+
+**Waiting on you, in the make.com editor. Nothing runs until these are clicked.**
+
+- The connections themselves: Claude, Google Calendar, Google Drive, Gmail, Supabase, and the API token.
+- Elena's calendar id, copied into the database. Without it the calendar intake skips her.
+- Build the calendar intake, then the first half of the morning run. That is what puts 18 September in the database.
+- Build the interview turn and the day summary. **This is checkpoint one.**
+
+**Still to write, in order**
+
+- Reading the role documents and proposing each role's time split, plus the manager approving it.
+- The employee submitting a day and the manager approving it.
+- Reviewing the history and suggesting workflows worth automating.
+- Turning an approved suggestion into a real draft scenario. This is the ending of the demo and the longest one.
+- The agent that ties the scenarios together, only if there is time.
+- Deploying the interface.
+
+**Sunday morning**
+
+- Two clean runs of the whole story.
+- The Quality Clouds scanner, a secrets sweep, the README, and making the repository public.
+- Demo duty from 11:15.
+
+---
+
 ## Phase 1: to checkpoint one at 20:00
 
 ### G4. Migration to the version 2 schema (30 minutes, 17:15 to 17:45) [done]
