@@ -16,7 +16,7 @@ Time boxes are Madrid time, Saturday 19 September unless stated.
 
 ## Phase 0: set up (finish by 15:30)
 
-### G1. Repository skeleton (20 minutes)
+### G1. Repository skeleton (20 minutes) [done, except the two GitHub settings, see docs/decisions.md]
 - The repository already exists: `github.com/gmonteskeet/timewarden`, Marcus is a collaborator, and the planning documents and empty folders are already in it. Confirm it is public. Protect `main` lightly: pull requests required, no review required (speed matters).
 - Folders: `frontend/`, `supabase/migrations/`, `make/specs/`, `make/blueprints/`, `scripts/`, `data/`, `prompts/`, `docs/`.
 - `frontend/`: `npx create-next-app@latest frontend --ts --tailwind --app --eslint --no-src-dir --import-alias "@/*"`. Add `@supabase/supabase-js`. Confirm `npm run lint && npm run build` pass. After this, `frontend/` belongs to Marcus.
