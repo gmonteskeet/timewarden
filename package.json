@@ -1,0 +1,13 @@
+{
+  "name": "workflow-scout-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Repository level scripts for Workflow Scout. The interface has its own package.json in frontend/.",
+  "scripts": {
+    "seed": "node scripts/seed.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.116.0"
+  }
+}
