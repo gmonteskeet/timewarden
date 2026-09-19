@@ -73,7 +73,7 @@ function Card({ c, state, draftingElsewhere, onChange }: { c: Candidate; state: 
           <h2 id={`cand-${c.id}`} className="text-2xl font-semibold">
             {c.title}
           </h2>
-          <p className="mt-1 text-lg">{c.description}</p>
+          {c.description && <p className="mt-1 text-lg">{c.description}</p>}
         </div>
         <p className="text-right text-lg">
           <span className="block text-muted">Total score</span>
@@ -109,7 +109,7 @@ function Card({ c, state, draftingElsewhere, onChange }: { c: Candidate; state: 
         ))}
       </ul>
 
-      <p className="max-w-4xl text-lg leading-relaxed">{c.reasoning}</p>
+      {c.reasoning && <p className="max-w-4xl text-lg leading-relaxed">{c.reasoning}</p>}
 
       <div>
         <h3 className="mb-2 text-lg font-semibold">Proposed workflow</h3>
@@ -119,9 +119,11 @@ function Card({ c, state, draftingElsewhere, onChange }: { c: Candidate; state: 
               <div className="rounded-lg border border-line px-4 py-3" title={step.note}>
                 <p className="text-base text-muted">Step {i + 1}</p>
                 <p className="text-lg">
-                  <strong>{step.app}</strong>: {step.action}
+                  {step.app && <strong>{step.app}</strong>}
+                  {step.app && step.action ? ': ' : ''}
+                  {step.action}
                 </p>
-                <p className="max-w-60 text-base text-muted">{step.note}</p>
+                {step.note && <p className="max-w-60 text-base text-muted">{step.note}</p>}
               </div>
               {i < c.proposed_steps.length - 1 && (
                 <span aria-hidden="true" className="text-2xl text-muted">

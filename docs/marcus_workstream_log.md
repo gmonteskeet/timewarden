@@ -14,11 +14,12 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - Sunday 20 September, 10:30: code freeze. 11:30: submit. 12:00: deadline.
 
 ## Current position
-- Last update: Saturday 19 September 2026, 18:40 Madrid (task M7 reviewed).
+- Last update: Saturday 19 September 2026, 19:00 Madrid (task M8 code reviewed).
 - The plan changed to version 2 at 17:00 after the make.com mentor session. Read `docs/CHANGES_V2.md` first, then `AGENTS.md` and `docs/BUILD_MARCUS.md`.
-- Where we are: the whole story now runs on fake data, which is the first half of checkpoint one, 80 minutes early. The second half, one real interview turn through make.com, waits on Gerson finishing his interview turn scenario in make.com.
-- Next: Marcus looks at the three manager screens in Chrome, merges pull request 18, then task M8, real data, on branch `marcus/m8-real-data`. The prompt is ready in `cli_prompts/m8_real_data.md`.
-- Marcus has an SLNG API key in his own note for task M9, the voice upgrade. It has not been put anywhere yet.
+- Where we are: the whole story runs on fake data and Marcus has clicked through all of it in Chrome. The real data code is written. The live test is pending.
+- Next, in order: Marcus merges pull request 20. Marcus puts the Supabase address and service key into `frontend/.env.local` by hand, one step at a time with the development manager, and turns on real data mode locally. Read only test against the real database. Then, when Gerson's interview turn scenario answers, the interview webhook address, the shared secret and Elena's check in ID go in the same way, and Marcus does the first live interview turn. That completes checkpoint one.
+- Secrets rule: values go from Gerson's direct message into Marcus's note and then into `frontend/.env.local` only. Never into chat, the CLI, GitHub or this log.
+- Marcus has an SLNG API key in his own note for task M9, the voice upgrade.
 - The long CLI prompts are kept outside the repository, in the workspace folder `02_projects/timewarden/cli_prompts/`, because long pastes into the CLI get cut off. Marcus pastes one line telling the CLI to read the file.
 
 ## Task record
@@ -79,6 +80,12 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - Checked in the actual files: six manager routes, each checking for a manager first. A manager sees a team member's day only once it is submitted, approved or returned, and can decide only on submitted days that are not their own. The CLI found and closed a privacy gap from task M6, where a manager could open an unsubmitted day by typing its address. No "being built today" lines left. The voice now prefers Chrome's "Google UK English". No new packages, no secrets, no em dashes, only `frontend/` and `docs/` touched. The CLI reports lint, build and the whole story passing on fake data.
 - Not yet tested by anyone: how the three manager screens look in a real browser.
 - Next: task M8, real data.
+
+### Task M8, real data
+- Status: code reviewed, pass. Pull request 20, branch `marcus/m8-real-data`. Live test pending, so the task is not ticked.
+- Checked in the actual files: a server only database client using the service key, no anonymous key anywhere, no secrets or webhook addresses in the changes, `frontend/.env.local` still ignored. Demo sign in on real data goes through a server route by person and works only when `DEMO_SIGN_IN` is "true", so no real access token appears in a page. Submit and day approval go through make.com only. A footer line says whether the app is on live or sample data. One new name, `DEMO_SIGN_IN`, was added to the shared `.env.example`.
+- The CLI listed nine differences between Gerson's files and `AGENTS.md`. None blocks us. The ones that matter: make.com's database function records the employee's answer, so an answer must never be resent after a lost reply. The build sheets for scenarios 1, 2, 6, 7 and 8 do not exist yet, so roles, submit, approval, suggestions and the draft cannot be tested live until Gerson builds them.
+- Next: the live test, then task M9, the voice upgrade, or task M10, the pitch outline, depending on the time.
 
 ## Parked
 - Polish for Sunday: after a correction on the summary page, the sentence above the bars still quotes Scout's original minutes while the bar shows the corrected ones.
