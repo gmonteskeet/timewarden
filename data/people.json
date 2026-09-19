@@ -1,0 +1,68 @@
+[
+  {
+    "key": "elena",
+    "full_name": "Elena Ruiz",
+    "role_title": "Senior Client Consultant",
+    "team": "Client Delivery",
+    "manager_key": "tomas",
+    "job_description": "Elena leads Brightline's work with three client accounts: Northmere Foods, Kestrel Point Logistics and Ashvale Housing Trust. She designs and runs client workshops that uncover how work really flows, turns what she learns into clear recommendations the client can act on, and owns the day to day relationship with each client's senior team. She supports new client proposals with evidence from live engagements, and she coaches the consultants and analysts on her accounts so they can lead client sessions on their own.",
+    "performance_criteria": [
+      "70 percent of working time spent on client facing work",
+      "At least two client workshops delivered per month, each rated 4 out of 5 or higher by attendees",
+      "Two client proposals supported per quarter",
+      "Every client recommendation accepted or actioned within 60 days of delivery",
+      "Client satisfaction score of 8 out of 10 or higher on each of her accounts"
+    ],
+    "hourly_cost_eur": 85,
+    "calendar_id": null
+  },
+  {
+    "key": "tomas",
+    "full_name": "Tomas Berg",
+    "role_title": "Head of Client Delivery",
+    "team": "Client Delivery",
+    "manager_key": null,
+    "job_description": "Tomas runs the Client Delivery team. He sets priorities across all client engagements, manages the consultants and analysts, keeps delivery profitable, and is the senior contact when a client relationship needs attention. He also leads the team's input into new business, working with partners on proposals and pricing.",
+    "performance_criteria": [
+      "Team utilisation of 75 percent or higher on billable client work",
+      "Every client engagement delivered within 10 percent of its agreed budget",
+      "Client retention of 90 percent or higher across the year",
+      "Four new or extended engagements won per year",
+      "Every team member has a development plan reviewed each quarter"
+    ],
+    "hourly_cost_eur": 140,
+    "calendar_id": null
+  },
+  {
+    "key": "priya",
+    "full_name": "Priya Nair",
+    "role_title": "Consultant",
+    "team": "Client Delivery",
+    "manager_key": "tomas",
+    "job_description": "Priya works on the Ashvale Housing Trust and Kestrel Point Logistics accounts. She researches the client's current processes, prepares workshop materials, captures what is agreed in client sessions and drafts the first version of recommendations for Elena to review. She is building towards leading client workshops herself.",
+    "performance_criteria": [
+      "Workshop materials ready two working days before each session",
+      "First draft of recommendations delivered within five working days of a workshop",
+      "Co-lead at least one client workshop per month",
+      "Positive feedback from the lead consultant on each engagement"
+    ],
+    "hourly_cost_eur": 60,
+    "calendar_id": null
+  },
+  {
+    "key": "jonas",
+    "full_name": "Jonas Weber",
+    "role_title": "Business Analyst",
+    "team": "Client Delivery",
+    "manager_key": "tomas",
+    "job_description": "Jonas analyses client data to find where processes lose time and money. He builds the models behind Brightline's recommendations, for example demand forecasts for Northmere Foods and repairs backlog analysis for Ashvale Housing Trust, and explains his findings to consultants and clients in plain terms.",
+    "performance_criteria": [
+      "Analysis delivered for every recommendation before it goes to the client",
+      "Models documented so another analyst can rerun them",
+      "At least one client presentation of findings per month",
+      "Data questions from consultants answered within two working days"
+    ],
+    "hourly_cost_eur": 45,
+    "calendar_id": null
+  }
+]

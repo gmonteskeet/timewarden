@@ -1,0 +1,40 @@
+title: Call from Northmere Foods about last week's status pack
+occurred_at: 2026-09-16T14:10:00+02:00
+minutes: 35
+in_calendar: false
+---
+Sophie Lindqvist: Elena, hello, sorry to ring out of the blue. Have you got a few minutes?
+
+Elena Ruiz: Of course, Sophie. What's up?
+
+Sophie Lindqvist: I've got my own leadership meeting tomorrow morning and I went to pull the numbers from last week's status pack, and I realised I never got it. The last one I have is from the fourth of September.
+
+Elena Ruiz: You're right. I'm sorry. Last Friday's pack didn't go out to you. That's on me.
+
+Sophie Lindqvist: What happened? It's usually like clockwork.
+
+Elena Ruiz: The honest answer is that the pack is put together by hand. Every week I take the figures from our project tracker, check them against our budget sheet and our resourcing sheet, and then copy them into the slides one by one. Last Friday the tracker export came out with the columns in the wrong order, and by the time I'd fixed it the day had gone. Kestrel Point and Ashvale went out on Monday, and yours slipped through.
+
+Sophie Lindqvist: I had no idea it was that manual. I assumed it came straight out of a system.
+
+Elena Ruiz: I wish it did. I'm actually rebuilding this week's pack right now, because the export has broken the formatting again. I can send you last week's version within the hour and this week's on Friday as normal.
+
+Sophie Lindqvist: Last week's within the hour would be great. What I really need for tomorrow is three things: hours spent to date, spend against budget, and whether the supply planning milestones are on track.
+
+Elena Ruiz: Hours to date are 212 as of this morning. That includes Jonas's forecast work, which wasn't showing properly before. Spend is 39,150 euros against a budget of 60,000. The slide will explain that the day rate for analyst time changed at the start of the month, so you don't get a surprise.
+
+Sophie Lindqvist: And the milestones?
+
+Elena Ruiz: Two of three are on track. The new weekly planning meeting is running and your team is using the forecast. The third, moving the chilled range onto the new ordering pattern, is two weeks behind, because Daniel's team wanted another round of testing. I'd rather be honest about that than paint it green.
+
+Sophie Lindqvist: Agreed. Daniel mentioned it. Can you add a line on what you need from us to close the gap?
+
+Elena Ruiz: Yes. Mainly one afternoon with Daniel's planners next week to agree the order quantities. I'll put that on the slide.
+
+Sophie Lindqvist: Perfect. And Elena, one thing. I'd much rather have your time in the room with my planners than on slides. If the pack is that much work, maybe it doesn't need to be so polished.
+
+Elena Ruiz: That's kind of you. I'll take that back to Tomas. The polish isn't the slow part, though. It's getting the three sources to agree.
+
+Sophie Lindqvist: Understood. Thanks for being straight with me. I'll look out for your email.
+
+Elena Ruiz: Within the hour. Thanks for ringing, Sophie, and sorry again.

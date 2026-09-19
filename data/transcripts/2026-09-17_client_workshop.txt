@@ -1,0 +1,48 @@
+title: Kestrel Point Logistics: returns process workshop
+occurred_at: 2026-09-17T09:00:00+02:00
+minutes: 120
+in_calendar: true
+---
+Elena Ruiz: Good morning, everyone, and thank you for giving us two hours. The goal today is simple: by eleven o'clock we want one agreed map of how a customer return moves through Kestrel Point, and three places where it breaks that you want fixed first. Priya will run the mapping part.
+
+Priya Nair: Thanks, Elena. On the wall there's a blank timeline from the moment a customer asks to return something to the moment they get their money back. Martin, can you start us off? Where does a return begin?
+
+Martin Okafor: With a call or an email to customer service. Luis's team logs it, gives the customer a returns number and books the collection.
+
+Luis Carrasco: In theory. In practice about a third of customers send the parcel back without calling us first, so it turns up at the warehouse with no returns number at all.
+
+Hannah Brierley: And those are the ones that sit on the shelf. My team can't book them in without a number, so they wait until someone in customer service matches them up by hand. Some wait eight or nine days.
+
+Elena Ruiz: Let's put that on the wall as the first break point: parcels arriving without a returns number. Hannah, how many a week are we talking about?
+
+Hannah Brierley: Last month it was around 140 a week.
+
+Elena Ruiz: And while they sit there, what does the customer see?
+
+Luis Carrasco: Nothing. No refund, no update. So they ring us, and we can't find the parcel because it isn't booked in. That's where most of our complaint calls come from.
+
+Priya Nair: So one problem at the warehouse is creating a second one in customer service. I'll draw an arrow from the shelf to the complaints box.
+
+Martin Okafor: That's exactly it. I'd never seen it drawn like that.
+
+Elena Ruiz: Let's keep going. Once a parcel is booked in, what happens next?
+
+Hannah Brierley: We inspect it and decide whether it can go back into stock, go to the outlet, or be written off. That decision is fairly quick, same day usually.
+
+Elena Ruiz: And the refund?
+
+Martin Okafor: The refund needs the inspection result, but the inspection result goes into the warehouse system and the refund is triggered in the finance system. Someone copies it across once a day.
+
+Elena Ruiz: So a second break point is the daily copy between warehouse and finance. Priya, can you mark it? Now, a question for all of you. If you could fix only one of these by Christmas, which would it be?
+
+Luis Carrasco: The missing returns numbers. It drives everything else.
+
+Hannah Brierley: Agreed. My shelf would be empty by November.
+
+Martin Okafor: I'd agree, as long as we don't forget the refund delay. That's what customers write reviews about.
+
+Elena Ruiz: Then here's what I'd suggest. Priority one is a simple way to match parcels without a number, for example by order number or postcode at the warehouse door. Priority two is linking the inspection result to the refund. Priority three is a proactive message to the customer when their parcel arrives. Priya and I will write this up today with the map, and I'll bring a costed recommendation to Martin by next Friday.
+
+Martin Okafor: That's the clearest this has ever been. Thank you both.
+
+Elena Ruiz: Thank you. You did the hard part.
