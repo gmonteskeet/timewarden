@@ -6,3 +6,6 @@ node_modules/
 .vercel/
 .DS_Store
 *.log
+
+# Private demo links, never committed
+docs/demo_links.md
