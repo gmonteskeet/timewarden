@@ -29,7 +29,7 @@ Branch `gerson/g4-schema-v2`. Write `supabase/migrations/0002_version_2.sql` tha
 Rewrite `supabase/reset.sql`: it returns the database to "the morning of the demo". It deletes Elena's check in for 18 September with its turns, allocations and interview activities, deletes all candidates and approvals, sets every role's `split_status` back to `proposed` with `expected_percent` equal to `proposed_percent`. It keeps people, roles, topics, calendar and transcript activities and the three weeks of history.
 Checks: both migrations run clean in order on an empty database. With the anonymous key, a select returns nothing or is refused.
 
-### G5. Connections and the scenario map (15 minutes)
+### G5. Connections and the scenario map (15 minutes) [done, Gerson to do the clicking]
 Branch `gerson/g5-connections-v2`. Update `make/specs/00_connections.md`: add Google Drive (the account holding the "Brightline Advisory role documents" folder), Gmail or the make.com Email app for the morning email, and keep Claude, Google Calendar, Supabase and the make.com API token. Add a short section "Swapping Google Drive for SharePoint": which module changes (the first two of scenario one) and nothing else. Replace the scenario table in `make/specs/README.md` with:
 
 | Sheet | Scenario | Trigger |
