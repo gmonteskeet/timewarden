@@ -1,7 +1,8 @@
-import { listDemoSignIns } from "@/lib/data";
+import { canResetDemo, listDemoSignIns } from "@/lib/data";
 
 export default async function Home({ searchParams }: PageProps<"/">) {
   const people = await listDemoSignIns();
+  const resettable = await canResetDemo();
   const { signin } = await searchParams;
 
   return (
@@ -40,6 +41,14 @@ export default async function Home({ searchParams }: PageProps<"/">) {
             </li>
           ))}
         </ul>
+        {resettable && (
+          <form action="/demo/reset" method="post" className="mt-6">
+            <button type="submit" className="text-base font-medium text-muted underline hover:text-accent focus-visible:outline-3 focus-visible:outline-accent">
+              Reset the demo
+            </button>
+            <span className="ml-2 text-base text-muted">clears the interview, corrections and approvals made in this browser.</span>
+          </form>
+        )}
       </section>
     </div>
   );

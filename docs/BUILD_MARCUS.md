@@ -71,7 +71,7 @@ Tell Marcus what runs on fake data and whether one real interview turn has been 
 
 ## Phase 2: 20:00 to 22:30 (dinner is at 20:00, keep it short)
 
-### M6. The check in: interview and summary (60 minutes)
+### M6. The check in: interview and summary (60 minutes) [done]
 Branch `marcus/m6-check-in`.
 - `/check-in/[id]`: the interview starts the moment the page opens, by calling the interview function with no employee text. Show the conversation as it grows, Scout's question large, its `evidence` line smaller beneath, a progress hint ("question 2 of about 5"). Input depends on `NEXT_PUBLIC_VOICE_MODE`, with a visible switch between typing and speaking: `text` is a text box, `browser` uses speech recognition (`en-GB`) for answers and speech synthesis to read questions aloud. Build the voice layer as `frontend/lib/voice/` with one interface (`listen()`, `speak()`, `stop()`) and one file per mode, so SLNG can be added in task M9 without touching the screen. A "thinking" state covers the wait for make.com. When `done` is true, show the closing line and move to the summary, polling until the check in status is `summarised` (60 second timeout with a friendly message).
 - `/check-in/[id]/summary`: title "Your last working day: Friday 18 September". The privacy line from rule 12. `AllocationBars` with expected against that day's actual. `summary_text` above it. Each row can be corrected in steps of 15 minutes, and the total must stay at the working day or the Submit button explains why it is disabled. The evidence for each row is one click away. Submit calls the submit function, then shows "Sent to Tomas for approval".

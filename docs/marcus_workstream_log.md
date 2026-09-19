@@ -14,10 +14,10 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - Sunday 20 September, 10:30: code freeze. 11:30: submit. 12:00: deadline.
 
 ## Current position
-- Last update: Saturday 19 September 2026, 17:25 Madrid (task M4 reviewed).
+- Last update: Saturday 19 September 2026, 17:55 Madrid (task M5 reviewed, manual Google steps done).
 - The plan changed to version 2 at 17:00 after the make.com mentor session. Read `docs/CHANGES_V2.md` first, then `AGENTS.md` and `docs/BUILD_MARCUS.md`.
-- In progress: task M5, the interface foundations on fake data, in the CLI on branch `marcus/m5-interface-foundations`. Marcus is doing the three manual Google steps of task M3 at the same time.
-- Against the plan: about 95 minutes ahead. Task M5 was planned for 19:00 to 20:00.
+- In progress: task M6, the check in (interview and summary), in the CLI on branch `marcus/m6-check-in`.
+- Against the plan: about two hours ahead. Task M6 was planned to start at 20:00.
 - The long CLI prompts are kept outside the repository, in the workspace folder `02_projects/timewarden/cli_prompts/`, because long pastes into the CLI get cut off. Marcus pastes one line telling the CLI to read the file.
 
 ## Task record
@@ -47,9 +47,9 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 ### Task M3, the calendar file and the role documents into Google
 - Code part: reviewed, pass. Pull request 8, branch `marcus/m3-calendar-ics`. `data/elena_week.ics` has 25 events, a Europe/Madrid timezone block, correct line endings, no line over 75 bytes, no description on "Sync" and "Catch up", and only made up `@brightline.example` addresses.
 - Manual steps for Marcus, tick each when done:
-  - [ ] Step 1: in Google Calendar create the calendar "Scout demo: Elena Ruiz" and import `data/elena_week.ics` into it.
-  - [ ] Step 2: in Google Drive create the folder "Brightline Advisory role documents" and upload the four files from `data/role_documents/` as Google Docs.
-  - [ ] Step 3: send Gerson the calendar ID and the Drive folder link by direct message. Never put them in the repository.
+  - [x] Step 1: in Google Calendar create the calendar "Scout demo: Elena Ruiz" and import `data/elena_week.ics` into it.
+  - [x] Step 2: in Google Drive create the folder "Brightline Advisory role documents" and upload the four files from `data/role_documents/` as Google Docs.
+  - [x] Step 3: send Gerson the calendar ID and the Drive folder link by direct message. Never put them in the repository.
 - Next: task M4, the prompts.
 
 ### Task M4, the prompts
@@ -57,6 +57,15 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - Checked in the actual files: five prompts and a README. Each has role, inputs, output shape, rules and a worked example, and demands JSON only at the top and the end. No code fences and no em dashes. The interview prompt has the lunch rule, the six question limit and two worked examples built on Elena's Friday. The day summary example totals 480 with 230 minutes of "Manual status reporting". The suggestion prompt never outputs the total score, the rank or the annual cost. Only `prompts/` and `docs/` touched.
 - Gerson needs to know: three prompts expect inputs beyond the build file. The suggestion prompt takes `working_days_in_period` and a `sample_evidence` list on each history row. The draft fill prompt takes `contacts`. Each transcript activity carries `in_calendar`. All are listed in `prompts/README.md`.
 - Next: task M5, the interface foundations on fake data.
+
+- Manual steps finished at 17:50. The calendar "Scout demo: Elena Ruiz" (25 events) and the Drive folder "Brightline Advisory role documents" (four Google Docs named after the role keys) live in Marcus's personal Google account and are shared with the Google account Gerson's make.com connection uses. The calendar ID and folder link went to Gerson by direct message only.
+
+### Task M5, the interface foundations on fake data
+- Status: reviewed, pass. Branch `marcus/m5-interface-foundations`. Marcus to merge.
+- Checked in the actual files: `frontend/lib/contract.ts` matches the tables in `AGENTS.md` field for field. The session cookie is signed with HMAC SHA-256, compared in constant time, expires after seven days, and the fallback secret works only in fake data mode. The `next` address after sign in is limited to paths on the site. `frontend/lib/make.ts` is server only, has one function per webhook, adds the `x-scout-key` header and uses a 12 second limit for the interview. No new packages. `frontend/.env.local` is ignored by git. Only `frontend/` and `docs/` touched. No em dashes, no secrets.
+- Not checked by the manager: lint and build, because the manager's session cannot run the Mac's installed packages. The CLI's own run is relied on for those.
+- To carry forward: four pages still say "This screen is being built today." Task M6 removes it from the check in page and task M7 from the three manager pages.
+- Next: task M6, the check in.
 
 ## Parked
 - Nothing yet.
