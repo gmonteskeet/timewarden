@@ -1,0 +1,30 @@
+{
+  "senior_client_consultant": [
+    { "name": "Client delivery and workshops", "description": "Designing and running client workshops, leading the analysis and turning it into recommendations.", "expected_percent": 45, "sort_order": 1 },
+    { "name": "Client relationships", "description": "Regular calls, steering groups and day to day contact with each client's senior team.", "expected_percent": 20, "sort_order": 2 },
+    { "name": "Proposals and business development", "description": "Shaping proposals for new and extended engagements with evidence from live work.", "expected_percent": 15, "sort_order": 3 },
+    { "name": "Coaching juniors", "description": "Coaching the consultants and analysts on each account towards leading client sessions.", "expected_percent": 10, "sort_order": 4 },
+    { "name": "Internal meetings and administration", "description": "Team meetings, planning and keeping engagement records accurate.", "expected_percent": 10, "sort_order": 5 }
+  ],
+  "head_of_client_delivery": [
+    { "name": "Team leadership and people management", "description": "Objectives, one to one conversations, development plans and staffing decisions.", "expected_percent": 25, "sort_order": 1 },
+    { "name": "Client relationships and escalations", "description": "Acting as the senior contact for each client and resolving concerns quickly.", "expected_percent": 20, "sort_order": 2 },
+    { "name": "Delivery oversight and quality", "description": "Reviewing plans, budgets and recommendations before they reach the client.", "expected_percent": 20, "sort_order": 3 },
+    { "name": "New business and proposals", "description": "Proposals and pricing for new and extended engagements with the partners.", "expected_percent": 20, "sort_order": 4 },
+    { "name": "Internal meetings and administration", "description": "Chairing team meetings and taking part in the firm's leadership discussions.", "expected_percent": 15, "sort_order": 5 }
+  ],
+  "consultant": [
+    { "name": "Client research and analysis", "description": "Interviews, site visits and study of the client's own documents to understand current processes.", "expected_percent": 30, "sort_order": 1 },
+    { "name": "Workshop preparation and support", "description": "Process maps, exercises and agendas for client workshops, and capturing what is agreed.", "expected_percent": 25, "sort_order": 2 },
+    { "name": "Drafting recommendations", "description": "First drafts of recommendations with their evidence, for the lead consultant to review.", "expected_percent": 25, "sort_order": 3 },
+    { "name": "Learning and development", "description": "Coaching sessions, the firm's training and building towards leading workshops.", "expected_percent": 10, "sort_order": 4 },
+    { "name": "Internal meetings and administration", "description": "Team meetings and keeping engagement records accurate.", "expected_percent": 10, "sort_order": 5 }
+  ],
+  "business_analyst": [
+    { "name": "Data analysis and modelling", "description": "Collecting, cleaning and analysing client data, and building forecasts and cost models.", "expected_percent": 45, "sort_order": 1 },
+    { "name": "Supporting consultants with data", "description": "Answering data questions, checking figures in recommendations and making engagement figures available.", "expected_percent": 20, "sort_order": 2 },
+    { "name": "Client presentations of findings", "description": "Presenting analysis to client teams and adjusting models in response to their questions.", "expected_percent": 15, "sort_order": 3 },
+    { "name": "Documenting models", "description": "Recording how each model works so another analyst can rerun it.", "expected_percent": 10, "sort_order": 4 },
+    { "name": "Internal meetings and administration", "description": "Team meetings and sharing techniques with colleagues.", "expected_percent": 10, "sort_order": 5 }
+  ]
+}
