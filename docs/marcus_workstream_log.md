@@ -14,10 +14,10 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - Sunday 20 September, 10:30: code freeze. 11:30: submit. 12:00: deadline.
 
 ## Current position
-- Last update: Saturday 19 September 2026, 17:55 Madrid (task M5 reviewed, manual Google steps done).
+- Last update: Saturday 19 September 2026, 18:15 Madrid (task M6 reviewed).
 - The plan changed to version 2 at 17:00 after the make.com mentor session. Read `docs/CHANGES_V2.md` first, then `AGENTS.md` and `docs/BUILD_MARCUS.md`.
-- In progress: task M6, the check in (interview and summary), in the CLI on branch `marcus/m6-check-in`.
-- Against the plan: about two hours ahead. Task M6 was planned to start at 20:00.
+- Next: Marcus looks at the app on his own screen and tries Speak mode in Chrome, then merges pull request 15, then task M7, the manager screens, on branch `marcus/m7-manager`. The prompt is ready in `cli_prompts/m7_manager_screens.md`.
+- Against the plan: about two hours ahead. Task M7 was planned for 21:00.
 - The long CLI prompts are kept outside the repository, in the workspace folder `02_projects/timewarden/cli_prompts/`, because long pastes into the CLI get cut off. Marcus pastes one line telling the CLI to read the file.
 
 ## Task record
@@ -67,8 +67,14 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - To carry forward: four pages still say "This screen is being built today." Task M6 removes it from the check in page and task M7 from the three manager pages.
 - Next: task M6, the check in.
 
+### Task M6, the check in (interview and summary)
+- Status: reviewed, pass. Pull request 15, branch `marcus/m6-check-in`. Marcus to merge after his own look at the screens.
+- Checked in the actual files: three server routes (one interview turn, the status, the submit), each refusing anyone but the owner, with plain messages. The submit checks the day still adds up to the working minutes. The voice layer has one interface with a typing mode and a browser voice mode. Demo progress is kept in a signed cookie. No new packages, no secrets, no em dashes, only `frontend/` and `docs/` touched. The CLI reports lint, build and all server tests passing.
+- Not yet tested by anyone: Speak mode in a real browser, and how the screens look. Marcus to try both.
+- Next: task M7, the manager screens.
+
 ## Parked
-- Nothing yet.
+- The pitch outline. A first draft from Marcus's own answers is in the workspace at `02_projects/timewarden/pitch_outline_draft.md`, outside the repository. Marcus still has to read it aloud with a timer and choose the closing line. It goes into the repository in task M10.
 
 ## Waiting on Gerson
 - Gerson to read `docs/CHANGES_V2.md` and agree the new `AGENTS.md`.

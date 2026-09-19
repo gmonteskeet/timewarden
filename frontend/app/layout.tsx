@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Link from "next/link";
+import NavLinks from "@/components/NavLinks";
 import { getCurrentPerson } from "@/lib/data";
 import "./globals.css";
 
@@ -34,13 +35,7 @@ async function TopBar() {
           <Link href="/" className="text-2xl font-bold text-accent">
             Workflow Scout
           </Link>
-          <nav aria-label="Main" className="flex gap-6 text-lg">
-            {links.map((l) => (
-              <Link key={l.href} href={l.href} className="font-medium text-ink hover:text-accent">
-                {l.label}
-              </Link>
-            ))}
-          </nav>
+          <NavLinks links={links} />
         </div>
         {current && (
           <div className="flex items-center gap-5">
