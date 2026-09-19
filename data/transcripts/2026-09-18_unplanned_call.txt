@@ -1,0 +1,44 @@
+title: Call from Northmere Foods about two figures in last week's status pack
+occurred_at: 2026-09-18T09:20:00+02:00
+minutes: 40
+in_calendar: false
+---
+Sophie Lindqvist: Morning, Elena. Sorry, it's me again. Two calls in one week, I know.
+
+Elena Ruiz: Morning, Sophie. No need to apologise. Did the pack I sent on Wednesday arrive safely?
+
+Sophie Lindqvist: It did, thank you. That's actually why I'm ringing. I used it in my leadership meeting yesterday, and our finance director had the project tracker dashboard open on his laptop at the same time. Two figures in your pack don't match what the tracker showed.
+
+Elena Ruiz: Which two?
+
+Sophie Lindqvist: Hours to date. Your pack says 176 hours as at 11 September. The tracker says 186 for the same date. And the supply planning workstream. Your pack says 64 hours, the tracker says 74.
+
+Elena Ruiz: Both ten hours out. I'm fairly sure I know what that is. Jonas's forecast hours were logged in the tracker, but they weren't in our resourcing sheet, and last week I took the figures from the resourcing sheet. We found the same gap on Tuesday for this week's numbers, but I didn't go back and correct last week's pack before I sent it to you.
+
+Sophie Lindqvist: So the tracker is right.
+
+Elena Ruiz: The tracker is right. I'm sorry. It must have been awkward in front of your finance director.
+
+Sophie Lindqvist: It was a little. He asked me which number to believe, and I didn't have an answer. Can I ask how the pack is actually put together? On Wednesday you said it was manual, but I didn't realise it was this manual.
+
+Elena Ruiz: Every Friday I open the tracker export, the budget sheet and the resourcing sheet. I check them against each other, then I copy the figures into the slides by hand, one account at a time. Then I format the slides and email them out. It goes to eight client contacts across our three accounts, you and Daniel included.
+
+Sophie Lindqvist: Every week?
+
+Elena Ruiz: Every single week. Most weeks it's fine. When one of the three sources is behind, a number like this slips through.
+
+Sophie Lindqvist: Elena, I'll be honest. I would rather have one number that comes straight from the tracker than a beautiful slide with the wrong one. Is there no way to take the copying out of it?
+
+Elena Ruiz: I think there should be, and it's a fair challenge. For now, here's what I'll do. This morning I'll correct both figures in last week's pack, add a note saying what changed and why, and send you a new version before eleven. Today's pack will use the tracker figures for hours, with Jonas's work included.
+
+Sophie Lindqvist: That works. Could you copy our finance director? Then he has the right numbers too.
+
+Elena Ruiz: Of course. I'll add him to the list.
+
+Sophie Lindqvist: And the chilled range? Still two weeks behind?
+
+Elena Ruiz: Still two weeks behind, no worse. Daniel's planners have the afternoon with Jonas booked for next Tuesday. We'll cover it properly at the steering group at eleven.
+
+Sophie Lindqvist: Good. See you at eleven, then.
+
+Elena Ruiz: See you at eleven. Thanks for telling me straight away, Sophie.

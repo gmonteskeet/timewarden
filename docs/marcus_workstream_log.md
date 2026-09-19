@@ -8,15 +8,16 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 3. The development manager opens the actual files and reviews them against `AGENTS.md` and the task's own checks. Verdict: pass or fix.
 4. Nothing merges into `main` without a pass.
 
-## Key times (Madrid)
-- Saturday 19 September, 18:30: checkpoint one, the story runs on fake data.
-- Saturday 19 September, 22:30: checkpoint two, feature freeze.
+## Key times (Madrid), version 2 of the plan
+- Saturday 19 September, 20:00: checkpoint one. The interface runs the whole story on fake data, and one real interview turn goes to make.com and back.
+- Saturday 19 September, 22:30: checkpoint two, feature freeze. Doors close at 23:00.
 - Sunday 20 September, 10:30: code freeze. 11:30: submit. 12:00: deadline.
 
 ## Current position
-- Last update: Saturday 19 September 2026, 15:15 Madrid.
-- Next task: task M1, the demo company data. Branch `marcus/m1-demo-data`. Waiting for Marcus to say go.
-- Against the plan: the plan has tasks M1 to M4 starting at 15:30, so we are on time. The four tasks add up to 2 hours 45 minutes, which leaves about 20 minutes of slack before checkpoint one.
+- Last update: Saturday 19 September 2026, 17:10 Madrid.
+- The plan changed to version 2 at 17:00 after the make.com mentor session. Read `docs/CHANGES_V2.md` first, then `AGENTS.md` and `docs/BUILD_MARCUS.md`. Task numbers restarted: task M2 is now the version 2 demo data.
+- Next task: task M2, the version 2 demo data. Branch `marcus/m2-demo-data-v2`. Time box 17:15 to 17:55.
+- Against the plan: on time.
 
 ## Task record
 
@@ -25,14 +26,24 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - Checked on 19 September at 15:15: `AGENTS.md`, `CLAUDE.md`, `docs/BUILD_MARCUS.md`, `docs/BUILD_GERSON.md`, `docs/one_page_brief.md` and `docs/project_plan.md` are all on `main`. The working folder is clean. Local `main` matches the last known copy of GitHub's `main` (`b4c5e1f`). A live check against GitHub could not be run from the manager's session because it has no GitHub login, so Claude Code confirms this at the start of task M1.
 - Next: task M1, the demo company data.
 
+### Task M1, the demo company data (version 1 shape)
+- Status: done and merged into `main` as pull request 5 (commit `44f47cf`). It was merged before the manager reviewed it, so it was checked after the merge instead.
+- Checked on 19 September at 17:05: all three JSON files parse. 25 calendar entries, no em dashes, no placeholder text, transcripts 527 to 598 words with headers that match the calendar. Friday 18 September has the empty 09:00 to 11:00 slot and the "Friday report send out" from 14:00 to 16:30, which version 2 of the demo story relies on. Friday also has an empty 12:00 to 13:00, which is lunch: the interview prompt in task M4 must not treat it as a gap.
+- Verdict: pass.
+
+### Task M1b, version 2 of the plan
+- Status: merged into `main` as pull request 6 (commit `cb58aa2`, merge `e77d320`). Replaced `AGENTS.md`, `.env.example`, both build files, the one page brief and the project plan, and added `docs/CHANGES_V2.md`.
+- Open point: `AGENTS.md` and `docs/BUILD_GERSON.md` changed without Gerson having seen them. Marcus must tell Gerson before Gerson starts his next task.
+- Next: task M2, the version 2 demo data.
+
 ## Parked
 - Nothing yet.
 
 ## Waiting on Gerson
-- The `frontend/` folder does not exist on `main` yet. Gerson's task G1, the repository skeleton, creates it. Task M4, the interface skeleton, needs it. Marcus to ask Gerson for a time, and to get it before about 16:45.
+- Gerson to read `docs/CHANGES_V2.md` and agree the new `AGENTS.md`.
+- The interview webhook, for the one real interview turn at checkpoint one (20:00).
 
 ## Gerson is waiting on Marcus for
-- The data files from task M1 (`data/company.json`, `data/people.json`, `data/calendar_week.json`, `data/transcripts/`). His seed script, task G4, reads them.
-- The Google Calendar ID from task M2, the calendar file, after Marcus imports the calendar by hand.
-- The five prompts from task M3. His make.com scenarios, tasks G7, G8 and G12, paste them in. This is the most urgent hand over.
-- `data/team_findings.json` from task M8, the team roll up.
+- The version 2 data files from task M2 (role documents, `data/people.json`, `data/expected_splits.json`, `data/history.json`, the new Friday transcript). Message him the moment task M2 merges.
+- The calendar ID and the Google Drive folder link from task M3, the calendar and role documents into Google.
+- The five prompts from task M4. This is the most urgent hand over: his make.com scenarios paste them in.

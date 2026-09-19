@@ -14,7 +14,7 @@ Times are Madrid time, Saturday 19 September unless stated. If a task runs 30 mi
 
 ## Phase 1: to checkpoint one at 20:00
 
-### M2. Demo data, version 2 (40 minutes, 17:15 to 17:55)
+### M2. Demo data, version 2 (40 minutes, 17:15 to 17:55) [done]
 Branch `marcus/m2-demo-data-v2`. Extend the task M1 files. British English, realistic, specific.
 
 - `data/role_documents/`: one Markdown document per role, written as a real HR document of 250 to 400 words: `senior_client_consultant.md`, `head_of_client_delivery.md`, `consultant.md`, `business_analyst.md`. Each has: role purpose, main responsibilities, and five performance measures. Move the wording from the `job_description` and `performance_criteria` in `data/people.json`. None of the documents mentions building weekly status reports as a responsibility, except the Business Analyst's, where "supporting project reporting" is a small part. That contrast is the point.

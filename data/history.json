@@ -1,0 +1,2542 @@
+{
+  "check_ins": [
+    {
+      "person_key": "elena",
+      "day": "2026-08-31",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Elena's largest share of the day went to client delivery and workshops, at 2 hours 50 minutes. 1 hour 45 minutes went to work outside the role: manual status reporting and timesheet reconciliation.",
+      "allocations": [
+        {
+          "topic_name": "Client delivery and workshops",
+          "label": "Client delivery and workshops",
+          "in_role": true,
+          "minutes": 170,
+          "percent": 35.5,
+          "evidence": "Calendar: Kestrel Point Logistics working session on the returns process.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client relationships",
+          "label": "Client relationships",
+          "in_role": true,
+          "minutes": 65,
+          "percent": 13.5,
+          "evidence": "Calendar: Northmere Foods weekly client call with Sophie Lindqvist.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Proposals and business development",
+          "label": "Proposals and business development",
+          "in_role": true,
+          "minutes": 65,
+          "percent": 13.5,
+          "evidence": "Interview: gathered evidence from live work for the Ashvale proposal.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Coaching juniors",
+          "label": "Coaching juniors",
+          "in_role": true,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Calendar: coaching session with Jonas Weber.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Calendar: Client Delivery team meeting.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 60,
+          "percent": 12.5,
+          "evidence": "Started the weekly status pack for the three client accounts from the project tracker export.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Timesheet reconciliation",
+          "in_role": false,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Matched team hours against the resourcing sheet for all three accounts.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "priya",
+      "day": "2026-08-31",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Priya's largest share of the day went to client research and analysis, at 2 hours 5 minutes. 45 minutes went to work outside the role: timesheet reconciliation.",
+      "allocations": [
+        {
+          "topic_name": "Client research and analysis",
+          "label": "Client research and analysis",
+          "in_role": true,
+          "minutes": 125,
+          "percent": 26.1,
+          "evidence": "Interview: interviewed Ashvale repairs staff about the current process.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Workshop preparation and support",
+          "label": "Workshop preparation and support",
+          "in_role": true,
+          "minutes": 110,
+          "percent": 22.9,
+          "evidence": "Calendar: Ashvale working session; captured what was agreed.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Drafting recommendations",
+          "label": "Drafting recommendations",
+          "in_role": true,
+          "minutes": 110,
+          "percent": 22.9,
+          "evidence": "Interview: drafted the Ashvale repairs recommendations for Elena to review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Learning and development",
+          "label": "Learning and development",
+          "in_role": true,
+          "minutes": 50,
+          "percent": 10.4,
+          "evidence": "Calendar: coaching session with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Interview: planning and engagement records.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Timesheet reconciliation",
+          "in_role": false,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Checked team hours for Ashvale and Kestrel Point against the resourcing sheet.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "jonas",
+      "day": "2026-08-31",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Jonas's largest share of the day went to data analysis and modelling, at 3 hours. 1 hour 20 minutes went to work outside the role: manual status reporting and timesheet reconciliation.",
+      "allocations": [
+        {
+          "topic_name": "Data analysis and modelling",
+          "label": "Data analysis and modelling",
+          "in_role": true,
+          "minutes": 180,
+          "percent": 37.3,
+          "evidence": "Interview: built the autumn demand forecast for Northmere Foods.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Supporting consultants with data",
+          "label": "Supporting consultants with data",
+          "in_role": true,
+          "minutes": 90,
+          "percent": 18.8,
+          "evidence": "Interview: answered data questions from Elena and Priya.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client presentations of findings",
+          "label": "Client presentations of findings",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Calendar: presented backlog findings to Ashvale Housing Trust.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Documenting models",
+          "label": "Documenting models",
+          "in_role": true,
+          "minutes": 30,
+          "percent": 6.3,
+          "evidence": "Interview: wrote up how the Northmere forecast model works.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Interview: planning and engagement records.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Exported the project tracker and matched hours against the resourcing sheet for the status pack.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Timesheet reconciliation",
+          "in_role": false,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Reconciled analyst hours in the resourcing sheet with the tracker.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "elena",
+      "day": "2026-09-01",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Elena's largest share of the day went to client delivery and workshops, at 3 hours 35 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client delivery and workshops",
+          "label": "Client delivery and workshops",
+          "in_role": true,
+          "minutes": 215,
+          "percent": 44.8,
+          "evidence": "Calendar: Northmere Foods supply planning review; call transcript on file.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client relationships",
+          "label": "Client relationships",
+          "in_role": true,
+          "minutes": 110,
+          "percent": 22.9,
+          "evidence": "Calendar: call with Aisha Delaney at Ashvale Housing Trust.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Proposals and business development",
+          "label": "Proposals and business development",
+          "in_role": true,
+          "minutes": 80,
+          "percent": 16.7,
+          "evidence": "Calendar: Ashvale Housing Trust phase two proposal with Tomas Berg.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Coaching juniors",
+          "label": "Coaching juniors",
+          "in_role": true,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Calendar: coaching session with Priya Nair.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Interview: planning and engagement records.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "priya",
+      "day": "2026-09-01",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Priya's largest share of the day went to client research and analysis, at 2 hours 25 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client research and analysis",
+          "label": "Client research and analysis",
+          "in_role": true,
+          "minutes": 145,
+          "percent": 30.2,
+          "evidence": "Interview: studied Kestrel Point returns data from the warehouse.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Workshop preparation and support",
+          "label": "Workshop preparation and support",
+          "in_role": true,
+          "minutes": 105,
+          "percent": 21.9,
+          "evidence": "Interview: built the returns process map for the Kestrel Point workshop.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Drafting recommendations",
+          "label": "Drafting recommendations",
+          "in_role": true,
+          "minutes": 120,
+          "percent": 25,
+          "evidence": "Interview: drafted the Ashvale repairs recommendations for Elena to review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Learning and development",
+          "label": "Learning and development",
+          "in_role": true,
+          "minutes": 50,
+          "percent": 10.4,
+          "evidence": "Calendar: coaching session with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 60,
+          "percent": 12.5,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "jonas",
+      "day": "2026-09-01",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Jonas's largest share of the day went to data analysis and modelling, at 3 hours 10 minutes. 35 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Data analysis and modelling",
+          "label": "Data analysis and modelling",
+          "in_role": true,
+          "minutes": 190,
+          "percent": 39.6,
+          "evidence": "Calendar: forecast working session.",
+          "employee_adjusted": true
+        },
+        {
+          "topic_name": "Supporting consultants with data",
+          "label": "Supporting consultants with data",
+          "in_role": true,
+          "minutes": 90,
+          "percent": 18.8,
+          "evidence": "Interview: answered data questions from Elena and Priya.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client presentations of findings",
+          "label": "Client presentations of findings",
+          "in_role": true,
+          "minutes": 75,
+          "percent": 15.6,
+          "evidence": "Calendar: Northmere Foods demand forecast review with Daniel Achterberg.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Documenting models",
+          "label": "Documenting models",
+          "in_role": true,
+          "minutes": 50,
+          "percent": 10.4,
+          "evidence": "Interview: wrote up how the Northmere forecast model works.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Chased missing hours from the tracker export for the status pack.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "elena",
+      "day": "2026-09-02",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Elena's largest share of the day went to client delivery and workshops, at 3 hours 30 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client delivery and workshops",
+          "label": "Client delivery and workshops",
+          "in_role": true,
+          "minutes": 210,
+          "percent": 43.8,
+          "evidence": "Calendar: Northmere Foods supply planning review; call transcript on file.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client relationships",
+          "label": "Client relationships",
+          "in_role": true,
+          "minutes": 100,
+          "percent": 20.8,
+          "evidence": "Calendar: Northmere Foods weekly client call with Sophie Lindqvist.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Proposals and business development",
+          "label": "Proposals and business development",
+          "in_role": true,
+          "minutes": 65,
+          "percent": 13.5,
+          "evidence": "Calendar: Ashvale Housing Trust phase two proposal with Tomas Berg.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Coaching juniors",
+          "label": "Coaching juniors",
+          "in_role": true,
+          "minutes": 60,
+          "percent": 12.5,
+          "evidence": "Interview: went through the Kestrel Point workshop materials with Priya Nair.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Calendar: Client Delivery team meeting.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "priya",
+      "day": "2026-09-02",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Priya's largest share of the day went to client research and analysis, at 2 hours 30 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client research and analysis",
+          "label": "Client research and analysis",
+          "in_role": true,
+          "minutes": 150,
+          "percent": 31.3,
+          "evidence": "Calendar: site visit to the Kestrel Point warehouse.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Workshop preparation and support",
+          "label": "Workshop preparation and support",
+          "in_role": true,
+          "minutes": 120,
+          "percent": 25,
+          "evidence": "Calendar: Ashvale working session; captured what was agreed.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Drafting recommendations",
+          "label": "Drafting recommendations",
+          "in_role": true,
+          "minutes": 120,
+          "percent": 25,
+          "evidence": "Interview: drafted the Ashvale repairs recommendations for Elena to review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Learning and development",
+          "label": "Learning and development",
+          "in_role": true,
+          "minutes": 50,
+          "percent": 10.4,
+          "evidence": "Calendar: coaching session with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Calendar: Client Delivery team meeting.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "jonas",
+      "day": "2026-09-02",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Jonas's largest share of the day went to data analysis and modelling, at 3 hours 30 minutes. 35 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Data analysis and modelling",
+          "label": "Data analysis and modelling",
+          "in_role": true,
+          "minutes": 210,
+          "percent": 43.7,
+          "evidence": "Interview: analysed the Ashvale repairs backlog by trade and age.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Supporting consultants with data",
+          "label": "Supporting consultants with data",
+          "in_role": true,
+          "minutes": 90,
+          "percent": 18.8,
+          "evidence": "Interview: answered data questions from Elena and Priya.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client presentations of findings",
+          "label": "Client presentations of findings",
+          "in_role": true,
+          "minutes": 65,
+          "percent": 13.5,
+          "evidence": "Calendar: Northmere Foods demand forecast review with Daniel Achterberg.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Documenting models",
+          "label": "Documenting models",
+          "in_role": true,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Interview: wrote up how the Northmere forecast model works.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Calendar: Client Delivery team meeting.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Updated the budget sheet by hand so spend figures agree with the tracker.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "elena",
+      "day": "2026-09-03",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Elena's largest share of the day went to client delivery and workshops, at 3 hours 45 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client delivery and workshops",
+          "label": "Client delivery and workshops",
+          "in_role": true,
+          "minutes": 225,
+          "percent": 46.9,
+          "evidence": "Calendar: Kestrel Point Logistics working session on the returns process.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client relationships",
+          "label": "Client relationships",
+          "in_role": true,
+          "minutes": 85,
+          "percent": 17.7,
+          "evidence": "Calendar: call with Aisha Delaney at Ashvale Housing Trust.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Proposals and business development",
+          "label": "Proposals and business development",
+          "in_role": true,
+          "minutes": 75,
+          "percent": 15.6,
+          "evidence": "Interview: gathered evidence from live work for the Ashvale proposal.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Coaching juniors",
+          "label": "Coaching juniors",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Calendar: coaching session with Jonas Weber.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "priya",
+      "day": "2026-09-03",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Priya's largest share of the day went to client research and analysis, at 2 hours 20 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client research and analysis",
+          "label": "Client research and analysis",
+          "in_role": true,
+          "minutes": 140,
+          "percent": 29.2,
+          "evidence": "Calendar: site visit to the Kestrel Point warehouse.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Workshop preparation and support",
+          "label": "Workshop preparation and support",
+          "in_role": true,
+          "minutes": 110,
+          "percent": 22.9,
+          "evidence": "Calendar: Kestrel Point workshop materials with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Drafting recommendations",
+          "label": "Drafting recommendations",
+          "in_role": true,
+          "minutes": 125,
+          "percent": 26,
+          "evidence": "Interview: drafted the Ashvale repairs recommendations for Elena to review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Learning and development",
+          "label": "Learning and development",
+          "in_role": true,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Calendar: coaching session with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 60,
+          "percent": 12.5,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "jonas",
+      "day": "2026-09-03",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Jonas's largest share of the day went to data analysis and modelling, at 3 hours 25 minutes. 35 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Data analysis and modelling",
+          "label": "Data analysis and modelling",
+          "in_role": true,
+          "minutes": 205,
+          "percent": 42.7,
+          "evidence": "Interview: analysed the Ashvale repairs backlog by trade and age.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Supporting consultants with data",
+          "label": "Supporting consultants with data",
+          "in_role": true,
+          "minutes": 85,
+          "percent": 17.7,
+          "evidence": "Interview: answered data questions from Elena and Priya.",
+          "employee_adjusted": true
+        },
+        {
+          "topic_name": "Client presentations of findings",
+          "label": "Client presentations of findings",
+          "in_role": true,
+          "minutes": 80,
+          "percent": 16.7,
+          "evidence": "Calendar: Northmere Foods demand forecast review with Daniel Achterberg.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Documenting models",
+          "label": "Documenting models",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Interview: documented the Ashvale backlog analysis.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Interview: planning and engagement records.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Rechecked status pack figures after late changes in the tracker.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "elena",
+      "day": "2026-09-04",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Elena's largest share of the day went to client delivery and workshops, at 2 hours 35 minutes. 2 hours 30 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Client delivery and workshops",
+          "label": "Client delivery and workshops",
+          "in_role": true,
+          "minutes": 155,
+          "percent": 32.2,
+          "evidence": "Calendar: Kestrel Point Logistics working session on the returns process.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client relationships",
+          "label": "Client relationships",
+          "in_role": true,
+          "minutes": 70,
+          "percent": 14.6,
+          "evidence": "Calendar: Northmere Foods weekly client call with Sophie Lindqvist.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Proposals and business development",
+          "label": "Proposals and business development",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Calendar: Ashvale Housing Trust phase two proposal with Tomas Berg.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Coaching juniors",
+          "label": "Coaching juniors",
+          "in_role": true,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Calendar: coaching session with Jonas Weber.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 30,
+          "percent": 6.3,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 150,
+          "percent": 31.3,
+          "evidence": "Copied figures from the project tracker into the status pack slides, formatted them and emailed eight client contacts.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "priya",
+      "day": "2026-09-04",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Priya's largest share of the day went to client research and analysis, at 1 hour 45 minutes. 1 hour 30 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Client research and analysis",
+          "label": "Client research and analysis",
+          "in_role": true,
+          "minutes": 105,
+          "percent": 21.9,
+          "evidence": "Interview: interviewed Ashvale repairs staff about the current process.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Workshop preparation and support",
+          "label": "Workshop preparation and support",
+          "in_role": true,
+          "minutes": 100,
+          "percent": 20.8,
+          "evidence": "Calendar: Ashvale working session; captured what was agreed.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Drafting recommendations",
+          "label": "Drafting recommendations",
+          "in_role": true,
+          "minutes": 100,
+          "percent": 20.8,
+          "evidence": "Interview: drafted the Ashvale repairs recommendations for Elena to review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Learning and development",
+          "label": "Learning and development",
+          "in_role": true,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Calendar: coaching session with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 90,
+          "percent": 18.8,
+          "evidence": "Pulled Ashvale and Kestrel Point figures into the status pack and checked them with Elena.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "jonas",
+      "day": "2026-09-04",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Jonas's largest share of the day went to data analysis and modelling, at 3 hours 10 minutes. 40 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Data analysis and modelling",
+          "label": "Data analysis and modelling",
+          "in_role": true,
+          "minutes": 190,
+          "percent": 39.6,
+          "evidence": "Interview: analysed the Ashvale repairs backlog by trade and age.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Supporting consultants with data",
+          "label": "Supporting consultants with data",
+          "in_role": true,
+          "minutes": 90,
+          "percent": 18.8,
+          "evidence": "Interview: checked figures in the Ashvale draft recommendations.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client presentations of findings",
+          "label": "Client presentations of findings",
+          "in_role": true,
+          "minutes": 70,
+          "percent": 14.6,
+          "evidence": "Calendar: presented backlog findings to Ashvale Housing Trust.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Documenting models",
+          "label": "Documenting models",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Interview: documented the Ashvale backlog analysis.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 50,
+          "percent": 10.4,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Sent final hours and spend figures to Elena for the Friday status pack.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "elena",
+      "day": "2026-09-07",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Elena's largest share of the day went to client delivery and workshops, at 3 hours 5 minutes. 1 hour 45 minutes went to work outside the role: manual status reporting and timesheet reconciliation.",
+      "allocations": [
+        {
+          "topic_name": "Client delivery and workshops",
+          "label": "Client delivery and workshops",
+          "in_role": true,
+          "minutes": 185,
+          "percent": 38.4,
+          "evidence": "Calendar: Kestrel Point Logistics working session on the returns process.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client relationships",
+          "label": "Client relationships",
+          "in_role": true,
+          "minutes": 70,
+          "percent": 14.6,
+          "evidence": "Calendar: Northmere Foods weekly client call with Sophie Lindqvist.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Proposals and business development",
+          "label": "Proposals and business development",
+          "in_role": true,
+          "minutes": 60,
+          "percent": 12.5,
+          "evidence": "Interview: gathered evidence from live work for the Ashvale proposal.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Coaching juniors",
+          "label": "Coaching juniors",
+          "in_role": true,
+          "minutes": 30,
+          "percent": 6.3,
+          "evidence": "Calendar: coaching session with Priya Nair.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 30,
+          "percent": 6.3,
+          "evidence": "Interview: planning and engagement records.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 60,
+          "percent": 12.5,
+          "evidence": "Started the weekly status pack for the three client accounts from the project tracker export.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Timesheet reconciliation",
+          "in_role": false,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Matched team hours against the resourcing sheet for all three accounts.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "priya",
+      "day": "2026-09-07",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Priya's largest share of the day went to client research and analysis, at 2 hours 15 minutes. 45 minutes went to work outside the role: timesheet reconciliation.",
+      "allocations": [
+        {
+          "topic_name": "Client research and analysis",
+          "label": "Client research and analysis",
+          "in_role": true,
+          "minutes": 135,
+          "percent": 28.1,
+          "evidence": "Interview: studied Kestrel Point returns data from the warehouse.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Workshop preparation and support",
+          "label": "Workshop preparation and support",
+          "in_role": true,
+          "minutes": 105,
+          "percent": 21.9,
+          "evidence": "Interview: built the returns process map for the Kestrel Point workshop.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Drafting recommendations",
+          "label": "Drafting recommendations",
+          "in_role": true,
+          "minutes": 100,
+          "percent": 20.8,
+          "evidence": "Interview: drafted the Ashvale repairs recommendations for Elena to review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Learning and development",
+          "label": "Learning and development",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Calendar: facilitation training session.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Calendar: Client Delivery team meeting.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Timesheet reconciliation",
+          "in_role": false,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Checked team hours for Ashvale and Kestrel Point against the resourcing sheet.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "jonas",
+      "day": "2026-09-07",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Jonas's largest share of the day went to data analysis and modelling, at 2 hours 55 minutes. 1 hour 20 minutes went to work outside the role: manual status reporting and timesheet reconciliation.",
+      "allocations": [
+        {
+          "topic_name": "Data analysis and modelling",
+          "label": "Data analysis and modelling",
+          "in_role": true,
+          "minutes": 175,
+          "percent": 36.4,
+          "evidence": "Interview: built the autumn demand forecast for Northmere Foods.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Supporting consultants with data",
+          "label": "Supporting consultants with data",
+          "in_role": true,
+          "minutes": 90,
+          "percent": 18.8,
+          "evidence": "Interview: answered data questions from Elena and Priya.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client presentations of findings",
+          "label": "Client presentations of findings",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Calendar: Northmere Foods demand forecast review with Daniel Achterberg.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Documenting models",
+          "label": "Documenting models",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Interview: wrote up how the Northmere forecast model works.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Exported the project tracker and matched hours against the resourcing sheet for the status pack.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Timesheet reconciliation",
+          "in_role": false,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Reconciled analyst hours in the resourcing sheet with the tracker.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "elena",
+      "day": "2026-09-08",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Elena's largest share of the day went to client delivery and workshops, at 3 hours 35 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client delivery and workshops",
+          "label": "Client delivery and workshops",
+          "in_role": true,
+          "minutes": 215,
+          "percent": 44.8,
+          "evidence": "Calendar: Northmere Foods supply planning review; call transcript on file.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client relationships",
+          "label": "Client relationships",
+          "in_role": true,
+          "minutes": 100,
+          "percent": 20.8,
+          "evidence": "Interview: follow up calls with Kestrel Point Logistics after the planning meeting.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Proposals and business development",
+          "label": "Proposals and business development",
+          "in_role": true,
+          "minutes": 75,
+          "percent": 15.6,
+          "evidence": "Interview: gathered evidence from live work for the Ashvale proposal.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Coaching juniors",
+          "label": "Coaching juniors",
+          "in_role": true,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Calendar: coaching session with Jonas Weber.",
+          "employee_adjusted": true
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "priya",
+      "day": "2026-09-08",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Priya's largest share of the day went to client research and analysis, at 2 hours 30 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client research and analysis",
+          "label": "Client research and analysis",
+          "in_role": true,
+          "minutes": 150,
+          "percent": 31.3,
+          "evidence": "Calendar: site visit to the Kestrel Point warehouse.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Workshop preparation and support",
+          "label": "Workshop preparation and support",
+          "in_role": true,
+          "minutes": 125,
+          "percent": 26,
+          "evidence": "Calendar: Kestrel Point workshop materials with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Drafting recommendations",
+          "label": "Drafting recommendations",
+          "in_role": true,
+          "minutes": 110,
+          "percent": 22.9,
+          "evidence": "Calendar: Ashvale draft recommendations with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Learning and development",
+          "label": "Learning and development",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Calendar: facilitation training session.",
+          "employee_adjusted": true
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "jonas",
+      "day": "2026-09-08",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Jonas's largest share of the day went to data analysis and modelling, at 3 hours 25 minutes. 35 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Data analysis and modelling",
+          "label": "Data analysis and modelling",
+          "in_role": true,
+          "minutes": 205,
+          "percent": 42.6,
+          "evidence": "Interview: analysed the Ashvale repairs backlog by trade and age.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Supporting consultants with data",
+          "label": "Supporting consultants with data",
+          "in_role": true,
+          "minutes": 90,
+          "percent": 18.8,
+          "evidence": "Interview: checked figures in the Ashvale draft recommendations.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client presentations of findings",
+          "label": "Client presentations of findings",
+          "in_role": true,
+          "minutes": 65,
+          "percent": 13.5,
+          "evidence": "Calendar: Northmere Foods demand forecast review with Daniel Achterberg.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Documenting models",
+          "label": "Documenting models",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Interview: wrote up how the Northmere forecast model works.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 30,
+          "percent": 6.3,
+          "evidence": "Calendar: Client Delivery team meeting.",
+          "employee_adjusted": true
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Chased missing hours from the tracker export for the status pack.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "elena",
+      "day": "2026-09-09",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Elena's largest share of the day went to client delivery and workshops, at 3 hours 45 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client delivery and workshops",
+          "label": "Client delivery and workshops",
+          "in_role": true,
+          "minutes": 225,
+          "percent": 46.9,
+          "evidence": "Calendar: Northmere Foods supply planning review; call transcript on file.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client relationships",
+          "label": "Client relationships",
+          "in_role": true,
+          "minutes": 85,
+          "percent": 17.7,
+          "evidence": "Calendar: Northmere Foods weekly client call with Sophie Lindqvist.",
+          "employee_adjusted": true
+        },
+        {
+          "topic_name": "Proposals and business development",
+          "label": "Proposals and business development",
+          "in_role": true,
+          "minutes": 75,
+          "percent": 15.6,
+          "evidence": "Interview: gathered evidence from live work for the Ashvale proposal.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Coaching juniors",
+          "label": "Coaching juniors",
+          "in_role": true,
+          "minutes": 50,
+          "percent": 10.4,
+          "evidence": "Calendar: coaching session with Jonas Weber.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Interview: planning and engagement records.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "priya",
+      "day": "2026-09-09",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Priya's largest share of the day went to client research and analysis, at 2 hours 20 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client research and analysis",
+          "label": "Client research and analysis",
+          "in_role": true,
+          "minutes": 140,
+          "percent": 29.2,
+          "evidence": "Interview: studied Kestrel Point returns data from the warehouse.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Workshop preparation and support",
+          "label": "Workshop preparation and support",
+          "in_role": true,
+          "minutes": 110,
+          "percent": 22.9,
+          "evidence": "Calendar: Ashvale working session; captured what was agreed.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Drafting recommendations",
+          "label": "Drafting recommendations",
+          "in_role": true,
+          "minutes": 125,
+          "percent": 26,
+          "evidence": "Calendar: Ashvale draft recommendations with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Learning and development",
+          "label": "Learning and development",
+          "in_role": true,
+          "minutes": 50,
+          "percent": 10.4,
+          "evidence": "Calendar: coaching session with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "jonas",
+      "day": "2026-09-09",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Jonas's largest share of the day went to data analysis and modelling, at 3 hours 5 minutes. 35 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Data analysis and modelling",
+          "label": "Data analysis and modelling",
+          "in_role": true,
+          "minutes": 185,
+          "percent": 38.5,
+          "evidence": "Interview: analysed the Ashvale repairs backlog by trade and age.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Supporting consultants with data",
+          "label": "Supporting consultants with data",
+          "in_role": true,
+          "minutes": 75,
+          "percent": 15.6,
+          "evidence": "Interview: answered data questions from Elena and Priya.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client presentations of findings",
+          "label": "Client presentations of findings",
+          "in_role": true,
+          "minutes": 75,
+          "percent": 15.6,
+          "evidence": "Calendar: presented backlog findings to Ashvale Housing Trust.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Documenting models",
+          "label": "Documenting models",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Interview: documented the Ashvale backlog analysis.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Interview: planning and engagement records.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Updated the budget sheet by hand so spend figures agree with the tracker.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "elena",
+      "day": "2026-09-10",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Elena's largest share of the day went to client delivery and workshops, at 3 hours 35 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client delivery and workshops",
+          "label": "Client delivery and workshops",
+          "in_role": true,
+          "minutes": 215,
+          "percent": 44.7,
+          "evidence": "Calendar: Ashvale Housing Trust repairs backlog session; confirmed in the interview.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client relationships",
+          "label": "Client relationships",
+          "in_role": true,
+          "minutes": 90,
+          "percent": 18.8,
+          "evidence": "Interview: follow up calls with Kestrel Point Logistics after the planning meeting.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Proposals and business development",
+          "label": "Proposals and business development",
+          "in_role": true,
+          "minutes": 70,
+          "percent": 14.6,
+          "evidence": "Interview: gathered evidence from live work for the Ashvale proposal.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Coaching juniors",
+          "label": "Coaching juniors",
+          "in_role": true,
+          "minutes": 60,
+          "percent": 12.5,
+          "evidence": "Interview: went through the Kestrel Point workshop materials with Priya Nair.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "priya",
+      "day": "2026-09-10",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Priya's largest share of the day went to client research and analysis, at 2 hours 15 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client research and analysis",
+          "label": "Client research and analysis",
+          "in_role": true,
+          "minutes": 135,
+          "percent": 28.2,
+          "evidence": "Interview: interviewed Ashvale repairs staff about the current process.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Workshop preparation and support",
+          "label": "Workshop preparation and support",
+          "in_role": true,
+          "minutes": 130,
+          "percent": 27.1,
+          "evidence": "Interview: built the returns process map for the Kestrel Point workshop.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Drafting recommendations",
+          "label": "Drafting recommendations",
+          "in_role": true,
+          "minutes": 110,
+          "percent": 22.9,
+          "evidence": "Interview: drafted the Ashvale repairs recommendations for Elena to review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Learning and development",
+          "label": "Learning and development",
+          "in_role": true,
+          "minutes": 65,
+          "percent": 13.5,
+          "evidence": "Calendar: facilitation training session.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "jonas",
+      "day": "2026-09-10",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Jonas's largest share of the day went to data analysis and modelling, at 3 hours 10 minutes. 35 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Data analysis and modelling",
+          "label": "Data analysis and modelling",
+          "in_role": true,
+          "minutes": 190,
+          "percent": 39.5,
+          "evidence": "Interview: built the autumn demand forecast for Northmere Foods.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Supporting consultants with data",
+          "label": "Supporting consultants with data",
+          "in_role": true,
+          "minutes": 90,
+          "percent": 18.8,
+          "evidence": "Interview: answered data questions from Elena and Priya.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client presentations of findings",
+          "label": "Client presentations of findings",
+          "in_role": true,
+          "minutes": 75,
+          "percent": 15.6,
+          "evidence": "Calendar: Northmere Foods demand forecast review with Daniel Achterberg.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Documenting models",
+          "label": "Documenting models",
+          "in_role": true,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Interview: documented the Ashvale backlog analysis.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Rechecked status pack figures after late changes in the tracker.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "elena",
+      "day": "2026-09-11",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Elena's largest share of the day went to client delivery and workshops, at 2 hours 20 minutes. 2 hours 30 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Client delivery and workshops",
+          "label": "Client delivery and workshops",
+          "in_role": true,
+          "minutes": 140,
+          "percent": 29.2,
+          "evidence": "Calendar: Ashvale Housing Trust repairs backlog session; confirmed in the interview.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client relationships",
+          "label": "Client relationships",
+          "in_role": true,
+          "minutes": 70,
+          "percent": 14.6,
+          "evidence": "Calendar: Northmere Foods weekly client call with Sophie Lindqvist.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Proposals and business development",
+          "label": "Proposals and business development",
+          "in_role": true,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Interview: gathered evidence from live work for the Ashvale proposal.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Coaching juniors",
+          "label": "Coaching juniors",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Interview: went through the Kestrel Point workshop materials with Priya Nair.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Calendar: Client Delivery team meeting.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 150,
+          "percent": 31.2,
+          "evidence": "Copied figures from the project tracker into the status pack slides, formatted them and emailed eight client contacts.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "priya",
+      "day": "2026-09-11",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Priya's largest share of the day went to client research and analysis, at 1 hour 45 minutes. 1 hour 30 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Client research and analysis",
+          "label": "Client research and analysis",
+          "in_role": true,
+          "minutes": 105,
+          "percent": 21.9,
+          "evidence": "Interview: interviewed Ashvale repairs staff about the current process.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Workshop preparation and support",
+          "label": "Workshop preparation and support",
+          "in_role": true,
+          "minutes": 100,
+          "percent": 20.8,
+          "evidence": "Calendar: Kestrel Point workshop materials with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Drafting recommendations",
+          "label": "Drafting recommendations",
+          "in_role": true,
+          "minutes": 105,
+          "percent": 21.9,
+          "evidence": "Interview: drafted the Ashvale repairs recommendations for Elena to review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Learning and development",
+          "label": "Learning and development",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Calendar: facilitation training session.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 90,
+          "percent": 18.8,
+          "evidence": "Pulled Ashvale and Kestrel Point figures into the status pack and checked them with Elena.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "jonas",
+      "day": "2026-09-11",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Jonas's largest share of the day went to data analysis and modelling, at 3 hours 10 minutes. 40 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Data analysis and modelling",
+          "label": "Data analysis and modelling",
+          "in_role": true,
+          "minutes": 190,
+          "percent": 39.7,
+          "evidence": "Interview: analysed the Ashvale repairs backlog by trade and age.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Supporting consultants with data",
+          "label": "Supporting consultants with data",
+          "in_role": true,
+          "minutes": 100,
+          "percent": 20.8,
+          "evidence": "Interview: answered data questions from Elena and Priya.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client presentations of findings",
+          "label": "Client presentations of findings",
+          "in_role": true,
+          "minutes": 65,
+          "percent": 13.5,
+          "evidence": "Calendar: presented backlog findings to Ashvale Housing Trust.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Documenting models",
+          "label": "Documenting models",
+          "in_role": true,
+          "minutes": 50,
+          "percent": 10.4,
+          "evidence": "Interview: documented the Ashvale backlog analysis.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Calendar: Client Delivery team meeting.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Sent final hours and spend figures to Elena for the Friday status pack.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "elena",
+      "day": "2026-09-14",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Elena's largest share of the day went to client delivery and workshops, at 2 hours 35 minutes. 1 hour 45 minutes went to work outside the role: manual status reporting and timesheet reconciliation.",
+      "allocations": [
+        {
+          "topic_name": "Client delivery and workshops",
+          "label": "Client delivery and workshops",
+          "in_role": true,
+          "minutes": 155,
+          "percent": 32.2,
+          "evidence": "Calendar: Northmere Foods supply planning review; call transcript on file.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client relationships",
+          "label": "Client relationships",
+          "in_role": true,
+          "minutes": 80,
+          "percent": 16.7,
+          "evidence": "Interview: follow up calls with Kestrel Point Logistics after the planning meeting.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Proposals and business development",
+          "label": "Proposals and business development",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Interview: gathered evidence from live work for the Ashvale proposal.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Coaching juniors",
+          "label": "Coaching juniors",
+          "in_role": true,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Calendar: coaching session with Jonas Weber.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Interview: planning and engagement records.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 60,
+          "percent": 12.5,
+          "evidence": "Started the weekly status pack for the three client accounts from the project tracker export.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Timesheet reconciliation",
+          "in_role": false,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Matched team hours against the resourcing sheet for all three accounts.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "priya",
+      "day": "2026-09-14",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Priya's largest share of the day went to client research and analysis, at 2 hours 15 minutes. 45 minutes went to work outside the role: timesheet reconciliation.",
+      "allocations": [
+        {
+          "topic_name": "Client research and analysis",
+          "label": "Client research and analysis",
+          "in_role": true,
+          "minutes": 135,
+          "percent": 28.2,
+          "evidence": "Interview: studied Kestrel Point returns data from the warehouse.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Workshop preparation and support",
+          "label": "Workshop preparation and support",
+          "in_role": true,
+          "minutes": 110,
+          "percent": 22.9,
+          "evidence": "Interview: built the returns process map for the Kestrel Point workshop.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Drafting recommendations",
+          "label": "Drafting recommendations",
+          "in_role": true,
+          "minutes": 100,
+          "percent": 20.8,
+          "evidence": "Interview: drafted the Ashvale repairs recommendations for Elena to review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Learning and development",
+          "label": "Learning and development",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Calendar: facilitation training session.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 50,
+          "percent": 10.4,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Timesheet reconciliation",
+          "in_role": false,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Checked team hours for Ashvale and Kestrel Point against the resourcing sheet.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "jonas",
+      "day": "2026-09-14",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Jonas's largest share of the day went to data analysis and modelling, at 3 hours 5 minutes. 1 hour 20 minutes went to work outside the role: manual status reporting and timesheet reconciliation.",
+      "allocations": [
+        {
+          "topic_name": "Data analysis and modelling",
+          "label": "Data analysis and modelling",
+          "in_role": true,
+          "minutes": 185,
+          "percent": 38.4,
+          "evidence": "Interview: built the autumn demand forecast for Northmere Foods.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Supporting consultants with data",
+          "label": "Supporting consultants with data",
+          "in_role": true,
+          "minutes": 80,
+          "percent": 16.7,
+          "evidence": "Interview: answered data questions from Elena and Priya.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client presentations of findings",
+          "label": "Client presentations of findings",
+          "in_role": true,
+          "minutes": 70,
+          "percent": 14.6,
+          "evidence": "Calendar: presented backlog findings to Ashvale Housing Trust.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Documenting models",
+          "label": "Documenting models",
+          "in_role": true,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Interview: wrote up how the Northmere forecast model works.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 30,
+          "percent": 6.3,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Exported the project tracker and matched hours against the resourcing sheet for the status pack.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Timesheet reconciliation",
+          "in_role": false,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Reconciled analyst hours in the resourcing sheet with the tracker.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "elena",
+      "day": "2026-09-15",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Elena's largest share of the day went to client delivery and workshops, at 3 hours 25 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client delivery and workshops",
+          "label": "Client delivery and workshops",
+          "in_role": true,
+          "minutes": 205,
+          "percent": 42.6,
+          "evidence": "Calendar: Ashvale Housing Trust repairs backlog session; confirmed in the interview.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client relationships",
+          "label": "Client relationships",
+          "in_role": true,
+          "minutes": 105,
+          "percent": 21.9,
+          "evidence": "Calendar: call with Aisha Delaney at Ashvale Housing Trust.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Proposals and business development",
+          "label": "Proposals and business development",
+          "in_role": true,
+          "minutes": 70,
+          "percent": 14.6,
+          "evidence": "Calendar: Ashvale Housing Trust phase two proposal with Tomas Berg.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Coaching juniors",
+          "label": "Coaching juniors",
+          "in_role": true,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Calendar: coaching session with Priya Nair.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Calendar: Client Delivery team meeting.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "priya",
+      "day": "2026-09-15",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Priya's largest share of the day went to client research and analysis, at 2 hours 30 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client research and analysis",
+          "label": "Client research and analysis",
+          "in_role": true,
+          "minutes": 150,
+          "percent": 31.3,
+          "evidence": "Interview: studied Kestrel Point returns data from the warehouse.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Workshop preparation and support",
+          "label": "Workshop preparation and support",
+          "in_role": true,
+          "minutes": 120,
+          "percent": 25,
+          "evidence": "Calendar: Kestrel Point workshop materials with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Drafting recommendations",
+          "label": "Drafting recommendations",
+          "in_role": true,
+          "minutes": 125,
+          "percent": 26,
+          "evidence": "Interview: drafted the Ashvale repairs recommendations for Elena to review.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Learning and development",
+          "label": "Learning and development",
+          "in_role": true,
+          "minutes": 50,
+          "percent": 10.4,
+          "evidence": "Calendar: facilitation training session.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Calendar: Client Delivery team meeting.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "jonas",
+      "day": "2026-09-15",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Jonas's largest share of the day went to data analysis and modelling, at 3 hours 15 minutes. 35 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Data analysis and modelling",
+          "label": "Data analysis and modelling",
+          "in_role": true,
+          "minutes": 195,
+          "percent": 40.6,
+          "evidence": "Calendar: forecast working session.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Supporting consultants with data",
+          "label": "Supporting consultants with data",
+          "in_role": true,
+          "minutes": 85,
+          "percent": 17.7,
+          "evidence": "Interview: answered data questions from Elena and Priya.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client presentations of findings",
+          "label": "Client presentations of findings",
+          "in_role": true,
+          "minutes": 75,
+          "percent": 15.6,
+          "evidence": "Calendar: presented backlog findings to Ashvale Housing Trust.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Documenting models",
+          "label": "Documenting models",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Interview: wrote up how the Northmere forecast model works.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Calendar: Client Delivery team meeting.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Chased missing hours from the tracker export for the status pack.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "elena",
+      "day": "2026-09-16",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Elena's largest share of the day went to client delivery and workshops, at 3 hours 45 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client delivery and workshops",
+          "label": "Client delivery and workshops",
+          "in_role": true,
+          "minutes": 225,
+          "percent": 46.8,
+          "evidence": "Interview: worked on Northmere Foods recommendations between meetings.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client relationships",
+          "label": "Client relationships",
+          "in_role": true,
+          "minutes": 90,
+          "percent": 18.8,
+          "evidence": "Calendar: Northmere Foods weekly client call with Sophie Lindqvist.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Proposals and business development",
+          "label": "Proposals and business development",
+          "in_role": true,
+          "minutes": 65,
+          "percent": 13.5,
+          "evidence": "Calendar: Ashvale Housing Trust phase two proposal with Tomas Berg.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Coaching juniors",
+          "label": "Coaching juniors",
+          "in_role": true,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Calendar: coaching session with Priya Nair.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "priya",
+      "day": "2026-09-16",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Priya's largest share of the day went to client research and analysis, at 2 hours 25 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client research and analysis",
+          "label": "Client research and analysis",
+          "in_role": true,
+          "minutes": 145,
+          "percent": 30.2,
+          "evidence": "Interview: interviewed Ashvale repairs staff about the current process.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Workshop preparation and support",
+          "label": "Workshop preparation and support",
+          "in_role": true,
+          "minutes": 115,
+          "percent": 24,
+          "evidence": "Calendar: Kestrel Point workshop materials with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Drafting recommendations",
+          "label": "Drafting recommendations",
+          "in_role": true,
+          "minutes": 110,
+          "percent": 22.9,
+          "evidence": "Calendar: Ashvale draft recommendations with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Learning and development",
+          "label": "Learning and development",
+          "in_role": true,
+          "minutes": 60,
+          "percent": 12.5,
+          "evidence": "Calendar: coaching session with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 50,
+          "percent": 10.4,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "jonas",
+      "day": "2026-09-16",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Jonas's largest share of the day went to data analysis and modelling, at 3 hours 20 minutes. 35 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Data analysis and modelling",
+          "label": "Data analysis and modelling",
+          "in_role": true,
+          "minutes": 200,
+          "percent": 41.6,
+          "evidence": "Interview: analysed the Ashvale repairs backlog by trade and age.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Supporting consultants with data",
+          "label": "Supporting consultants with data",
+          "in_role": true,
+          "minutes": 95,
+          "percent": 19.8,
+          "evidence": "Interview: answered data questions from Elena and Priya.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client presentations of findings",
+          "label": "Client presentations of findings",
+          "in_role": true,
+          "minutes": 75,
+          "percent": 15.6,
+          "evidence": "Calendar: Northmere Foods demand forecast review with Daniel Achterberg.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Documenting models",
+          "label": "Documenting models",
+          "in_role": true,
+          "minutes": 45,
+          "percent": 9.4,
+          "evidence": "Interview: wrote up how the Northmere forecast model works.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 30,
+          "percent": 6.3,
+          "evidence": "Interview: planning and engagement records.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Updated the budget sheet by hand so spend figures agree with the tracker.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "elena",
+      "day": "2026-09-17",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Elena's largest share of the day went to client delivery and workshops, at 3 hours 30 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client delivery and workshops",
+          "label": "Client delivery and workshops",
+          "in_role": true,
+          "minutes": 210,
+          "percent": 43.8,
+          "evidence": "Calendar: Ashvale Housing Trust repairs backlog session; confirmed in the interview.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client relationships",
+          "label": "Client relationships",
+          "in_role": true,
+          "minutes": 100,
+          "percent": 20.8,
+          "evidence": "Calendar: call with Aisha Delaney at Ashvale Housing Trust.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Proposals and business development",
+          "label": "Proposals and business development",
+          "in_role": true,
+          "minutes": 70,
+          "percent": 14.6,
+          "evidence": "Interview: gathered evidence from live work for the Ashvale proposal.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Coaching juniors",
+          "label": "Coaching juniors",
+          "in_role": true,
+          "minutes": 40,
+          "percent": 8.3,
+          "evidence": "Interview: went through the Kestrel Point workshop materials with Priya Nair.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 60,
+          "percent": 12.5,
+          "evidence": "Calendar: Client Delivery stand up and weekly review.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "priya",
+      "day": "2026-09-17",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Priya's largest share of the day went to client research and analysis, at 2 hours 20 minutes. No time went to work outside the role.",
+      "allocations": [
+        {
+          "topic_name": "Client research and analysis",
+          "label": "Client research and analysis",
+          "in_role": true,
+          "minutes": 140,
+          "percent": 29.2,
+          "evidence": "Calendar: site visit to the Kestrel Point warehouse.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Workshop preparation and support",
+          "label": "Workshop preparation and support",
+          "in_role": true,
+          "minutes": 125,
+          "percent": 26,
+          "evidence": "Calendar: Ashvale working session; captured what was agreed.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Drafting recommendations",
+          "label": "Drafting recommendations",
+          "in_role": true,
+          "minutes": 120,
+          "percent": 25,
+          "evidence": "Calendar: Ashvale draft recommendations with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Learning and development",
+          "label": "Learning and development",
+          "in_role": true,
+          "minutes": 60,
+          "percent": 12.5,
+          "evidence": "Calendar: coaching session with Elena Ruiz.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Calendar: Client Delivery team meeting.",
+          "employee_adjusted": false
+        }
+      ]
+    },
+    {
+      "person_key": "jonas",
+      "day": "2026-09-17",
+      "status": "approved",
+      "approved_by_key": "tomas",
+      "summary_text": "Jonas's largest share of the day went to data analysis and modelling, at 3 hours 20 minutes. 35 minutes went to work outside the role: manual status reporting.",
+      "allocations": [
+        {
+          "topic_name": "Data analysis and modelling",
+          "label": "Data analysis and modelling",
+          "in_role": true,
+          "minutes": 200,
+          "percent": 41.6,
+          "evidence": "Calendar: forecast working session.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Supporting consultants with data",
+          "label": "Supporting consultants with data",
+          "in_role": true,
+          "minutes": 80,
+          "percent": 16.7,
+          "evidence": "Interview: answered data questions from Elena and Priya.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Client presentations of findings",
+          "label": "Client presentations of findings",
+          "in_role": true,
+          "minutes": 60,
+          "percent": 12.5,
+          "evidence": "Calendar: Northmere Foods demand forecast review with Daniel Achterberg.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Documenting models",
+          "label": "Documenting models",
+          "in_role": true,
+          "minutes": 50,
+          "percent": 10.4,
+          "evidence": "Interview: wrote up how the Northmere forecast model works.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": "Internal meetings and administration",
+          "label": "Internal meetings and administration",
+          "in_role": true,
+          "minutes": 55,
+          "percent": 11.5,
+          "evidence": "Calendar: Client Delivery team meeting.",
+          "employee_adjusted": false
+        },
+        {
+          "topic_name": null,
+          "label": "Manual status reporting",
+          "in_role": false,
+          "minutes": 35,
+          "percent": 7.3,
+          "evidence": "Rechecked status pack figures after late changes in the tracker.",
+          "employee_adjusted": false
+        }
+      ]
+    }
+  ]
+}
