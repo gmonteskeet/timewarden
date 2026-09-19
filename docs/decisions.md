@@ -32,3 +32,39 @@ A Supabase project grants `select` on new public tables to the anonymous role
 by default. The migration states the grants anyway, so it runs correctly on a
 plain Postgres database and can be tested without a Supabase project. Row level
 security is still what refuses a write.
+
+## 5. Decision 4 is superseded by version 2 (task G4, 19 September)
+Version 2 has users and rights and no public read access. Migration `0002`
+drops every public read policy and takes the grants in decision 4 back off the
+anonymous role. Row level security stays on for every table with no policies at
+all, so only the service key reaches the data.
+
+Worth knowing: the anonymous role keeps `usage` on the `public` schema, because
+that is granted to `PUBLIC` rather than to `anon` and taking it away would
+affect every role. It does not matter. Checked on a real Postgres: with no
+table grants the anonymous role is refused outright, and even when `select` is
+granted back by hand, row level security with no policies returns zero rows.
+Two locks, not one.
+
+## 6. A role with no topics at all is allowed (task G4, 19 September)
+Task G4 asks for a check that a role's `expected_percent` values add up to 100.
+It is a deferred constraint trigger on `topics`, so the seed script and the
+scenarios can delete a role's topics and write the new ones inside one
+transaction.
+
+make.com cannot do that. It replaces topics with a delete call followed by an
+insert call, and those are two separate transactions, so the table is briefly
+empty for that role. The trigger therefore allows a role with no topics and
+only checks the total once topics exist. It also allows 0.01 either side of
+100, because a proposed split can carry repeating decimals.
+
+The gap this leaves: a scenario that deletes topics and then fails before
+inserting leaves a role with none. Scenario one is written to insert straight
+after, and `supabase/reset.sql` puts a clean split back.
+
+## 7. The demo day is reset for everyone, not only Elena (task G4, 19 September)
+Task G4 says `supabase/reset.sql` deletes Elena's check in for 18 September.
+The morning routine creates a check in for every employee, so the script
+deletes every check in for 18 September instead. Anything less would leave
+Priya's and Jonas's half finished days behind on a second rehearsal. The three
+weeks of history, which end on 17 September, are untouched.
