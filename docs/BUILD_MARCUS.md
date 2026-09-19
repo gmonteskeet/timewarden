@@ -12,7 +12,7 @@ Time boxes are in Madrid time, Saturday 19 September unless stated. If a task ru
 
 ## Phase 1: thin path (finish by 18:30)
 
-### M1. Demo company data (30 minutes)
+### M1. Demo company data (30 minutes) [done]
 Branch `marcus/m1-demo-data`. Create these files. Content must be realistic, specific and written in British English.
 
 - `data/company.json`: `{ "name": "Brightline Advisory", "description": "...", "team": "Client Delivery" }`

@@ -1,0 +1,52 @@
+title: Sync
+occurred_at: 2026-09-15T15:00:00+02:00
+minutes: 90
+in_calendar: true
+---
+Elena Ruiz: Right, have you got all three open? The tracker export, the budget sheet and the resourcing sheet?
+
+Jonas Weber: All three. The tracker export came through at lunchtime, so it should be current as of this morning.
+
+Elena Ruiz: Good. Let's start with Northmere, because Sophie will read that pack line by line. What does the tracker say for hours spent this month?
+
+Jonas Weber: The tracker says 212 hours on Northmere since the first of September. The resourcing sheet says 196.
+
+Elena Ruiz: Sixteen hours out. That's the same problem as last week. Is it the demand forecast work?
+
+Jonas Weber: I think so. I logged my forecast hours against the Northmere project in the tracker, but nobody added me to the Northmere tab in the resourcing sheet, so none of it shows there.
+
+Elena Ruiz: So the tracker is right and the resourcing sheet is wrong. I'll type your sixteen hours into the resourcing sheet by hand and use 212 in the pack. Now the budget sheet. What's it showing as spent?
+
+Jonas Weber: The budget sheet has spend at 38,400 euros, but it still uses the old day rate for me. If I use the new rate, it comes to 39,150.
+
+Elena Ruiz: Which one did we send Sophie last week?
+
+Jonas Weber: 37,900. That was before the forecast hours went in.
+
+Elena Ruiz: Fine. I'll put 39,150 in the pack and add a note on the slide saying the rate changed. Otherwise she'll ring me asking why it jumped. Kestrel Point next.
+
+Jonas Weber: Kestrel Point is easier. The tracker and the resourcing sheet agree on 88 hours. The only thing is the tracker export has split the workshop preparation into two lines, one called workshop prep and one called Thursday workshop, so the total looks doubled if you add up the rows.
+
+Elena Ruiz: I'll merge those by hand when I paste it into the slide. Ashvale?
+
+Jonas Weber: Ashvale is the messy one. The tracker has 140 hours, the resourcing sheet has 151, and the budget sheet hasn't been updated since the ninth.
+
+Elena Ruiz: Eleven hours the other way. Any idea where they came from?
+
+Jonas Weber: Looks like Priya's Monday working session got entered twice in the resourcing sheet. Once on Monday, once on Tuesday.
+
+Elena Ruiz: Okay, I'll take one out. And I'll update the budget sheet myself from the tracker, because finance won't get to it before Friday.
+
+Jonas Weber: Can I ask something? Why are we doing this every week? These are the same three sheets, the same three clients, the same checks. I could write something that pulls the tracker export and flags every mismatch in about a minute.
+
+Elena Ruiz: Honestly, I don't know. It's always been done this way. The status pack goes out on Friday, the numbers have to agree, and I'm the one whose name is on it.
+
+Jonas Weber: How long does the whole pack take you?
+
+Elena Ruiz: I don't really add it up. Monday morning to start it, a bit on Tuesday chasing people, a couple of hours on Thursday making the slides look right, and Friday afternoon sending it. Plus this.
+
+Jonas Weber: That's most of two days.
+
+Elena Ruiz: Don't say that out loud. Right, send me your final numbers for all three in one message so I can copy them straight into the slides. I've got to be at my desk for the Kestrel Point materials at half past four.
+
+Jonas Weber: Sending them now.
