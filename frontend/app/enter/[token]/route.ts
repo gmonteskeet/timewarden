@@ -7,17 +7,19 @@ import { encodeSession, safeNextPath, SESSION_COOKIE, sessionCookieOptions } fro
 export async function GET(request: NextRequest, ctx: RouteContext<"/enter/[token]">) {
   const { token } = await ctx.params;
   let person;
+  let landing;
   try {
     person = await findPersonByToken(token);
+    if (person) landing = await landingPathFor(person);
   } catch (error) {
     console.error("[enter] Sign in lookup failed:", error instanceof Error ? error.message : "unknown error");
     return NextResponse.redirect(new URL("/?signin=unavailable", request.url), 303);
   }
-  if (!person) {
+  if (!person || !landing) {
     return NextResponse.redirect(new URL("/?signin=unknown", request.url), 303);
   }
 
-  const next = safeNextPath(request.nextUrl.searchParams.get("next")) ?? (await landingPathFor(person));
+  const next = safeNextPath(request.nextUrl.searchParams.get("next")) ?? landing;
   const response = NextResponse.redirect(new URL(next, request.url), 303);
   response.cookies.set(SESSION_COOKIE, encodeSession({ person_id: person.id, app_role: person.app_role }), sessionCookieOptions);
   return response;
