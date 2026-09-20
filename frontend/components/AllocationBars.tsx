@@ -2,8 +2,9 @@
 
 // The one standard summary, used everywhere: expected share against actual share per topic,
 // in role topics first, then work outside the role. Same colours, order and layout every time.
-// Every bar prints its number, so nothing depends on colour alone.
+// Every bar prints its number, so nothing depends on colour alone, and the number never wraps.
 
+import { btnQuietSmall, card, focusRing } from '@/components/ui';
 import { formatMinutes, type AllocationRow } from '@/lib/allocation-rows';
 
 export interface AllocationBarsProps {
@@ -23,10 +24,10 @@ function Bar({ percent, tone, text }: { percent: number; tone: 'expected' | 'act
   const width = Math.max(0, Math.min(100, percent));
   return (
     <div className="flex items-center gap-3">
-      <div className="h-5 flex-1 rounded bg-track">
+      <div className="h-5 min-w-0 flex-1 rounded bg-track">
         <div className={`h-5 rounded ${colour}`} style={{ width: `${width}%` }} />
       </div>
-      <span className="w-80 shrink-0 text-lg tabular-nums text-ink">{text}</span>
+      <span className="w-[22rem] shrink-0 whitespace-nowrap text-lg tabular-nums text-ink">{text}</span>
     </div>
   );
 }
@@ -35,7 +36,7 @@ function Row({ row, editable, step, audience, onMinutesChange }: { row: Allocati
   const canEdit = editable && onMinutesChange && row.allocationId !== undefined;
   return (
     <li className="border-t border-line py-4 first:border-t-0">
-      <div className="mb-2 flex flex-wrap items-baseline justify-between gap-3">
+      <div className="mb-2 flex min-h-12 flex-wrap items-center justify-between gap-3">
         <p className="text-xl font-semibold text-ink">
           {row.label}
           {row.employeeAdjusted && (
@@ -48,7 +49,7 @@ function Row({ row, editable, step, audience, onMinutesChange }: { row: Allocati
           <div className="flex items-center gap-2">
             <button
               type="button"
-              className="rounded border border-line bg-white px-4 py-2 text-lg font-medium hover:bg-track focus-visible:outline-3 focus-visible:outline-accent disabled:opacity-40"
+              className={btnQuietSmall}
               onClick={() => onMinutesChange!(row.key, Math.max(0, row.minutes - step))}
               disabled={row.minutes === 0}
               aria-label={`Take ${step} minutes off ${row.label}`}
@@ -57,7 +58,7 @@ function Row({ row, editable, step, audience, onMinutesChange }: { row: Allocati
             </button>
             <button
               type="button"
-              className="rounded border border-line bg-white px-4 py-2 text-lg font-medium hover:bg-track focus-visible:outline-3 focus-visible:outline-accent"
+              className={btnQuietSmall}
               onClick={() => onMinutesChange!(row.key, row.minutes + step)}
               aria-label={`Add ${step} minutes to ${row.label}`}
             >
@@ -76,7 +77,7 @@ function Row({ row, editable, step, audience, onMinutesChange }: { row: Allocati
       </div>
       {row.evidence.length > 0 && (
         <details className="mt-2 text-base text-muted">
-          <summary className="inline-block cursor-pointer select-none rounded px-1 font-medium text-accent underline focus-visible:outline-3 focus-visible:outline-accent">Why?</summary>
+          <summary className={`inline-block cursor-pointer select-none px-1 font-medium text-accent underline ${focusRing}`}>Why?</summary>
           <ul className="mt-1 list-disc pl-6" aria-label="What Scout saw">
             {row.evidence.map((e) => (
               <li key={e}>{e}</li>
@@ -93,7 +94,7 @@ export default function AllocationBars({ rows, periodLabel, audience = 'self', e
   const outside = rows.filter((r) => !r.inRole).sort((a, b) => a.sortOrder - b.sortOrder);
 
   return (
-    <section aria-label={`Expected against actual time, ${periodLabel}`} className="rounded-lg border border-line bg-white p-6">
+    <section aria-label={`Expected against actual time, ${periodLabel}`} className={card}>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-2xl font-semibold text-ink">Expected against actual: {periodLabel}</h2>
         <div className="flex flex-wrap gap-5 text-base text-muted">
@@ -111,7 +112,7 @@ export default function AllocationBars({ rows, periodLabel, audience = 'self', e
 
       {outside.length > 0 && (
         <>
-          <h3 className="mt-6 border-t-2 border-outside pt-4 text-xl font-semibold text-ink">
+          <h3 className="mt-6 border-t-2 border-outside pt-5 text-xl font-semibold text-ink">
             {audience === 'manager' ? 'Outside the role' : 'Outside your role'}
           </h3>
           <ul>

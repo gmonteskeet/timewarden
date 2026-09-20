@@ -1,4 +1,11 @@
+import { btnDanger, card } from "@/components/ui";
 import { canResetDemo, demoResetNote, listDemoSignIns } from "@/lib/data";
+
+const STEPS = [
+  "Scout interviews you about your last working day.",
+  "You check the summary and send it to your manager.",
+  "Scout suggests what to automate, and drafts it in make.com.",
+];
 
 export default async function Home({ searchParams }: PageProps<"/">) {
   const people = await listDemoSignIns();
@@ -8,14 +15,29 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
   return (
     <div className="space-y-10">
-      <section className="max-w-3xl">
-        <h1 className="text-4xl font-bold leading-tight">Workflow Scout</h1>
-        <p className="mt-4 text-2xl leading-relaxed text-muted">
-          Scout asks each person about their last working day, compares it with what their role is for, and suggests make.com workflows to take over the work that keeps landing in the wrong place.
-        </p>
+      <section className="space-y-8">
+        <div className="max-w-3xl space-y-4">
+          <h1 className="text-4xl font-bold leading-tight">Workflow Scout</h1>
+          <p className="text-2xl leading-relaxed text-muted">
+            Scout asks each person about their last working day, compares it with what their role is for, and suggests make.com workflows to take over the work that keeps landing in the wrong place.
+          </p>
+        </div>
+        <ol aria-label="How Workflow Scout works" className="grid gap-4 sm:grid-cols-3">
+          {STEPS.map((step, i) => (
+            <li key={step} className={`${card} flex gap-4`}>
+              <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-xl font-bold text-white">
+                {i + 1}
+              </span>
+              <p className="text-lg leading-snug">
+                <span className="sr-only">{`Step ${i + 1}. `}</span>
+                {step}
+              </p>
+            </li>
+          ))}
+        </ol>
       </section>
 
-      <section aria-labelledby="demo-sign-in" className="rounded-lg border border-line bg-white p-8">
+      <section aria-labelledby="demo-sign-in" className={card}>
         <h2 id="demo-sign-in" className="text-2xl font-semibold">
           Demo sign in
         </h2>
@@ -40,7 +62,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
             <li key={p.href}>
               <a
                 href={p.href}
-                className="block rounded-lg border border-line px-6 py-5 hover:border-accent hover:bg-track"
+                className="block rounded-lg border border-line bg-white px-6 py-5 hover:border-accent hover:bg-track focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <span className="block text-xl font-semibold">{p.full_name}</span>
                 <span className="block text-lg text-muted">
@@ -51,11 +73,11 @@ export default async function Home({ searchParams }: PageProps<"/">) {
           ))}
         </ul>
         {resettable && (
-          <form action="/demo/reset" method="post" className="mt-6">
-            <button type="submit" className="text-base font-medium text-muted underline hover:text-accent focus-visible:outline-3 focus-visible:outline-accent">
+          <form action="/demo/reset" method="post" className="mt-6 flex flex-wrap items-center gap-4">
+            <button type="submit" className={btnDanger}>
               Reset the demo
             </button>
-            <span className="ml-2 text-base text-muted">{resetNote}</span>
+            <span className="text-base text-muted">{resetNote}</span>
           </form>
         )}
       </section>

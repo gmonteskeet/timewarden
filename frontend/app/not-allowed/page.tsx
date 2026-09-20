@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { btnPrimary } from "@/components/ui";
 
 export default function NotAllowed() {
   return (
@@ -7,7 +8,7 @@ export default function NotAllowed() {
       <p className="text-xl text-muted">
         Employees can see only their own check ins. Managers can see their own team. If you followed a link from an email, open it again, or choose a person on the home page.
       </p>
-      <Link href="/" className="inline-block text-xl font-medium text-accent underline">
+      <Link href="/" className={btnPrimary}>
         Back to the home page
       </Link>
     </div>

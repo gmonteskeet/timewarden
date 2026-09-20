@@ -4,6 +4,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { btnLink, btnPrimary, btnQuiet, btnQuietSmall, card, errorPanel, focusRing, waiting, warning } from '@/components/ui';
 import { approvedText } from '@/lib/dates';
 
 export interface RoleCardData {
@@ -47,20 +48,20 @@ function RoleCard({ role }: { role: RoleCardData }) {
         role?: { role: { split_approved_at: string | null }; approved_by: { full_name: string } | null };
       };
       if (!res.ok || !data.ok || !data.role) {
-        setProblem(data.message ?? 'The split could not be approved just now. Please try again.');
+        setProblem(data.message ?? 'The split could not be approved just now. Your numbers are safe.');
         return;
       }
       setApprovedLabel(approvedText(data.role.approved_by?.full_name ?? null, data.role.role.split_approved_at));
       setEditing(false);
     } catch {
-      setProblem('The split could not be approved just now. Your numbers are safe. Please try again.');
+      setProblem('The split could not be approved just now. Your numbers are safe.');
     } finally {
       setSending(false);
     }
   }
 
   return (
-    <article className="rounded-lg border border-line bg-white p-7" aria-labelledby={`role-${role.id}`}>
+    <article className={card} aria-labelledby={`role-${role.id}`}>
       <header className="mb-5 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 id={`role-${role.id}`} className="text-2xl font-semibold">
@@ -71,7 +72,7 @@ function RoleCard({ role }: { role: RoleCardData }) {
               <>
                 Role document:{' '}
                 {role.document_url ? (
-                  <a href={role.document_url} target="_blank" rel="noopener noreferrer" className="font-medium text-accent underline focus-visible:outline-3 focus-visible:outline-accent">
+                  <a href={role.document_url} target="_blank" rel="noopener noreferrer" className={`font-medium text-accent underline ${focusRing}`}>
                     {role.document_name}
                   </a>
                 ) : (
@@ -87,7 +88,7 @@ function RoleCard({ role }: { role: RoleCardData }) {
           <div className="text-right">
             <p className="rounded bg-track px-4 py-2 text-lg font-semibold text-accent">{approvedLabel}</p>
             {role.topics.length > 0 && (
-              <button type="button" onClick={() => setEditing(true)} className="mt-2 text-base font-medium text-accent underline focus-visible:outline-3 focus-visible:outline-accent">
+              <button type="button" onClick={() => setEditing(true)} className={`mt-2 ${btnLink}`}>
                 Edit again
               </button>
             )}
@@ -96,7 +97,9 @@ function RoleCard({ role }: { role: RoleCardData }) {
       </header>
 
       {role.topics.length === 0 && (
-        <p className="border-t border-line py-4 text-lg">Scout has not proposed a split for this role yet. Press Read the role documents again.</p>
+        <p className="border-t border-line py-4 text-lg">
+          Scout has not proposed a split for this role yet. The topics appear here once Scout has read the role document, which takes about half a minute after you press Read the role documents again.
+        </p>
       )}
 
       <ul>
@@ -111,7 +114,7 @@ function RoleCard({ role }: { role: RoleCardData }) {
               {editing ? (
                 <div className="flex items-center gap-2">
                   {value !== t.proposed && <span className="mr-2 text-base text-muted">Scout proposed {t.proposed}</span>}
-                  <button type="button" onClick={() => set(t.id, value - STEP)} aria-label={`Take ${STEP} off ${t.name}`} className="rounded border border-line px-3 py-2 text-lg font-medium hover:bg-track focus-visible:outline-3 focus-visible:outline-accent">
+                  <button type="button" onClick={() => set(t.id, value - STEP)} aria-label={`Take ${STEP} off ${t.name}`} className={btnQuietSmall}>
                     − {STEP}
                   </button>
                   <label className="sr-only" htmlFor={`pct-${t.id}`}>{`${t.name}, percent of time`}</label>
@@ -124,10 +127,10 @@ function RoleCard({ role }: { role: RoleCardData }) {
                     step={1}
                     value={value}
                     onChange={(e) => set(t.id, Number(e.target.value || 0))}
-                    className="w-20 rounded border border-line px-2 py-2 text-center text-xl font-semibold tabular-nums focus-visible:outline-3 focus-visible:outline-accent"
+                    className={`w-20 rounded-lg border-2 border-line bg-white px-2 py-2 text-center text-xl font-semibold tabular-nums ${focusRing}`}
                   />
                   <span className="text-xl font-semibold">%</span>
-                  <button type="button" onClick={() => set(t.id, value + STEP)} aria-label={`Add ${STEP} to ${t.name}`} className="rounded border border-line px-3 py-2 text-lg font-medium hover:bg-track focus-visible:outline-3 focus-visible:outline-accent">
+                  <button type="button" onClick={() => set(t.id, value + STEP)} aria-label={`Add ${STEP} to ${t.name}`} className={btnQuietSmall}>
                     + {STEP}
                   </button>
                 </div>
@@ -143,16 +146,11 @@ function RoleCard({ role }: { role: RoleCardData }) {
 
       {role.topics.length > 0 && (
       <footer className="mt-2 flex flex-wrap items-center justify-between gap-4 border-t-2 border-line pt-4">
-        <p className={`text-xl font-semibold tabular-nums ${total === 100 ? 'text-ink' : 'text-outside'}`}>Total {total}%</p>
+        <p className={`text-xl font-semibold tabular-nums ${total === 100 ? 'text-ink' : 'text-warn'}`}>Total {total}%</p>
         {editing && (
           <div className="flex flex-wrap items-center gap-4">
-            {reason && <p className="max-w-md text-lg text-outside">{reason}</p>}
-            <button
-              type="button"
-              onClick={() => void approve()}
-              disabled={reason !== null || sending}
-              className="rounded-lg bg-accent px-8 py-3 text-xl font-semibold text-white hover:bg-accent-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
-            >
+            {reason && <p className={`max-w-md ${warning}`}>{reason}</p>}
+            <button type="button" onClick={() => void approve()} disabled={reason !== null || sending} className={btnPrimary}>
               {sending ? 'Approving' : 'Approve'}
             </button>
           </div>
@@ -160,9 +158,12 @@ function RoleCard({ role }: { role: RoleCardData }) {
       </footer>
       )}
       {problem && (
-        <p role="alert" className="mt-4 rounded bg-note px-5 py-3 text-lg">
-          {problem}
-        </p>
+        <div role="alert" className={`mt-4 ${errorPanel}`}>
+          <p>{problem}</p>
+          <button type="button" onClick={() => void approve()} disabled={sending} className={btnPrimary}>
+            Try again
+          </button>
+        </div>
       )}
     </article>
   );
@@ -226,20 +227,15 @@ export default function RolesClient({ roles }: { roles: RoleCardData[] }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex min-h-14 flex-wrap items-center gap-4">
-        <button
-          type="button"
-          onClick={() => void sync()}
-          disabled={syncing}
-          className="rounded-lg border-2 border-accent bg-white px-6 py-3 text-lg font-semibold text-accent hover:bg-track focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
-        >
+      <div className="flex min-h-16 flex-wrap items-center gap-4">
+        <button type="button" onClick={() => void sync()} disabled={syncing} className={btnQuiet}>
           Read the role documents again
         </button>
-        <p aria-live="polite" className={`text-lg ${syncing ? 'animate-pulse text-accent' : 'text-muted'}`}>
+        <p aria-live="polite" className={syncing ? `animate-pulse ${waiting}` : 'text-lg text-muted'}>
           {syncing ? 'Scout is reading the role documents in the document store' : result}
         </p>
         {failed && !syncing && (
-          <button type="button" onClick={() => void sync()} className="text-lg font-semibold text-accent underline focus-visible:outline-3 focus-visible:outline-accent">
+          <button type="button" onClick={() => void sync()} className={btnPrimary}>
             Try again
           </button>
         )}

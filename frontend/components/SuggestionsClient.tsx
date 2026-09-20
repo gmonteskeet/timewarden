@@ -3,6 +3,7 @@
 // Suggested workflows: review the approved history, then approve one to have it drafted in make.com.
 
 import { useState } from 'react';
+import { btnPrimary, btnQuiet, buttonRow, card, cardHighlighted, errorPanel, waiting } from '@/components/ui';
 import type { Candidate } from '@/lib/contract';
 
 const DECISION_TIMEOUT_MS = 40_000;
@@ -20,11 +21,6 @@ const SCORES: { key: 'score_time' | 'score_repetitive' | 'score_reliability' | '
 ];
 
 type CardState = { kind: 'idle' } | { kind: 'drafting' } | { kind: 'ready'; url: string } | { kind: 'failed'; message: string } | { kind: 'not_now' };
-
-const primary =
-  'rounded-lg bg-accent px-7 py-3 text-lg font-semibold text-white hover:bg-accent-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50';
-const secondary =
-  'rounded-lg border-2 border-line bg-white px-6 py-3 text-lg font-semibold hover:bg-track focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50';
 
 /** Waits for the draft link: first from the decision reply, otherwise by reading the suggestion again. */
 async function approveAndWait(candidateId: string): Promise<{ url: string } | { message: string }> {
@@ -64,7 +60,7 @@ function Card({ c, state, draftingElsewhere, onChange }: { c: Candidate; state: 
 
   const greyed = state.kind === 'not_now';
   return (
-    <article className={`space-y-5 rounded-lg border bg-white p-7 ${greyed ? 'border-line opacity-50' : 'border-line'} ${state.kind === 'ready' ? 'border-2 border-accent' : ''}`} aria-labelledby={`cand-${c.id}`}>
+    <article className={`space-y-5 ${state.kind === 'ready' ? cardHighlighted : card} ${greyed ? 'opacity-50' : ''}`} aria-labelledby={`cand-${c.id}`}>
       <header className="flex flex-wrap items-start gap-5">
         <p className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent text-2xl font-bold text-white" aria-label={`Rank ${c.rank}`}>
           {c.rank}
@@ -113,62 +109,50 @@ function Card({ c, state, draftingElsewhere, onChange }: { c: Candidate; state: 
 
       <div>
         <h3 className="mb-2 text-lg font-semibold">Proposed workflow</h3>
-        <ol className="flex flex-wrap items-stretch gap-3">
+        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {c.proposed_steps.map((step, i) => (
-            <li key={`${step.app}-${i}`} className="flex items-center gap-3">
-              <div className="rounded-lg border border-line px-4 py-3" title={step.note}>
-                <p className="text-base text-muted">Step {i + 1}</p>
-                <p className="text-lg">
-                  {step.app && <strong>{step.app}</strong>}
-                  {step.app && step.action ? ': ' : ''}
-                  {step.action}
-                </p>
-                {step.note && <p className="max-w-60 text-base text-muted">{step.note}</p>}
-              </div>
-              {i < c.proposed_steps.length - 1 && (
-                <span aria-hidden="true" className="text-2xl text-muted">
-                  →
-                </span>
-              )}
+            <li key={`${step.app}-${i}`} className="h-full space-y-1 rounded-lg border border-line bg-white px-4 py-3">
+              <p className="text-base font-medium text-muted">Step {i + 1}</p>
+              <p className="text-lg leading-snug">
+                {step.app && <strong>{step.app}</strong>}
+                {step.app && step.action ? ': ' : ''}
+                {step.action}
+              </p>
+              {step.note && <p className="text-base leading-snug text-muted">{step.note}</p>}
             </li>
           ))}
         </ol>
       </div>
 
-      <div className="min-h-14">
+      <div className="flex min-h-20 items-center">
         {state.kind === 'idle' && (
-          <div className="flex flex-wrap gap-4">
-            <button type="button" className={primary} disabled={draftingElsewhere} onClick={() => void approve()}>
+          <div className={buttonRow}>
+            <button type="button" className={btnPrimary} disabled={draftingElsewhere} onClick={() => void approve()}>
               Approve
             </button>
-            <button type="button" className={secondary} disabled={draftingElsewhere} onClick={() => onChange({ kind: 'not_now' })}>
+            <button type="button" className={btnQuiet} disabled={draftingElsewhere} onClick={() => onChange({ kind: 'not_now' })}>
               Not now
             </button>
           </div>
         )}
         {state.kind === 'not_now' && (
-          <button type="button" className={secondary} onClick={() => onChange({ kind: 'idle' })}>
+          <button type="button" className={btnQuiet} onClick={() => onChange({ kind: 'idle' })}>
             Reconsider
           </button>
         )}
-        {state.kind === 'drafting' && <p className="animate-pulse text-xl font-medium text-accent">Scout is drafting this in make.com</p>}
+        {state.kind === 'drafting' && <p className={`animate-pulse ${waiting}`}>Scout is building this scenario in make.com now</p>}
         {state.kind === 'failed' && (
-          <div role="alert" className="flex flex-wrap items-center gap-4 rounded-lg bg-note px-6 py-4 text-lg">
+          <div role="alert" className={errorPanel}>
             <p>{state.message} Nothing has been lost.</p>
-            <button type="button" className={primary} onClick={() => void approve()}>
+            <button type="button" className={btnPrimary} onClick={() => void approve()}>
               Try again
             </button>
           </div>
         )}
         {state.kind === 'ready' && (
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg bg-track px-6 py-5">
+          <div className="flex w-full flex-wrap items-center justify-between gap-4 rounded-lg bg-track px-6 py-5">
             <p className="text-2xl font-semibold text-accent">Your draft is ready in make.com</p>
-            <a
-              href={state.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg bg-accent px-8 py-4 text-xl font-semibold text-white hover:bg-accent-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
+            <a href={state.url} target="_blank" rel="noopener noreferrer" className={btnPrimary}>
               Open the draft in make.com
             </a>
           </div>
@@ -222,14 +206,14 @@ export default function SuggestionsClient({ initialCandidates, periodStart, peri
       });
       const data = (await res.json()) as { ok: boolean; message?: string; candidates?: Candidate[]; complete?: boolean; since?: string };
       if (!res.ok || !data.ok) {
-        setProblem(`${data.message ?? 'Scout could not review the history just now.'} Please try again.`);
+        setProblem(data.message ?? 'Scout could not review the history just now.');
         return;
       }
       const list = data.complete ? (data.candidates ?? []) : await waitForSuggestions(data.since ?? new Date().toISOString());
-      if (!list) setProblem('Scout is taking longer than usual to review the history. Please try again.');
+      if (!list) setProblem('Scout is taking longer than usual to review the history.');
       else setCandidates(list);
     } catch {
-      setProblem('Scout could not review the history just now. Please try again.');
+      setProblem('Scout could not review the history just now.');
     } finally {
       setReviewing(false);
     }
@@ -237,20 +221,33 @@ export default function SuggestionsClient({ initialCandidates, periodStart, peri
 
   return (
     <div className="space-y-6">
-      <div className="flex min-h-14 flex-wrap items-center gap-4">
-        <button type="button" onClick={() => void review()} disabled={reviewing || drafting} className={primary}>
+      <div className="flex min-h-16 flex-wrap items-center gap-4">
+        <button type="button" onClick={() => void review()} disabled={reviewing || drafting} className={btnQuiet}>
           Review the last three weeks
         </button>
-        <p aria-live="polite" className={`text-lg ${reviewing ? 'animate-pulse text-accent' : 'text-muted'}`}>
+        <p aria-live="polite" className={reviewing ? `animate-pulse ${waiting}` : 'text-lg text-muted'}>
           {reviewing ? reviewingText : candidates.length > 0 ? `${candidates.length} suggestions, strongest first.` : ''}
         </p>
       </div>
       {problem && (
-        <p role="alert" className="rounded-lg bg-note px-6 py-4 text-lg">
-          {problem}
-        </p>
+        <div role="alert" className={errorPanel}>
+          <p>{problem}</p>
+          <button type="button" onClick={() => void review()} disabled={reviewing} className={btnPrimary}>
+            Try again
+          </button>
+        </div>
       )}
-      {!reviewing &&
+      {reviewing ? (
+        <div className={`flex min-h-64 items-center justify-center ${card}`}>
+          <p className={`animate-pulse ${waiting}`}>{reviewingText}</p>
+        </div>
+      ) : candidates.length === 0 ? (
+        <div className={`min-h-64 ${card}`}>
+          <p className="max-w-3xl text-xl text-muted">
+            No suggestions yet. Press Review the last three weeks, and the ranked cards appear here in about half a minute, strongest first.
+          </p>
+        </div>
+      ) : (
         candidates.map((c) => (
           <Card
             key={c.id}
@@ -259,7 +256,8 @@ export default function SuggestionsClient({ initialCandidates, periodStart, peri
             draftingElsewhere={drafting && states[c.id]?.kind !== 'drafting'}
             onChange={(s) => setStates((prev) => ({ ...prev, [c.id]: s }))}
           />
-        ))}
+        ))
+      )}
     </div>
   );
 }

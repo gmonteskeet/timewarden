@@ -1,13 +1,16 @@
 @import "tailwindcss";
 
-/* Workflow Scout: one accent colour (teal) for actual time, slate for expected time,
-   amber as the warning tone for time outside the role. Light theme only. */
+/* Workflow Scout: one accent colour (teal) for everything the person can act on, slate for
+   expected time, amber for time outside the role. Light theme only.
+   Colours that carry words have at least 4.5 to 1 contrast on white and on the track grey. */
 @theme {
   --color-accent: #0f766e;
   --color-accent-dark: #115e59;
   --color-actual: #0f766e;
   --color-expected: #94a3b8;
-  --color-outside: #d97706;
+  --color-outside: #b45309;
+  --color-warn: #92400e;
+  --color-danger: #b91c1c;
   --color-ink: #0f172a;
   --color-muted: #475569;
   --color-line: #e2e8f0;
