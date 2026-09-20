@@ -227,6 +227,16 @@ export interface InterviewReply extends WebhookReplyBase {
 /** MAKE_WEBHOOK_SUBMIT: employee submits the day. */
 export interface SubmitRequest {
   check_in_id: Uuid;
+  /**
+   * One entry per row the employee changed. `allocation_id` is normally the id of an existing
+   * `day_allocations` row.
+   *
+   * A role topic that Scout recorded no time for has no row to point at, so for those the screen
+   * sends the text `topic:` followed by the topic's id instead, and the server creates the row on
+   * submit. The shape of the request is deliberately unchanged, so nothing else has to know.
+   * Scenario six would not understand a `topic:` id, so if `MAKE_WEBHOOK_SUBMIT` is ever set, a
+   * submit carrying one is refused rather than sent on. See `frontend/lib/data.ts`.
+   */
   adjustments: { allocation_id: Uuid; minutes: number }[];
 }
 export type SubmitReply = WebhookReplyBase;

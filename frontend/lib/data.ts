@@ -31,6 +31,7 @@ import type {
   Topic,
   Uuid,
 } from './contract';
+import { NEW_TOPIC_PREFIX } from './allocation-rows';
 import { db } from './db';
 import * as fx from './fixtures';
 import * as make from './make';
@@ -274,7 +275,26 @@ function fxAllocations(checkIn: CheckIn, state: DemoState): DayAllocation[] {
   if (!adj) return base;
   const person = fx.people.find((p) => p.id === checkIn.person_id);
   const changed = base.map((a) => (a.id in adj ? { ...a, minutes: adj[a.id], employee_adjusted: a.minutes !== adj[a.id] || a.employee_adjusted } : a));
-  return fx.withPercents(changed, person?.working_minutes_per_day ?? 480);
+  // Rows the employee added for a topic Scout recorded nothing for, kept under a `topic:<id>` key.
+  const withARow = new Set(base.filter((a) => a.topic_id !== null).map((a) => a.topic_id));
+  const added = Object.entries(adj)
+    .filter(([key, minutes]) => key.startsWith(NEW_TOPIC_PREFIX) && minutes > 0)
+    .map(([key, minutes]) => ({ topic: fx.topics.find((t) => t.id === key.slice(NEW_TOPIC_PREFIX.length)), minutes }))
+    .filter((r) => r.topic !== undefined && !withARow.has(r.topic.id))
+    .map(({ topic, minutes }) => ({
+      id: `${NEW_TOPIC_PREFIX}${topic!.id}`,
+      check_in_id: checkIn.id,
+      person_id: checkIn.person_id,
+      day: checkIn.day,
+      topic_id: topic!.id,
+      label: topic!.name,
+      in_role: true,
+      minutes,
+      evidence: 'Added by the employee when reviewing the day.',
+      employee_adjusted: true,
+      created_at: checkIn.created_at,
+    }));
+  return fx.withPercents([...changed, ...added], person?.working_minutes_per_day ?? 480);
 }
 
 function fxView(checkIn: CheckIn, state: DemoState): CheckInView {
@@ -684,6 +704,61 @@ export async function sendInterviewAnswer(checkInId: Uuid, employeeText: string 
 }
 
 /**
+ * A row the employee added for a role topic the day has no allocation for. The screen names such a
+ * topic as `topic:<id>` in place of an allocation id, because there is no row to point at yet.
+ */
+interface AddedTopicRow {
+  topicId: Uuid;
+  name: string;
+  minutes: number;
+}
+
+/**
+ * Splits the corrections into changes to rows that exist and time added to topics that have none,
+ * refusing anything that does not belong to this person's own day. The rules are the same whether
+ * the day is written to the real database or to the demo state, so they live in one place.
+ */
+function readAdjustments(
+  adjustments: { allocation_id: Uuid; minutes: number }[],
+  allocations: DayAllocation[],
+  topics: Topic[],
+): { byId: Map<Uuid, number>; added: AddedTopicRow[] } {
+  const ids = new Set(allocations.map((a) => a.id));
+  const withARow = new Set(allocations.filter((a) => a.topic_id !== null).map((a) => a.topic_id as Uuid));
+  const byTopicId = new Map(topics.map((t) => [t.id, t]));
+  const byId = new Map<Uuid, number>();
+  const added: AddedTopicRow[] = [];
+
+  const wholeMinutes = (minutes: number) => {
+    if (!Number.isInteger(minutes) || minutes < 0) throw new InvalidRequest('Corrections must be whole minutes of zero or more.');
+  };
+  for (const adj of adjustments) {
+    // A row that already exists is an ordinary correction, whatever its id looks like. This is also
+    // what makes a row added on an earlier submit behave like any other once the manager returns
+    // the day: by then it has a row, so it is corrected rather than added a second time. The order
+    // of these two refusals is the order the old path used, so its messages are unchanged.
+    if (ids.has(adj.allocation_id)) {
+      wholeMinutes(adj.minutes);
+      byId.set(adj.allocation_id, adj.minutes);
+      continue;
+    }
+    if (!adj.allocation_id?.startsWith(NEW_TOPIC_PREFIX)) {
+      throw new InvalidRequest('One of the corrections does not belong to this day.');
+    }
+    wholeMinutes(adj.minutes);
+    // Time added to a topic with no row: it must be a topic of this person's own role, it must not
+    // already have a row for the day, and it may only be named once.
+    const topicId = adj.allocation_id.slice(NEW_TOPIC_PREFIX.length);
+    const topic = byTopicId.get(topicId);
+    if (!topic || withARow.has(topicId)) throw new InvalidRequest('One of the corrections does not belong to this day.');
+    if (added.some((a) => a.topicId === topicId)) throw new InvalidRequest('One of the corrections does not belong to this day.');
+    // Zero means the employee moved the row back down again, so there is nothing to add.
+    if (adj.minutes > 0) added.push({ topicId, name: topic.name, minutes: adj.minutes });
+  }
+  return { byId, added };
+}
+
+/**
  * The employee submits their day. Adjustments must belong to this check in, be whole minutes of
  * zero or more, and leave the day adding up to the working minutes exactly.
  */
@@ -694,21 +769,22 @@ export async function submitCheckIn(checkInId: Uuid, adjustments: { allocation_i
     throw new InvalidRequest(checkIn.status === 'submitted' || checkIn.status === 'approved' ? 'This day has already been sent.' : 'The summary for this day is not ready yet.');
   }
   const allocations = fxAllocations(checkIn, state);
-  const ids = new Set(allocations.map((a) => a.id));
-  for (const adj of adjustments) {
-    if (!ids.has(adj.allocation_id)) throw new InvalidRequest('One of the corrections does not belong to this day.');
-    if (!Number.isInteger(adj.minutes) || adj.minutes < 0) throw new InvalidRequest('Corrections must be whole minutes of zero or more.');
-  }
   const person = fx.people.find((p) => p.id === session.person_id)!;
-  const byId = new Map(adjustments.map((a) => [a.allocation_id, a.minutes]));
-  const total = allocations.reduce((s, a) => s + (byId.get(a.id) ?? a.minutes), 0);
+  const { byId, added } = readAdjustments(adjustments, allocations, fxTopics(person.role_id));
+  const total =
+    allocations.reduce((s, a) => s + (byId.get(a.id) ?? a.minutes), 0) + added.reduce((s, a) => s + a.minutes, 0);
   if (total !== person.working_minutes_per_day) {
     throw new InvalidRequest(`The day adds up to ${total} minutes, but it needs to add up to ${person.working_minutes_per_day} minutes.`);
   }
 
   await make.submitDay({ check_in_id: checkInId, adjustments });
   const st: DemoCheckInState = state.c[checkInId] ?? { n: 0, a: [] };
-  st.adj = { ...(st.adj ?? {}), ...Object.fromEntries(byId) };
+  // Added rows are kept under their `topic:<id>` key, and fxAllocations builds the row from it.
+  st.adj = {
+    ...(st.adj ?? {}),
+    ...Object.fromEntries(byId),
+    ...Object.fromEntries(added.map((a) => [`${NEW_TOPIC_PREFIX}${a.topicId}`, a.minutes])),
+  };
   st.sub = Date.now();
   state.c[checkInId] = st;
   await writeDemoState(state);
@@ -1140,23 +1216,24 @@ async function liveSubmit(session: Session, checkInId: Uuid, adjustments: { allo
   }
   const person = (await livePerson(session.person_id))!;
   const allocations = await liveAllocations([checkInId]);
-  const ids = new Set(allocations.map((a) => a.id));
-  for (const adj of adjustments) {
-    if (!ids.has(adj.allocation_id)) throw new InvalidRequest('One of the corrections does not belong to this day.');
-    if (!Number.isInteger(adj.minutes) || adj.minutes < 0) throw new InvalidRequest('Corrections must be whole minutes of zero or more.');
-  }
-  const byId = new Map(adjustments.map((a) => [a.allocation_id, a.minutes]));
-  const total = allocations.reduce((s, a) => s + (byId.get(a.id) ?? a.minutes), 0);
+  const { byId, added } = readAdjustments(adjustments, allocations, await liveTopics([person.role_id]));
+  const total =
+    allocations.reduce((s, a) => s + (byId.get(a.id) ?? a.minutes), 0) + added.reduce((s, a) => s + a.minutes, 0);
   if (total !== person.working_minutes_per_day) {
     throw new InvalidRequest(`The day adds up to ${total} minutes, but it needs to add up to ${person.working_minutes_per_day} minutes.`);
   }
   // Through make.com when scenario six exists. Without it, AGENTS.md section 6 lets the server write
   // the day straight to the database.
   if (make.hasWebhook('MAKE_WEBHOOK_SUBMIT')) {
+    // Scenario six expects every adjustment to name an existing row, so it would drop time added to
+    // a topic that has none. Refuse plainly rather than send a day the scenario would get wrong.
+    if (added.length > 0) {
+      throw new InvalidRequest('Time added to a topic with no recorded time cannot be sent just now. Take that time back off and send the day, and tell your manager.');
+    }
     await make.submitDay({ check_in_id: checkInId, adjustments });
     return;
   }
-  await liveWriteSubmit(checkInId, allocations, byId, person.working_minutes_per_day);
+  await liveWriteSubmit(checkInId, checkIn, person, allocations, byId, added);
 }
 
 /**
@@ -1177,8 +1254,49 @@ function dayPercents(rows: { id: Uuid; minutes: number }[], workingMinutes: numb
  * written with the same values whoever clicks, so a double click is harmless, and the status only
  * moves when it is still summarised or returned, so the day is sent once.
  */
-async function liveWriteSubmit(checkInId: Uuid, allocations: DayAllocation[], byId: Map<Uuid, number>, workingMinutes: number): Promise<void> {
-  const rows = allocations.map((a) => ({ ...a, newMinutes: byId.get(a.id) ?? a.minutes }));
+async function liveWriteSubmit(
+  checkInId: Uuid,
+  checkIn: CheckIn,
+  person: Person,
+  allocations: DayAllocation[],
+  byId: Map<Uuid, number>,
+  added: AddedTopicRow[],
+): Promise<void> {
+  const workingMinutes = person.working_minutes_per_day;
+  // Time the employee added to a topic with no row is written first, so the percentages below are
+  // worked out over the whole day at once. Repeating a half finished submit updates the row it
+  // already made rather than making a second one.
+  for (const row of added) {
+    const existing = await run<Row[]>(
+      'look for a row already added for this topic',
+      db().from('day_allocations').select('id').eq('check_in_id', checkInId).eq('topic_id', row.topicId).limit(1),
+    );
+    const values: Row = {
+      minutes: row.minutes,
+      label: row.name,
+      in_role: true,
+      evidence: 'Added by the employee when reviewing the day.',
+      employee_adjusted: true,
+    };
+    if (existing[0]) {
+      await run('update a row the employee added', db().from('day_allocations').update(values).eq('id', existing[0].id as Uuid));
+    } else {
+      await run(
+        'add a row for a topic with no recorded time',
+        db().from('day_allocations').insert({
+          ...values,
+          check_in_id: checkInId,
+          person_id: checkIn.person_id,
+          day: checkIn.day,
+          topic_id: row.topicId,
+          percent: 0,
+        }),
+      );
+    }
+  }
+  // Read the day back so the added rows carry their real ids into the percentages below.
+  const everything = added.length > 0 ? await liveAllocations([checkInId]) : allocations;
+  const rows = everything.map((a) => ({ ...a, newMinutes: byId.get(a.id) ?? a.minutes }));
   const percents = dayPercents(rows.map((r) => ({ id: r.id, minutes: r.newMinutes })), workingMinutes);
   for (const r of rows) {
     const changed = r.newMinutes !== r.minutes;
