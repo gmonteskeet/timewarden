@@ -294,7 +294,9 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+              // Enter starts a new line, so a long answer can be written in paragraphs. Command
+              // with Enter, or Control with Enter, sends without reaching for the mouse.
+              if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && !e.nativeEvent.isComposing) {
                 e.preventDefault();
                 submitDraft();
               }
@@ -303,7 +305,7 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
             className={`w-full resize-y rounded-xl border border-line bg-white px-5 py-4 text-xl leading-relaxed ${focusRing}`}
           />
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <p className="text-base text-muted">Enter sends. Shift and Enter starts a new line.</p>
+            <p className="text-base text-muted">Enter starts a new line. Press Send when you are ready.</p>
             <button type="button" onClick={submitDraft} disabled={busy || draft.trim().length === 0} className={btnPrimary}>
               Send
             </button>

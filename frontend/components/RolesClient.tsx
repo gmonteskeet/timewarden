@@ -3,7 +3,7 @@
 // Role cards: Scout's proposed split per role, which the manager can adjust and approve.
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { btnLink, btnPrimary, btnQuiet, btnQuietSmall, card, errorPanel, focusRing, waiting, warning } from '@/components/ui';
 import { approvedText } from '@/lib/dates';
 
@@ -21,20 +21,71 @@ export interface RoleCardData {
 const STEP = 5;
 const clamp = (n: number) => Math.max(0, Math.min(100, n));
 
+// On live data the approval is written by make.com, so the reply can arrive a moment before the
+// database shows it. When that happens the card waits for the real approved line rather than
+// inventing one from what it hoped had happened.
+const APPROVAL_WAIT_MS = 10_000;
+const APPROVAL_POLL_MS = 1_500;
+const APPROVED_MESSAGE_MS = 5_000;
+
 function RoleCard({ role }: { role: RoleCardData }) {
+  const router = useRouter();
   const [values, setValues] = useState<Record<string, number>>(() => Object.fromEntries(role.topics.map((t) => [t.id, t.expected])));
   const [approvedLabel, setApprovedLabel] = useState<string | null>(role.approved_label);
   const [editing, setEditing] = useState(role.approved_label === null);
   const [sending, setSending] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
+  const [justApproved, setJustApproved] = useState(false);
+  // True only while this card is waiting for the database to show the approval it has just sent.
+  const waitingRef = useRef(false);
 
   const total = role.topics.reduce((s, t) => s + (values[t.id] ?? 0), 0);
   const reason = total === 100 ? null : `The split adds up to ${total} percent. It needs to add up to exactly 100 before you can approve it.`;
   const set = (id: string, n: number) => setValues((prev) => ({ ...prev, [id]: clamp(Math.round(n)) }));
 
+  /** The page has been read again and now carries the approved line: show the approved state. */
+  useEffect(() => {
+    if (!waitingRef.current || !role.approved_label) return;
+    waitingRef.current = false;
+    setApprovedLabel(role.approved_label);
+    setEditing(false);
+    setJustApproved(true);
+    setSending(false);
+  }, [role.approved_label]);
+
+  /** "Split approved." is a confirmation, not a state, so it goes away on its own. */
+  useEffect(() => {
+    if (!justApproved) return;
+    const timer = setTimeout(() => setJustApproved(false), APPROVED_MESSAGE_MS);
+    return () => clearTimeout(timer);
+  }, [justApproved]);
+
+  useEffect(() => () => { waitingRef.current = false; }, []);
+
+  /** Reads the page again every second and a half until the approved line appears, or gives up. */
+  async function waitForApproval(): Promise<boolean> {
+    const startedAt = Date.now();
+    while (waitingRef.current && Date.now() - startedAt < APPROVAL_WAIT_MS) {
+      await new Promise((resolve) => setTimeout(resolve, APPROVAL_POLL_MS));
+      if (!waitingRef.current) return true;
+      router.refresh();
+    }
+    // One last moment for the read that was asked for just before the time ran out.
+    await new Promise((resolve) => setTimeout(resolve, APPROVAL_POLL_MS));
+    return !waitingRef.current;
+  }
+
+  function showApproved(name: string | null, at: string) {
+    setApprovedLabel(approvedText(name, at));
+    setEditing(false);
+    setJustApproved(true);
+    setSending(false);
+  }
+
   async function approve() {
     setSending(true);
     setProblem(null);
+    setJustApproved(false);
     try {
       const res = await fetch(`/api/manager/roles/${encodeURIComponent(role.id)}/approve`, {
         method: 'POST',
@@ -45,17 +96,27 @@ function RoleCard({ role }: { role: RoleCardData }) {
       const data = (await res.json()) as {
         ok: boolean;
         message?: string;
-        role?: { role: { split_approved_at: string | null }; approved_by: { full_name: string } | null };
+        role?: { role: { split_status?: string; split_approved_at: string | null }; approved_by: { full_name: string } | null };
       };
       if (!res.ok || !data.ok || !data.role) {
         setProblem(data.message ?? 'The split could not be approved just now. Your numbers are safe.');
+        setSending(false);
         return;
       }
-      setApprovedLabel(approvedText(data.role.approved_by?.full_name ?? null, data.role.role.split_approved_at));
-      setEditing(false);
+      const approvedAt = data.role.role.split_approved_at;
+      if (data.role.role.split_status === 'approved' && approvedAt) {
+        showApproved(data.role.approved_by?.full_name ?? null, approvedAt);
+        return;
+      }
+      // The reply came back before the database showed the change. Wait for it.
+      waitingRef.current = true;
+      if (await waitForApproval()) return;
+      waitingRef.current = false;
+      setProblem('Scout is taking longer than usual to record the approval. Your numbers are safe.');
+      setSending(false);
     } catch {
+      waitingRef.current = false;
       setProblem('The split could not be approved just now. Your numbers are safe.');
-    } finally {
       setSending(false);
     }
   }
@@ -155,8 +216,12 @@ function RoleCard({ role }: { role: RoleCardData }) {
             </button>
           </div>
         )}
+        {justApproved && !editing && <p className="text-lg font-semibold text-success">Split approved.</p>}
       </footer>
       )}
+      <p aria-live="polite" className="sr-only">
+        {justApproved ? 'Split approved.' : ''}
+      </p>
       {problem && (
         <div role="alert" className={`mt-4 ${errorPanel}`}>
           <p>{problem}</p>
