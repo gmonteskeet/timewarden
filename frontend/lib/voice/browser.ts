@@ -30,10 +30,26 @@ function recognitionConstructor(): RecognitionConstructor | null {
 
 let active: Recognition | null = null;
 
-function britishVoice(): SpeechSynthesisVoice | null {
-  if (typeof window === 'undefined' || !window.speechSynthesis) return null;
-  const voices = window.speechSynthesis.getVoices();
-  return voices.find((v) => v.lang === 'en-GB') ?? voices.find((v) => v.lang.startsWith('en-GB')) ?? null;
+/** The browser's voices. Chrome loads them after the page, so wait briefly for them if needed. */
+function loadVoices(): Promise<SpeechSynthesisVoice[]> {
+  const synth = window.speechSynthesis;
+  const now = synth.getVoices();
+  if (now.length > 0) return Promise.resolve(now);
+  return new Promise((resolve) => {
+    const done = () => {
+      synth.removeEventListener('voiceschanged', done);
+      resolve(synth.getVoices());
+    };
+    synth.addEventListener('voiceschanged', done);
+    setTimeout(done, 1500);
+  });
+}
+
+/** Prefer Google UK English, then any other British English voice, then the browser's default (null). */
+async function britishVoice(): Promise<SpeechSynthesisVoice | null> {
+  const voices = await loadVoices();
+  const british = (v: SpeechSynthesisVoice) => v.lang.replace('_', '-').toLowerCase().startsWith('en-gb');
+  return voices.find((v) => v.name.startsWith('Google UK English')) ?? voices.find(british) ?? null;
 }
 
 const errorMessages: Record<string, string> = {
@@ -78,13 +94,13 @@ export const browserVoice: Voice = {
     recognition.start();
   },
 
-  speak(text: string) {
-    return new Promise<void>((resolve) => {
-      if (typeof window === 'undefined' || !window.speechSynthesis) return resolve();
+  async speak(text: string) {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    const voice = await britishVoice();
+    await new Promise<void>((resolve) => {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-GB';
-      const voice = britishVoice();
       if (voice) utterance.voice = voice;
       utterance.onend = () => resolve();
       utterance.onerror = () => resolve();

@@ -14,10 +14,22 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - Sunday 20 September, 10:30: code freeze. 11:30: submit. 12:00: deadline.
 
 ## Current position
-- Last update: Saturday 19 September 2026, 17:55 Madrid (task M5 reviewed, manual Google steps done).
+- Last update: Sunday 20 September 2026, 02:10 Madrid.
+- BIG CHANGE: Gerson is unavailable until after the deadline. Marcus now owns both workstreams and every folder. Deadline Sunday 12:00, submit 11:30, code freeze 10:30. Time must be kept for two sponsor tests (names to come from Marcus) and for aesthetic changes.
+- Way of working from now: larger batches, two Claude Code sessions at once. Session A in `repo/` (back end, make.com, live data). Session B in a second copy, the git worktree `repo-b/` (interface polish and documents, fake data only). They must never edit the same files: session B does not touch `frontend/lib/contract.ts`, `data.ts` or `make.ts`.
+- Running now: session A `cli_prompts/sun_a_state_of_the_world.md` (read only check of make.com, the live database, deployment and the repository, report in `cli_prompts/sunday_state_report.md`). Session B `cli_prompts/sun_b_docs_and_polish.md` (report in `cli_prompts/sunday_batch_b_report.md`).
+- Open questions that decide the plan: does Marcus have a login to Gerson's make.com account, the Supabase dashboard and Vercel, or only the API token and the service key? Without the Supabase dashboard nobody can apply migrations 0004 and 0005. Fallback already chosen if so: move the sums for scenarios 7 and 8 into the Next.js server so no new database functions are needed, and keep make.com for the webhook, the filter, the AI call, the JSON handling, the draft creation and the reply.
+- Found at 02:00: `docs/decisions.md` decision 16 says Gerson switched the scenarios to make.com's own AI provider because there was no Anthropic key. The pitch must not claim Claude runs inside make.com unless that changes.
+
+## Earlier position (Saturday evening, kept for the record)
+- Last update: Saturday 19 September 2026, 19:00 Madrid (task M8 code reviewed).
+- Last update: Saturday 19 September 2026, 19:40 Madrid.
 - The plan changed to version 2 at 17:00 after the make.com mentor session. Read `docs/CHANGES_V2.md` first, then `AGENTS.md` and `docs/BUILD_MARCUS.md`.
-- In progress: task M6, the check in (interview and summary), in the CLI on branch `marcus/m6-check-in`.
-- Against the plan: about two hours ahead. Task M6 was planned to start at 20:00.
+- Where we are: the whole story runs on fake data. On live data the home page, sign in, Approvals, Suggestions and Elena's check in page load from Gerson's database. The Roles page crashed on an empty date and is fixed on branch `marcus/m8b-empty-dates`.
+- Biggest risk: at about 19:25 Gerson's coding assistant ran out of allowance, with his make.com scenarios only partly built. No webhook answers yet. Agreed response: Gerson builds the interview turn and day summary scenarios by hand. Marcus's CLI builds scenario 7 (suggest workflows) and then scenario 8 (decision and draft creation) in Gerson's make.com account, zone eu1, through a token Gerson created. The token is stored in Marcus's user settings as the MCP server `make-gerson`, outside the repository. Gerson deletes the token on Sunday after the demo. The CLI must never use the other make.com connections on Marcus's machine.
+- Next: merge the empty dates fix, restart the CLI so it sees `make-gerson`, run `cli_prompts/g11_suggest_scenario.md`. That task needs one manual step from Gerson or Marcus: pasting `supabase/migrations/0004_team_history.sql` into the Supabase SQL editor.
+- Still to do after that: scenario 8, moving submit and day approval to direct database writes so scenario 6 can be dropped (needs Gerson to record it in `docs/decisions.md`), the first live interview turn once Gerson's scenario answers, then task M9 (SLNG voice) and task M10 (pitch) if time allows.
+- Secrets rule: values go from Gerson's direct message into Marcus's note and then into `frontend/.env.local` or the CLI's own settings only. Never into chat, GitHub or this log.
 - The long CLI prompts are kept outside the repository, in the workspace folder `02_projects/timewarden/cli_prompts/`, because long pastes into the CLI get cut off. Marcus pastes one line telling the CLI to read the file.
 
 ## Task record
@@ -67,8 +79,33 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - To carry forward: four pages still say "This screen is being built today." Task M6 removes it from the check in page and task M7 from the three manager pages.
 - Next: task M6, the check in.
 
+### Task M6, the check in (interview and summary)
+- Status: reviewed, pass. Pull request 15, branch `marcus/m6-check-in`. Marcus to merge after his own look at the screens.
+- Checked in the actual files: three server routes (one interview turn, the status, the submit), each refusing anyone but the owner, with plain messages. The submit checks the day still adds up to the working minutes. The voice layer has one interface with a typing mode and a browser voice mode. Demo progress is kept in a signed cookie. No new packages, no secrets, no em dashes, only `frontend/` and `docs/` touched. The CLI reports lint, build and all server tests passing.
+- Not yet tested by anyone: Speak mode in a real browser, and how the screens look. Marcus to try both.
+- Next: task M7, the manager screens.
+
+### Task M7, the manager screens
+- Status: reviewed, pass. Pull request 18, branch `marcus/m7-manager`. Marcus to merge after his own look.
+- Checked in the actual files: six manager routes, each checking for a manager first. A manager sees a team member's day only once it is submitted, approved or returned, and can decide only on submitted days that are not their own. The CLI found and closed a privacy gap from task M6, where a manager could open an unsubmitted day by typing its address. No "being built today" lines left. The voice now prefers Chrome's "Google UK English". No new packages, no secrets, no em dashes, only `frontend/` and `docs/` touched. The CLI reports lint, build and the whole story passing on fake data.
+- Not yet tested by anyone: how the three manager screens look in a real browser.
+- Next: task M8, real data.
+
+### Task M8, real data
+- Status: code reviewed, pass. Pull request 20, branch `marcus/m8-real-data`. Live test pending, so the task is not ticked.
+- Checked in the actual files: a server only database client using the service key, no anonymous key anywhere, no secrets or webhook addresses in the changes, `frontend/.env.local` still ignored. Demo sign in on real data goes through a server route by person and works only when `DEMO_SIGN_IN` is "true", so no real access token appears in a page. Submit and day approval go through make.com only. A footer line says whether the app is on live or sample data. One new name, `DEMO_SIGN_IN`, was added to the shared `.env.example`.
+- The CLI listed nine differences between Gerson's files and `AGENTS.md`. None blocks us. The ones that matter: make.com's database function records the employee's answer, so an answer must never be resent after a lost reply. The build sheets for scenarios 1, 2, 6, 7 and 8 do not exist yet, so roles, submit, approval, suggestions and the draft cannot be tested live until Gerson builds them.
+- Next: the live test, then task M9, the voice upgrade, or task M10, the pitch outline, depending on the time.
+
+### Work done while Marcus was away, reviewed Saturday 19 September at 20:05
+- Pull request 24, submit and day approval straight to the database when scenario 6 is absent: reviewed, pass. Rights are checked before any write. The day must still add up to the working minutes. The status only moves when it is still in the expected state, so a double click cannot send or approve a day twice. Only `frontend/lib/data.ts`, `frontend/lib/make.ts` and one line in the build file changed. No secrets. Open point: the direct writes have not yet run through the real Supabase interface, so the first live submit and the first live approval must be watched. Marcus to merge on return.
+- Pull request 23 (draft), scenario 8 part one: the database file 0005 reviewed, pass. No destructive statements, service key only, and it locks the suggestion while a decision runs so a double click returns the same draft link. Do not merge until the scenario itself is built and tested.
+- Pull request 22, scenario 7: already passed. Merge after the one real test call succeeds.
+
 ## Parked
-- Nothing yet.
+- Polish for Sunday: after a correction on the summary page, the sentence above the bars still quotes Scout's original minutes while the bar shows the corrected ones.
+- Polish for Sunday: Marcus has other aesthetic points to list.
+- The pitch outline. A first draft from Marcus's own answers is in the workspace at `02_projects/timewarden/pitch_outline_draft.md`, outside the repository. Marcus still has to read it aloud with a timer and choose the closing line. It goes into the repository in task M10.
 
 ## Waiting on Gerson
 - Gerson to read `docs/CHANGES_V2.md` and agree the new `AGENTS.md`.

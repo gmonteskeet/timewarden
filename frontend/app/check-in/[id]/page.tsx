@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import InterviewClient from "@/components/InterviewClient";
-import { getCheckIn, getSuggestedAnswer, listMyCheckIns } from "@/lib/data";
+import { demoDay, findMyCheckInForDay, getCheckIn, getSuggestedAnswer } from "@/lib/data";
 import { dayLabel } from "@/lib/dates";
 import { orRefuse } from "@/lib/guard";
 import { requireSession } from "@/lib/session";
@@ -9,18 +9,25 @@ export default async function CheckInPage({ params }: PageProps<"/check-in/[id]"
   const session = await requireSession();
   const { id } = await params;
 
-  // "My check in" in the top bar points here: open the newest check in that is not yet approved.
+  // "My check in" in the top bar points here: open the check in for the demo day, if one exists.
   if (id === "current") {
-    const mine = await orRefuse(listMyCheckIns());
-    const open = mine.find((c) => c.status !== "approved") ?? mine[0];
-    redirect(open ? `/check-in/${open.id}` : "/");
+    const mine = await orRefuse(findMyCheckInForDay(await demoDay()));
+    if (!mine) {
+      return (
+        <div className="max-w-3xl space-y-4">
+          <h1 className="text-4xl font-bold">My check in</h1>
+          <p className="text-xl">There is no check in for you yet. It arrives with your morning email.</p>
+        </div>
+      );
+    }
+    redirect(`/check-in/${encodeURIComponent(mine.id)}`);
   }
 
   const view = await orRefuse(getCheckIn(id));
   const summaryPath = `/check-in/${encodeURIComponent(id)}/summary`;
   // Only the employee takes their own interview. Anyone else allowed to see the day sees the summary.
   if (view.person.id !== session.person_id) redirect(summaryPath);
-  if (["summarised", "submitted", "approved"].includes(view.check_in.status)) redirect(summaryPath);
+  if (["summarised", "submitted", "approved", "returned"].includes(view.check_in.status)) redirect(summaryPath);
 
   const suggestion = await orRefuse(getSuggestedAnswer(id));
   const firstName = view.person.full_name.split(" ")[0];

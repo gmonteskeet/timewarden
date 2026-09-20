@@ -41,21 +41,41 @@ async function callWebhook<Reply>(envName: WebhookEnv, body: unknown, timeoutMs:
   const key = process.env.SCOUT_SHARED_SECRET;
   if (!url) throw new Error(`${envName} is not set.`);
   if (!key) throw new Error('SCOUT_SHARED_SECRET is not set.');
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', 'x-scout-key': key },
-    body: JSON.stringify(body),
-    signal: AbortSignal.timeout(timeoutMs),
-    cache: 'no-store',
-  });
+  // Errors name the setting, never its value: a webhook address is a secret.
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-scout-key': key },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(timeoutMs),
+      cache: 'no-store',
+    });
+  } catch (error) {
+    const timedOut = error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError');
+    throw new Error(timedOut ? `make.com did not answer ${envName} within ${timeoutMs / 1000} seconds.` : `make.com could not be reached for ${envName}.`);
+  }
   if (!response.ok) throw new Error(`make.com replied ${response.status} to ${envName}.`);
-  const reply = (await response.json()) as Reply & { ok?: boolean };
+  let reply: Reply & { ok?: boolean };
+  try {
+    reply = (await response.json()) as Reply & { ok?: boolean };
+  } catch {
+    throw new Error(`make.com sent something that is not JSON to ${envName}.`);
+  }
   if (reply.ok !== true) throw new Error(`make.com did not confirm ${envName}.`);
   return reply;
 }
 
 const SLOW = 40_000;
 const INTERVIEW = 12_000;
+
+/**
+ * Whether a webhook address is configured. Submit and day approval may be written straight to the
+ * database when their scenario does not exist (AGENTS.md section 6); the caller decides.
+ */
+export function hasWebhook(envName: WebhookEnv): boolean {
+  return !!process.env[envName];
+}
 
 export async function syncRoles(body: RolesSyncRequest): Promise<RolesSyncReply> {
   if (fixturesMode()) {

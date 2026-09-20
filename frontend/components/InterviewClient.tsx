@@ -39,22 +39,28 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
   const router = useRouter();
   const [turns, setTurns] = useState<InterviewTurnView[]>(initialTurns);
   const [draft, setDraft] = useState('');
+  const lastInitial = initialTurns[initialTurns.length - 1];
+  // If the page opens with the employee's answer last, Scout's reply to it was lost on the way.
+  const replyLost = lastInitial?.speaker === 'employee';
   const [phase, setPhase] = useState<Phase>(() => {
-    const last = initialTurns[initialTurns.length - 1];
-    if (!last) return 'starting';
-    return last.kind === 'closing' ? 'preparing' : 'asking';
+    if (!lastInitial) return 'starting';
+    if (replyLost) return 'failed';
+    return lastInitial.kind === 'closing' ? 'preparing' : 'asking';
   });
-  const [problem, setProblem] = useState<string | null>(null);
+  const [problem, setProblem] = useState<string | null>(replyLost ? 'Scout has not answered your last message yet.' : null);
   const [suggestion, setSuggestion] = useState<string | null>(initialSuggestion);
   const [inputMode, setInputMode] = useState<'type' | 'speak'>(() => (defaultVoiceMode() === 'text' ? 'type' : 'speak'));
   const [listening, setListening] = useState(false);
   const [voiceNotice, setVoiceNotice] = useState<string | null>(null);
-  const [lastSent, setLastSent] = useState<string | null>(null);
+  const [lastSent, setLastSent] = useState<string | null>(replyLost ? lastInitial.text : null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const scoutTurns = turns.filter((t) => t.speaker === 'scout');
   const current = scoutTurns[scoutTurns.length - 1];
   const earlier = current ? turns.filter((t) => t.turn_no < current.turn_no) : [];
+  // An answer already saved after the current question, while Scout's reply is awaited.
+  const pendingSaved = current ? turns.find((t) => t.speaker === 'employee' && t.turn_no > current.turn_no) : undefined;
+  const shownAnswer = pendingSaved?.text ?? lastSent;
   const questionNumber = scoutTurns.filter((t) => t.kind !== 'closing').length;
 
   const speakAloud = useCallback(
@@ -211,10 +217,10 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
         ) : (
           <p className="text-2xl text-muted">Scout is reading your calendar and calls for the day.</p>
         )}
-        {phase === 'thinking' && lastSent && (
+        {(phase === 'thinking' || phase === 'failed') && shownAnswer && (
           <p className="mt-6 ml-10 rounded-lg bg-track px-5 py-3 text-lg">
             <span className="font-semibold">You: </span>
-            {lastSent}
+            {shownAnswer}
           </p>
         )}
         {busy && <p className="mt-6 animate-pulse text-xl font-medium text-accent">Scout is thinking</p>}
@@ -316,7 +322,7 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
               }}
               className="text-base font-medium text-accent underline focus-visible:outline-3 focus-visible:outline-accent"
             >
-              Use the scripted answer
+              Use Elena&apos;s scripted answer
             </button>
           )}
         </section>

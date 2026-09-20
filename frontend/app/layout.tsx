@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Link from "next/link";
-import { getCurrentPerson } from "@/lib/data";
+import NavLinks from "@/components/NavLinks";
+import { dataModeLabel, getCurrentPerson } from "@/lib/data";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,13 +35,7 @@ async function TopBar() {
           <Link href="/" className="text-2xl font-bold text-accent">
             Workflow Scout
           </Link>
-          <nav aria-label="Main" className="flex gap-6 text-lg">
-            {links.map((l) => (
-              <Link key={l.href} href={l.href} className="font-medium text-ink hover:text-accent">
-                {l.label}
-              </Link>
-            ))}
-          </nav>
+          <NavLinks links={links} />
         </div>
         {current && (
           <div className="flex items-center gap-5">
@@ -60,12 +55,22 @@ async function TopBar() {
   );
 }
 
+async function Footer() {
+  const label = await dataModeLabel();
+  return (
+    <footer className="border-t border-line bg-white">
+      <p className="mx-auto max-w-6xl px-8 py-3 text-base text-muted">{label}</p>
+    </footer>
+  );
+}
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en-GB" className={`${geistSans.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <TopBar />
         <main className="mx-auto w-full max-w-6xl flex-1 px-8 py-10">{children}</main>
+        <Footer />
       </body>
     </html>
   );
