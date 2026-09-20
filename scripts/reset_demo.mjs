@@ -101,15 +101,29 @@ const roles = await call('put the roles back to proposed', 'roles?id=not.is.null
   body: { split_status: 'proposed', split_approved_by: null, split_approved_at: null },
 });
 
-const topics = await call('read the topics', 'topics?select=id,expected_percent,proposed_percent');
+// All of a role's shares go back in one call. A role's shares must always add up to 100, so
+// writing them one at a time would break that rule half way through.
+const topics = await call('read the topics', 'topics?select=id,role_id,name,expected_percent,proposed_percent');
+const toReset = topics.filter((t) => Number(t.expected_percent) !== Number(t.proposed_percent));
 let topicsChanged = 0;
-for (const topic of topics) {
-  if (Number(topic.expected_percent) === Number(topic.proposed_percent)) continue;
-  await call('put a topic back to its proposed share', `topics?id=eq.${topic.id}`, {
-    method: 'PATCH',
-    body: { expected_percent: topic.proposed_percent },
-  });
-  topicsChanged += 1;
+if (toReset.length > 0) {
+  const roleIds = [...new Set(toReset.map((t) => t.role_id))];
+  for (const roleId of roleIds) {
+    const rows = topics
+      .filter((t) => t.role_id === roleId)
+      .map((t) => ({ id: t.id, role_id: t.role_id, name: t.name, expected_percent: t.proposed_percent }));
+    await fetch(`${url}/rest/v1/topics?on_conflict=id`, {
+      method: 'POST',
+      headers: { ...headers, Prefer: 'resolution=merge-duplicates,return=representation' },
+      body: JSON.stringify(rows),
+    }).then(async (r) => {
+      if (!r.ok) {
+        console.error(`Could not put a role's shares back: the database replied ${r.status}. ${(await r.text()).slice(0, 200)}`);
+        process.exit(1);
+      }
+    });
+    topicsChanged += rows.filter((row) => toReset.some((t) => t.id === row.id)).length;
+  }
 }
 
 // 3. Approvals and suggestions ----------------------------------------------

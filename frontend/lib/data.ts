@@ -769,6 +769,15 @@ export async function approveRoleSplit(roleId: Uuid, topics: { topic_id: Uuid; e
   await writeDemoState(state);
 }
 
+/**
+ * Whether reading the role documents again is switched on. Scenario one needs a person to connect
+ * the document store in make.com, so it may not exist. When it does not, the Roles page says
+ * plainly that Scout read the documents when the company was set up, and offers no button.
+ */
+export function canRereadRoleDocuments(): boolean {
+  return fixturesMode() || !!process.env.MAKE_WEBHOOK_ROLES_SYNC;
+}
+
 /** Asks Scout to read the role documents again and propose splits. */
 export async function rereadRoleDocuments(): Promise<RolesSyncReply> {
   const session = await asManager();
