@@ -23,11 +23,11 @@ function Bar({ percent, tone, text }: { percent: number; tone: 'expected' | 'act
   const colour = tone === 'expected' ? 'bg-expected' : tone === 'actual' ? 'bg-actual' : 'bg-outside';
   const width = Math.max(0, Math.min(100, percent));
   return (
-    <div className="flex items-center gap-3">
-      <div className="h-5 min-w-0 flex-1 rounded bg-track">
-        <div className={`h-5 rounded ${colour}`} style={{ width: `${width}%` }} />
+    <div className="scout-bar-line">
+      <div className="h-6 min-w-0 rounded-full bg-track">
+        <div className={`scout-bar-fill h-6 rounded-full ${colour}`} style={{ width: `${width}%` }} />
       </div>
-      <span className="w-[22rem] shrink-0 whitespace-nowrap text-lg tabular-nums text-ink">{text}</span>
+      <span className="whitespace-nowrap text-right text-lg tabular-nums text-ink">{text}</span>
     </div>
   );
 }
@@ -35,18 +35,18 @@ function Bar({ percent, tone, text }: { percent: number; tone: 'expected' | 'act
 function Row({ row, editable, step, audience, onMinutesChange }: { row: AllocationRow; editable: boolean; step: number; audience: 'self' | 'manager'; onMinutesChange?: (key: string, minutes: number) => void }) {
   const canEdit = editable && onMinutesChange && row.allocationId !== undefined;
   return (
-    <li className="border-t border-line py-4 first:border-t-0">
-      <div className="mb-2 flex min-h-12 flex-wrap items-center justify-between gap-3">
+    <li className="border-t border-line py-5 first:border-t-0">
+      <div className="mb-3 flex min-h-12 flex-wrap items-center justify-between gap-3">
         <p className="text-xl font-semibold text-ink">
           {row.label}
           {row.employeeAdjusted && (
-            <span className="ml-3 rounded bg-note px-2 py-0.5 text-base font-medium text-ink">
+            <span className="ml-3 inline-block rounded-full border border-accent/15 bg-accent-soft px-3 py-0.5 text-base font-medium text-accent">
               {audience === 'self' ? 'You corrected this' : 'Corrected by the employee'}
             </span>
           )}
         </p>
         {canEdit && (
-          <div className="flex items-center gap-2">
+          <div className="scout-stepper items-center">
             <button
               type="button"
               className={btnQuietSmall}
@@ -67,7 +67,7 @@ function Row({ row, editable, step, audience, onMinutesChange }: { row: Allocati
           </div>
         )}
       </div>
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         {row.expectedPercent !== null && <Bar percent={row.expectedPercent} tone="expected" text={`Expected ${row.expectedPercent}%`} />}
         <Bar
           percent={row.percent}
@@ -95,12 +95,12 @@ export default function AllocationBars({ rows, periodLabel, audience = 'self', e
 
   return (
     <section aria-label={`Expected against actual time, ${periodLabel}`} className={card}>
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-2xl font-semibold text-ink">Expected against actual: {periodLabel}</h2>
         <div className="flex flex-wrap gap-5 text-base text-muted">
-          <span className="flex items-center gap-2"><span className="inline-block h-4 w-8 rounded bg-expected" />Expected long term share</span>
-          <span className="flex items-center gap-2"><span className="inline-block h-4 w-8 rounded bg-actual" />Actual share</span>
-          <span className="flex items-center gap-2"><span className="inline-block h-4 w-8 rounded bg-outside" />Outside the role</span>
+          <span className="flex items-center gap-2"><span className="inline-block h-3 w-7 rounded-full bg-expected" />Expected long term share</span>
+          <span className="flex items-center gap-2"><span className="inline-block h-3 w-7 rounded-full bg-actual" />Actual share</span>
+          <span className="flex items-center gap-2"><span className="inline-block h-3 w-7 rounded-full bg-outside" />Outside the role</span>
         </div>
       </div>
 
@@ -111,8 +111,12 @@ export default function AllocationBars({ rows, periodLabel, audience = 'self', e
       </ul>
 
       {outside.length > 0 && (
-        <>
-          <h3 className="mt-6 border-t-2 border-outside pt-5 text-xl font-semibold text-ink">
+        <div className="scout-outside">
+          <h3 className="flex items-center gap-3 text-xl font-semibold text-warn">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="h-6 w-6 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10.3 4.4a2 2 0 0 1 3.4 0l7.5 13A2 2 0 0 1 19.5 20h-15a2 2 0 0 1-1.7-2.6z" />
+              <path d="M12 9v4m0 3h.01" />
+            </svg>
             {audience === 'manager' ? 'Outside the role' : 'Outside your role'}
           </h3>
           <ul>
@@ -120,7 +124,7 @@ export default function AllocationBars({ rows, periodLabel, audience = 'self', e
               <Row key={row.key} row={row} editable={editable} step={stepMinutes} audience={audience} onMinutesChange={onMinutesChange} />
             ))}
           </ul>
-        </>
+        </div>
       )}
     </section>
   );
