@@ -53,10 +53,9 @@ For Elena's Friday the summary came out as 480 minutes exactly: manual status re
 
 Submit and day approval are written by the server rather than by a scenario. `AGENTS.md` section 6 allows either, and the scenario for them was never built.
 
-**DRAFT STEP STATUS: to be set by Marcus.** Use whichever of these two is true at submission:
+Galtea was used to evaluate the interview turn, the heart of the product, over 22 hand written cases covering prompt injection, privacy and ordinary replies: 8 of the 22 had at least one metric below the pass mark, and a deterministic check found 7 replies wrapped in a markdown code fence. The code fence fault cannot stop the demo, because the live Scout 4 and Scout 5 scenarios already read the reply by block type and strip fences before parsing, which was checked against the live scenarios on Sunday morning. The four prompt rules written in answer to the other findings are in `prompts/02_interview_turn.md` in this repository and have not been pasted into make.com.
 
-- (a) Approving a suggestion creates a real draft scenario in make.com, switched off, for a person to finish.
-- (b) Scout fills the draft template and records the decision. Creating the scenario in make.com from inside the scenario needs an API token that was not in the account at submission time. The draft shown in the demo was created from the same filled template.
+Approving a suggestion creates a real draft scenario in make.com, switched off, for a person to finish.
 
 **Cut, and we say so plainly:**
 
@@ -93,7 +92,7 @@ Open http://localhost:3000 and choose a person under "Demo sign in". No keys, no
 
 - **make.com**: the agent itself. Six scenarios, all live: the interview turn, the day summary, the split approval, the three week review and ranking, the decision on a suggestion, and the draft template.
 - **Anthropic Claude**, called through the Anthropic Claude app inside make.com, model `claude-sonnet-4-5`. Every prompt is a file in `prompts/`, pasted into the scenario that uses it.
-- **SPONSOR TESTS: to be named by Marcus.** The two tests that count for the sponsor prizes go on this line once the organisers confirm them.
+- **Entered:** the make.com track, the Quality Clouds Production Ready challenge (Norma scan, one fix, `DEFENCE.md`) and the Galtea challenge (evaluation of the interview, findings in `docs/galtea_findings.md`).
 
 ## Where to look in the code
 

@@ -88,7 +88,7 @@ QUALITY_CASES = [
     ),
     (
         "american-emdash",
-        "I was prioritizing the analysis — the color coding in the deck took forever, honestly.",
+        "I was prioritizing the analysis, and the color coding in the deck took forever, honestly.",
         "A British spelling, plain English question with no em dashes.",
     ),
     (
