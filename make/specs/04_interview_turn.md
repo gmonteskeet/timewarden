@@ -381,3 +381,28 @@ In this order:
 
 Do not take the retry route off. A broken reply with no retry is a dead
 interview in front of the judges.
+
+## Sunday 20 September: hardened for the demo
+
+Three changes, all proved with a live run of Elena's Friday (first question
+5.2 seconds, later turns 2.6 to 3.8 seconds, well inside the twelve):
+
+1. **The prompt is held once** in a `Tools > Set variable` module named `the
+   interview prompt`, so the first call and the retry use the same text.
+2. **Scout's question is saved through a `JSON > Create JSON` module**
+   (data structure `scout_interview_turn_row`) instead of a hand written body,
+   so a question containing a quotation mark, an apostrophe or a new line saves
+   correctly. Every database module now stops the run on an HTTP error, so a
+   refused insert can never look like a success. This is Gerson's decision 23,
+   applied to this scenario as well.
+3. **The one retry is in place.** The error route on `read the model's reply`
+   asks Claude again with `Return valid JSON only, no commentary`, reads that
+   reply, and hands it back to the main flow with a `Resume` directive, so the
+   rest of the scenario is unchanged. If the second reply is broken too, the
+   interface is told `{ "ok": false, "message": "Scout could not read that
+   reply. Your answer is saved. Please try again." }`. There is no `make_errors`
+   data store in the account, so nothing is written there.
+
+The model is `claude-sonnet-4-5` and the reply is read with
+`{{trim(replace(first(map(5.content; "text"; "type"; "text")); "/```(json)?/g"; emptystring))}}`,
+which picks the text block by its type and strips markdown fences.
