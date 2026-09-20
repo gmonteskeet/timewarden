@@ -32,7 +32,7 @@ We evaluated the interviewer, our most important AI step, with Galtea: 22 hand w
 
 ## Links
 - Live demo: https://workflow-scout.vercel.app (use the demo sign in on the home page, no password needed)
-- Repository: https://github.com/gmonteskeet/timewarden [must be public before submitting]
+- Repository: https://github.com/gmonteskeet/workflow-scout [must be public before submitting]
 - Video: [YouTube link, unlisted]
 - Galtea dashboard: https://platform.galtea.ai/product/product_yvss08ok9ot0mgiwhadfnk9d
 
