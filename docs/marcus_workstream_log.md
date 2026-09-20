@@ -115,3 +115,40 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 - The version 2 data files from task M2 (role documents, `data/people.json`, `data/expected_splits.json`, `data/history.json`, the new Friday transcript). Message him the moment task M2 merges.
 - The calendar ID and the Google Drive folder link from task M3, the calendar and role documents into Google.
 - The five prompts from task M4. This is the most urgent hand over: his make.com scenarios paste them in.
+
+## State at code freeze, Sunday 20 September 12:10 Madrid
+
+### What is live through make.com
+Five scenarios, all run live this morning through the interface's own server routes:
+
+| Scenario | What it does | Measured |
+|---|---|---|
+| Scout 2 | the manager approves a role's expected split | 1.3 seconds |
+| Scout 4 | one interview turn | 2.6 to 6.9 seconds, against a 12 second budget |
+| Scout 5 | the day summary | ready about 11 seconds after the interview closed |
+| Scout 7 | three weeks reviewed and ranked | 19 seconds, two suggestions |
+| Scout 8 | the decision on a suggestion, and the draft it creates | 3.4 seconds |
+
+All five read the model's reply by block type and strip any markdown code fence before parsing it, on the first route and on the retry.
+
+### What the server writes itself
+Submit and day approval are written by the Next.js server straight to the database, in under a second. `AGENTS.md` section 6 allows either, and the scenario for them was never built. The row an employee adds for a topic Scout recorded nothing for is written on the same path.
+
+### What was cut, and we say so
+- Reading the role documents live from Google Drive. The seed script loads them instead.
+- The morning email. The check in link is opened by hand in the demo.
+- SLNG voice. Typing and the browser's own voice are in.
+
+### Pull requests merged today
+22 scenario 7 suggest workflows, 24 submit and day approval straight to the database, 25 the interview and the day summary running end to end, 26 M11 polish and M10 documents, 27 suggestions live plus scenarios 8 and 2, hardening, the reset script and deploy, 29 the Galtea evaluation, 30 the documents before the freeze, 31 the M11 visual restyle, 32 the truth about which Galtea findings reach a user, 33 adding time to a topic Scout recorded nothing for, 34 the Norma scan and DEFENCE.md, 35 the approval confirmation and Enter as a new line.
+
+Two are still open and were deliberately not merged: 23, scenario 8 part one, which was superseded by the work in 27, and 28, "G16 close the open redirect in the sign in link", which had not been merged at the freeze. Nothing in the repository claims that fix.
+
+### Before each judging round
+```
+node --env-file=frontend/.env.local scripts/reset_demo.mjs
+```
+Run it from the repository root. It puts Elena's Friday back to invited and the roles back to a proposed split, keeps the three weeks of approved history and keeps the suggestions. Delete any draft scenarios left in the make.com folder `Workflow Scout drafts` by hand if you want that folder empty.
+
+### After the judging, for Gerson
+**The make.com API token inside Scout 8 must be deleted.** Scenario 8 holds a personal access token so that approving a suggestion can create a real draft scenario through the make.com API. It was added by hand on Sunday morning and is not in this repository. Once the judging is over, Gerson removes it from the scenario and revokes it in the make.com account.

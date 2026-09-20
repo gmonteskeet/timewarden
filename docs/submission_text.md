@@ -1,44 +1,46 @@
-# Submission text
+# Submission form answers, ready to paste
 
-Everything the submission form and the backup video need. Written Sunday 20 September 2026. Copy it straight out; do not rewrite it on the form.
+Drafted at 12:05 on Sunday 20 September. Every claim here matches what was tested live this morning. Replace the three items in square brackets before pasting.
 
-## Description, 150 words
+## Project name
+Workflow Scout
 
-Building an automation has never been easier. The hard question has moved: what should a company automate next, and how do you prove it was worth it? Today it is answered by opinion.
+## One line
+An agent that lives inside a company, interviews people about their working day, and tells you which make.com workflow to build next, and what it is worth.
 
-Workflow Scout answers it with evidence. A make.com scenario reads each role's own document and proposes how that role's time should divide. Every morning it reads each person's calendar and recorded calls, then emails them a personal link. Scout interviews them about their last working day, asking only about what it cannot explain. They see their day as expected time against actual time, correct it and submit. Nothing reaches their manager until they do.
+## Short description (about 50 words)
+Workflow Scout compares what each role is for with where people's time really goes. It interviews employees about their last working day, lets them correct the result, and after the manager's approval it ranks the work most worth automating, priced from real cost rates. One click creates a draft scenario in make.com.
 
-The manager approves the day, then asks Scout to review three weeks of approved days. Scout ranks the work worth automating, weighted by how far it sits from the job the person was hired for. One approval creates a real draft scenario in make.com.
+## Full description (about 150 words)
+Building an automation is easy now. Knowing which one to build next is not. Workflow Scout answers that from evidence.
 
-## Description, 50 words
+It starts from three things every company has for each role: the job description, its performance measures and its cost rate. From those it proposes how the role's time should split, and the manager approves. Each day Scout interviews the employee about their last working day. It already knows their calendar and recorded calls, so it only asks about what it cannot explain. The employee sees expected against actual time, corrects their own day and submits. Nothing reaches the manager before that: this finds work to automate, it does not judge people.
 
-Workflow Scout finds what a company should automate next. It interviews each person about their working day, compares it with what their role is for, and ranks the work that keeps landing in the wrong place. One manager approval turns the top suggestion into a real draft scenario in make.com.
+After the manager approves, Scout reviews weeks of approved days across the team, ranks what is furthest from each role and costs the most, and on approval creates a real draft scenario in make.com for a person to finish.
 
-## How we used make.com
+## Challenges entered
+make.com, Quality Clouds (Production Ready, Norma), Galtea.
 
-make.com is not a step in Workflow Scout, it is the agent. Every piece of thinking happens inside a make.com scenario: reading each role document from the company's document store and proposing a time split, reading calendars and call transcripts every weekday morning and emailing each person their link, running the interview one question at a time, adding the day up into the expected against actual summary, and reviewing three weeks of approved days to rank what is worth automating. The model is Anthropic Claude, called through the Anthropic Claude app inside make.com, and the scoring is arithmetic in the scenario rather than something we ask the model to guess. Our Next.js app only shows what the scenarios produce and posts back what the person decides. The last scenario closes the loop: when a manager approves a suggestion, it calls the make.com API and a real draft scenario appears in the account.
+## How it addresses the make.com challenge
+make.com asked for an agent that finds automation use cases inside a company, with a regular check in by voice or text, structured interview questions, continuous capture, prioritisation and human approval. All of the reasoning runs in make.com scenarios calling Claude: proposing and approving each role's time split, the turn by turn interview (Claude decides each next question and when it knows enough), the day summary, the three week review that ranks candidates, and the decision scenario, which fills a template and creates a real draft scenario through the make.com API, switched off, for a person to finish. Two human approvals are built in: the employee sends their own day, and the manager approves the day and the suggestion. Employees can answer by typing or by browser speech.
 
-## Two minute demo video, shot list
+## How it addresses the Quality Clouds challenge
+We scanned the logic of the app with Norma: 131 violations across 23 files. We fixed the ones that were real risks in the sign in and reset routes, and DEFENCE.md in the repository lists every finding we left and the reason, in plain words.
 
-Two minutes, seven shots. Record at 1440 by 900 in sample data mode so nothing depends on the network. Read the words underneath each shot as the shot plays. Keep the pace steady; the whole thing runs to about 300 words.
+## How it addresses the Galtea challenge
+We evaluated the interviewer, our most important AI step, with Galtea: 22 hand written cases covering prompt injection, requests to reveal its instructions, questions about colleagues, attempts to make it judge the employee, and empty or distressed answers. Galtea found that one raw reply in three arrived wrapped in a code fence (our live scenarios already strip that, which we confirmed with a live run), and that Scout handled questions about colleagues and instruction requests poorly. We fixed those with four new prompt rules and reran the failing cases: the injection and instruction cases now pass. Full numbers, impact and honest notes are in docs/galtea_findings.md.
 
-**Shot 1, 0:00 to 0:15. The home page, then the three step strip.**
-"Every company hires people to do a job. Almost nobody ends up doing that job. Workflow Scout finds out where the time actually goes, and hands the difference to make.com."
+## Links
+- Live demo: https://workflow-scout.vercel.app (use the demo sign in on the home page, no password needed)
+- Repository: https://github.com/gmonteskeet/timewarden [must be public before submitting]
+- Video: [YouTube link, unlisted]
+- Galtea dashboard: https://platform.galtea.ai/product/product_yvss08ok9ot0mgiwhadfnk9d
 
-**Shot 2, 0:15 to 0:35. Roles, signed in as Tomas. Scroll one role card, nudge one number, press Approve.**
-"Tomas runs Client Delivery. A make.com scenario has read each role's own document and proposed how that role's time should divide. He is the yardstick, not the model, so he adjusts one number and approves."
+## Team
+Marcus Rodrigues (product, interface, data, prompts) and Gerson Montesinos (make.com, database, deployment). [check the spelling of both names and add emails if the form asks]
 
-**Shot 3, 0:35 to 1:05. The check in as Elena. Show the question, the line under it saying what Scout saw, then one answer sent and the next question arriving.**
-"Elena got a link in her morning email. Scout already has her calendar and her recorded calls, so it only asks about what it cannot explain: two empty hours, and a block called Friday report send out. It stops itself after about five questions."
+## Tech used
+make.com (eight webhooks designed, five scenarios live), Anthropic Claude through make.com, Next.js on Vercel, Supabase, Galtea, Quality Clouds Norma.
 
-**Shot 4, 1:05 to 1:25. The summary. Point at the outside the role bar. Correct one row, then show the line saying the bars are hers. Press Submit.**
-"Here is her day: what the role expects, against what happened. Nearly four hours went to manual status reporting, which is nowhere in her role. She corrects one number, and nothing reaches her manager until she submits it."
-
-**Shot 5, 1:25 to 1:40. Approvals as Tomas. Approve Elena's day.**
-"Tomas sees the day only now. He approves it."
-
-**Shot 6, 1:40 to 1:50. Suggestions. Press Review the last three weeks, then show the ranked cards and the scores on card one.**
-"Scout reviews three weeks of approved days and ranks what is worth automating: time, repetitiveness, reliability, and how far the work sits from the job. Top of the list, the weekly client status report. Seven hours a week across three people."
-
-**Shot 7, 1:50 to 2:00. Approve it, show the draft ready panel, then the draft scenario open in make.com.**
-"He approves it, and a real draft scenario is waiting in make.com."
+## What is sample data, said plainly
+The company, the people, the calendar and the call transcripts are made up. The role documents were loaded at set up rather than read live from a document store, and the morning email link is not built: both are next steps.
