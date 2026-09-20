@@ -1,11 +1,81 @@
-# timewarden (working name: Workflow Scout)
+# Workflow Scout
 
-HackBarna 2026, make.com challenge. An agent that finds what a company should automate next, by comparing what people say they do, what their calendar and calls show, and what their job says they should be doing.
+Workflow Scout finds the work a company should hand over to make.com, starting from each person's own account of their working day. It asks every person what they actually did, compares that with what their role is for, and turns the gap into a ranked list of workflows a manager can approve, which then become real draft scenarios in make.com.
 
-## Start here
-- Coding agents: read `AGENTS.md` first, then your owner's build file.
-  - Marcus: `docs/BUILD_MARCUS.md`, start at task M1.
-  - Gerson: `docs/BUILD_GERSON.md`, start at task G1.
-- Humans: `docs/one_page_brief.md` (what we are building) and `docs/project_plan.md` (the timeline).
+Built for the make.com challenge at HackBarna 2026, Barcelona, 19 and 20 September 2026, by Marcus Rodrigues and Gerson Monteskeet.
 
-A full README is written on Sunday morning (task G18).
+## The demo in five steps
+
+1. **Roles.** Tomas Berg runs Client Delivery at Brightline Advisory. Scout has read one document per role from the company's document store and proposes how each role's time should divide across its topics. Tomas adjusts one number and approves.
+2. **The check in.** Elena Ruiz, a Senior Client Consultant, gets a personal link in her morning email. Scout interviews her about her last working day. It already has her calendar and her recorded calls, so it asks only about what it cannot explain: two empty hours on Friday morning, and a block called "Friday report send out".
+3. **The summary.** Elena sees one bar per topic: what her role expects against what the day actually held. Nearly four hours went to manual status reporting, which is nowhere in her role. She corrects one number and submits. Nothing reaches her manager until she does.
+4. **Approval.** Tomas approves Elena's day, then asks Scout to review three weeks of approved days for the team. Scout ranks "Weekly client status report" first: about seven hours a week across three people.
+5. **The draft.** Tomas approves that suggestion and a real draft scenario appears in the make.com account, ready for a person to check.
+
+## How it answers make.com's brief
+
+| The brief asks for | Where it is in Workflow Scout |
+|---|---|
+| A daily voice or text check in | The check in screen. Type or speak, same questions either way, and the switch is on screen. |
+| Structured interview questions | make.com asks the questions, from the calendar and call gaps it cannot explain. It stops itself, normally within six. |
+| Continuous capture | A make.com scenario runs every weekday morning: it reads calendars and call transcripts, creates the day's check in and emails each person their link. |
+| Prioritisation | Every candidate workflow is scored on time cost, how repetitive it is, reliability risk and how far the work sits from the person's role. The weighting is fixed and computed in make.com, never by the model. |
+| Human approval | Three approvals, all by a person: the manager approves each role's expected split, the employee submits their own day, the manager approves the day and then the suggestion. |
+| A real draft scenario | Approving a suggestion calls the make.com API and creates a draft scenario in the account, with a link straight to it. |
+
+## How the parts talk to each other
+
+```
+Browser  --only ever talks to-->  Next.js server (pages and /api routes)
+Next.js server  --reads and writes-->  Supabase, using the service key, filtered by who is signed in
+Next.js server  --POST with x-scout-key-->  make.com webhooks
+make.com scenarios  --read and write-->  Supabase (service key held in make.com)
+make.com  --reads-->  document store, Google Calendar      make.com  --sends-->  morning emails
+make.com draft creation scenario  --POST-->  make.com API (creates the draft scenario)
+```
+
+The browser never holds a database key, a webhook address or a voice key. There is no public read access to the database.
+
+## What is live and what is sample data
+
+STATUS: to be confirmed by Marcus before submission.
+
+The interface runs in two modes, and the footer of every page says which one you are looking at.
+
+- **Sample data mode** (`NEXT_PUBLIC_USE_FIXTURES=true`) runs the whole story on the made up company in `frontend/lib/fixtures.ts`, with no database and no make.com. This is what the three commands below give you, and it is the safety net for the live demo.
+- **Live mode** (`NEXT_PUBLIC_USE_FIXTURES=false`) reads and writes Supabase and calls the make.com scenarios for the interview, the role splits, the suggestions and the draft creation.
+
+We will not claim a part works live until we have run it live. The line above is replaced with the honest list before we submit.
+
+## Running it locally on sample data
+
+```
+git clone https://github.com/gmonteskeet/timewarden.git && cd timewarden/frontend
+npm install
+NEXT_PUBLIC_USE_FIXTURES=true npm run dev
+```
+
+Open http://localhost:3000 and choose a person under "Demo sign in". No keys, no database and no make.com account are needed. Screenshots of every screen are in `docs/screenshots/`.
+
+## Honest notes
+
+- **No passwords, by design.** Every person has a secret link that arrives in their morning email. Opening it sets a signed, http only session cookie. The home page offers the same thing as a labelled demo sign in so judges can look around. Rights are checked on the server on every request: an employee can only ever see their own days, a manager only the people who report to them.
+- **The company and the people are made up.** Brightline Advisory, Tomas, Elena, Priya and Jonas, their clients and their calls were all written for this hackathon. No real company data is in this repository.
+- **One draft template.** Approving a suggestion creates one real draft scenario in make.com from one template shape. It is a genuine draft in the account, not a picture of one, but it is not yet a different shape per suggestion.
+- **No secrets in this repository.** `.env.example` lists variable names only. Real keys live in `frontend/.env.local` and inside make.com connections.
+- **Everything here was written over the weekend of 19 and 20 September 2026.** Nothing was carried in from an earlier project.
+
+## Sponsors' tools used
+
+STATUS: to be confirmed by Marcus before submission.
+
+- **make.com**: the agent itself. Every scenario, the Anthropic Claude app inside make.com for the model, and the make.com API for creating the draft scenario.
+- Others to be listed here once confirmed.
+
+## Where to look in the code
+
+- `frontend/` Next.js App Router, TypeScript, Tailwind CSS. `app/` holds the five screens, `components/` the shared interface pieces, `lib/` the data contract, the session and the sample data.
+- `make/specs/` one build sheet per make.com scenario, `make/blueprints/` the exported blueprints.
+- `supabase/migrations/` the database schema. `scripts/` the seed and reset scripts.
+- `prompts/` the prompts the scenarios give to the model. `data/` the made up role documents, calendar and call transcripts.
+- `AGENTS.md` the shared rules and the full data contract. `docs/pitch_outline.md` the pitch, `docs/submission_text.md` the submission copy, `DEFENCE.md` what the code scanner found.
