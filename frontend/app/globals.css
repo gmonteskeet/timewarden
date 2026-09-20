@@ -96,3 +96,16 @@ main h1 { font-size: clamp(2rem, 3.5vw, 2.8rem); letter-spacing: -0.045em; line-
   @keyframes scout-enter { from { opacity: 0.5; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes scout-think { 0%, 70%, 100% { opacity: 0.35; } 35% { opacity: 1; } }
 }
+
+.scout-stats > div { border: 1px solid var(--color-line); border-radius: 0.75rem; background: var(--color-track); padding: 1rem 1.2rem; }
+.scout-stats > div:not(:first-child) { background: var(--color-accent-soft); border-color: #dce1f7; }
+.scout-stats dd { margin-top: 0.25rem; letter-spacing: -0.035em; }
+.scout-score { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0.3rem 0.8rem; }
+.scout-flow > li:not(:last-child)::before { content: ""; position: absolute; left: 1.1rem; top: 2.1rem; bottom: -1rem; width: 1px; background: var(--color-line); }
+/* Existing waiting messages stay still; only the interview thinking dots repeat. */
+.animate-pulse { animation: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .scout-success { animation: scout-enter 220ms ease-out both; }
+  .scout-check { stroke-dasharray: 28; animation: scout-check 500ms ease-out both; }
+  @keyframes scout-check { from { stroke-dashoffset: 28; } to { stroke-dashoffset: 0; } }
+}

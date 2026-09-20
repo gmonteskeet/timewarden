@@ -60,9 +60,9 @@ function Card({ c, state, draftingElsewhere, onChange }: { c: Candidate; state: 
 
   const greyed = state.kind === 'not_now';
   return (
-    <article className={`space-y-5 ${state.kind === 'ready' ? cardHighlighted : card} ${greyed ? 'opacity-50' : ''}`} aria-labelledby={`cand-${c.id}`}>
+    <article className={`space-y-5 ${state.kind === 'ready' || c.rank === 1 ? cardHighlighted : card} ${greyed ? 'opacity-50' : ''}`} aria-labelledby={`cand-${c.id}`}>
       <header className="flex flex-wrap items-start gap-5">
-        <p className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent text-2xl font-bold text-white" aria-label={`Rank ${c.rank}`}>
+        <p className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-accent-soft text-3xl font-bold tabular-nums text-accent" aria-label={`Rank ${c.rank}`}>
           {c.rank}
         </p>
         <div className="min-w-0 flex-1">
@@ -78,29 +78,29 @@ function Card({ c, state, draftingElsewhere, onChange }: { c: Candidate; state: 
         </p>
       </header>
 
-      <dl className="grid grid-cols-3 gap-4 rounded-lg bg-track px-5 py-4 text-lg">
+      <dl className="scout-stats grid gap-3 text-lg sm:grid-cols-3">
         <div>
           <dt className="text-muted">People affected</dt>
-          <dd className="text-2xl font-semibold tabular-nums">{c.people_affected}</dd>
+          <dd className="text-3xl font-semibold tabular-nums">{c.people_affected}</dd>
         </div>
         <div>
           <dt className="text-muted">Team hours per week</dt>
-          <dd className="text-2xl font-semibold tabular-nums">{hours.format(c.hours_per_week)}</dd>
+          <dd className="text-3xl font-semibold tabular-nums">{hours.format(c.hours_per_week)}</dd>
         </div>
         <div>
           <dt className="text-muted">Cost per year</dt>
-          <dd className="text-2xl font-semibold tabular-nums">{euros.format(c.annual_cost_eur)}</dd>
+          <dd className="text-3xl font-semibold tabular-nums">{euros.format(c.annual_cost_eur)}</dd>
         </div>
       </dl>
 
-      <ul className="grid grid-cols-2 gap-x-8 gap-y-3" aria-label="Scores out of 5">
+      <ul className="grid gap-x-8 gap-y-5 sm:grid-cols-2" aria-label="Scores out of 5">
         {SCORES.map((s) => (
-          <li key={s.key} className="flex items-center gap-3">
-            <span className="w-52 shrink-0 text-lg">{s.label}</span>
-            <span className="h-4 flex-1 rounded bg-track">
-              <span className="block h-4 rounded bg-actual" style={{ width: `${(c[s.key] / 5) * 100}%` }} />
+          <li key={s.key} className="scout-score">
+            <span className="col-span-2 text-lg text-muted">{s.label}</span>
+            <span className="h-2.5 min-w-0 rounded-full bg-track">
+              <span className="scout-bar-fill block h-2.5 rounded-full bg-actual" style={{ width: `${(c[s.key] / 5) * 100}%` }} />
             </span>
-            <span className="w-16 text-lg font-semibold tabular-nums">{c[s.key]} of 5</span>
+            <span className="whitespace-nowrap text-right text-lg font-semibold tabular-nums">{c[s.key]} of 5</span>
           </li>
         ))}
       </ul>
@@ -109,9 +109,10 @@ function Card({ c, state, draftingElsewhere, onChange }: { c: Candidate; state: 
 
       <div>
         <h3 className="mb-2 text-lg font-semibold">Proposed workflow</h3>
-        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="scout-flow space-y-4">
           {c.proposed_steps.map((step, i) => (
-            <li key={`${step.app}-${i}`} className="h-full space-y-1 rounded-lg border border-line bg-white px-4 py-3">
+            <li key={`${step.app}-${i}`} className="relative space-y-1 pl-14">
+              <span aria-hidden="true" className="scout-flow-dot absolute top-0 left-0 flex h-9 w-9 items-center justify-center rounded-full border border-line bg-white text-base font-semibold text-accent">{i + 1}</span>
               <p className="text-base font-medium text-muted">Step {i + 1}</p>
               <p className="text-lg leading-snug">
                 {step.app && <strong>{step.app}</strong>}
@@ -150,8 +151,8 @@ function Card({ c, state, draftingElsewhere, onChange }: { c: Candidate; state: 
           </div>
         )}
         {state.kind === 'ready' && (
-          <div className="flex w-full flex-wrap items-center justify-between gap-4 rounded-lg bg-track px-6 py-5">
-            <p className="text-2xl font-semibold text-accent">Your draft is ready in make.com</p>
+          <div className="scout-success flex w-full flex-wrap items-center justify-between gap-5 rounded-2xl border border-accent/20 bg-accent-soft px-6 py-6">
+            <p className="flex items-center gap-3 text-2xl font-semibold text-accent"><svg aria-hidden="true" focusable="false" viewBox="0 0 32 32" className="h-11 w-11 shrink-0" fill="none"><circle cx="16" cy="16" r="14" fill="white" /><path className="scout-check" d="m9 16 5 5 9-10" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>Your draft is ready in make.com</p>
             <a href={state.url} target="_blank" rel="noopener noreferrer" className={btnPrimary}>
               Open the draft in make.com
             </a>
