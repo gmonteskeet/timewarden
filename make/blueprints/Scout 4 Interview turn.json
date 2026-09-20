@@ -1,0 +1,683 @@
+{
+  "_readme": "Exported from the live scenario with every key, token, webhook address and private id replaced by a named placeholder. The prompt is held once in a Set variable and used by both Claude calls. The prompt text is not repeated here: it is the file named in the Set variable module, word for word. Data structure ids are the account's own and are written as <DS_...>.",
+  "name": "Scout 4: Interview turn",
+  "flow": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": {
+        "hook": "<HOOK_ID>",
+        "maxResults": 1
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0,
+          "name": "Scout 4 interview turn"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "json:CreateJSON",
+      "version": 1,
+      "parameters": {
+        "type": "<DS_scout_rpc_interview_request>",
+        "space": ""
+      },
+      "mapper": {
+        "p_check_in_id": "{{1.check_in_id}}",
+        "p_employee_text": "{{1.employee_text}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0,
+          "name": "build the database call"
+        }
+      },
+      "filter": {
+        "name": "only our own interface",
+        "conditions": [
+          [
+            {
+              "a": "{{first(map(1.__IMTHEADERS__; \"value\"; \"name\"; \"x-scout-key\"))}}",
+              "o": "text:equal",
+              "b": "<SCOUT_SHARED_SECRET>"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": {
+        "handleErrors": false,
+        "useNewZLibDeCompress": true
+      },
+      "mapper": {
+        "ca": "",
+        "qs": [],
+        "url": "<SUPABASE_URL>/rest/v1/rpc/scout_interview_context",
+        "data": "{{2.json}}",
+        "gzip": true,
+        "method": "post",
+        "headers": [
+          {
+            "name": "apikey",
+            "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Authorization",
+            "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "timeout": "",
+        "useMtls": false,
+        "authPass": "",
+        "authUser": "",
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "serializeUrl": false,
+        "shareCookies": false,
+        "parseResponse": true,
+        "stopOnHttpError": true,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "followAllRedirects": false,
+        "rejectUnauthorized": true
+      },
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0,
+          "name": "read the check in and record the answer"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "module": "builtin:BasicRouter",
+      "version": 1,
+      "mapper": null,
+      "metadata": {
+        "designer": {
+          "x": 900,
+          "y": 0,
+          "name": "has Scout asked six questions"
+        }
+      },
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 20,
+              "module": "util:SetVariable2",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "name": "interview_prompt",
+                "scope": "roundtrip",
+                "value": "<THE WHOLE OF prompts/02_interview_turn.md>"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1200,
+                  "y": 0,
+                  "name": "the interview prompt"
+                }
+              },
+              "filter": {
+                "name": "Scout still has questions",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{3.data.scout_turns_asked}}",
+                      "o": "number:less",
+                      "b": "6"
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              "id": 5,
+              "module": "anthropic-claude:createAMessage",
+              "version": 1,
+              "parameters": {
+                "__IMTCONN__": "<ANTHROPIC_CONNECTION_ID>"
+              },
+              "mapper": {
+                "model": "claude-sonnet-4-5",
+                "max_tokens": 1500,
+                "temperature": 0.2,
+                "metadata": {},
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "{{20.interview_prompt}}\n\nHere is the input for this turn:\n\n{{3.data.prompt_input}}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1500,
+                  "y": 0,
+                  "name": "write the next question"
+                }
+              }
+            },
+            {
+              "id": 6,
+              "module": "json:ParseJSON",
+              "version": 1,
+              "parameters": {
+                "type": "<DS_scout_interview_reply>"
+              },
+              "mapper": {
+                "json": "{{trim(replace(first(map(5.content; \"text\"; \"type\"; \"text\")); \"/```(json)?/g\"; emptystring))}}"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1800,
+                  "y": 0,
+                  "name": "read the model's reply"
+                }
+              },
+              "onerror": [
+                {
+                  "id": 15,
+                  "module": "anthropic-claude:createAMessage",
+                  "version": 1,
+                  "parameters": {
+                    "__IMTCONN__": "<ANTHROPIC_CONNECTION_ID>"
+                  },
+                  "mapper": {
+                    "model": "claude-sonnet-4-5",
+                    "max_tokens": 1500,
+                    "temperature": 0.2,
+                    "metadata": {},
+                    "messages": [
+                      {
+                        "role": "user",
+                        "content": [
+                          {
+                            "type": "text",
+                            "text": "{{20.interview_prompt}}\n\nReturn valid JSON only, no commentary\n\nHere is the input for this turn:\n\n{{3.data.prompt_input}}"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 1800,
+                      "y": 400,
+                      "name": "ask again, JSON only"
+                    }
+                  }
+                },
+                {
+                  "id": 16,
+                  "module": "json:ParseJSON",
+                  "version": 1,
+                  "parameters": {
+                    "type": "<DS_scout_interview_reply>"
+                  },
+                  "mapper": {
+                    "json": "{{trim(replace(first(map(15.content; \"text\"; \"type\"; \"text\")); \"/```(json)?/g\"; emptystring))}}"
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 2100,
+                      "y": 400,
+                      "name": "read the second reply"
+                    }
+                  },
+                  "onerror": [
+                    {
+                      "id": 17,
+                      "module": "gateway:WebhookRespond",
+                      "version": 1,
+                      "parameters": {},
+                      "mapper": {
+                        "status": 200,
+                        "body": "{\"ok\":false,\"message\":\"Scout could not read that reply. Your answer is saved. Please try again.\"}",
+                        "headers": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ]
+                      },
+                      "metadata": {
+                        "designer": {
+                          "x": 2100,
+                          "y": 650,
+                          "name": "tell the interface to try again"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": 18,
+                  "module": "builtin:Resume",
+                  "version": 1,
+                  "parameters": {},
+                  "mapper": {
+                    "done": "{{16.done}}",
+                    "question": "{{16.question}}",
+                    "kind": "{{16.kind}}",
+                    "evidence": "{{16.evidence}}"
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 2400,
+                      "y": 400,
+                      "name": "carry on with the second reply"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": 7,
+              "module": "json:CreateJSON",
+              "version": 1,
+              "parameters": {
+                "type": "<DS_scout_interview_turn_row>",
+                "space": ""
+              },
+              "mapper": {
+                "check_in_id": "{{1.check_in_id}}",
+                "turn_no": "{{3.data.next_turn_no}}",
+                "speaker": "scout",
+                "text": "{{6.question}}",
+                "kind": "{{6.kind}}",
+                "evidence": "{{6.evidence}}"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2100,
+                  "y": 0,
+                  "name": "build Scout's question row"
+                }
+              }
+            },
+            {
+              "id": 8,
+              "module": "http:ActionSendData",
+              "version": 3,
+              "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+              },
+              "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "<SUPABASE_URL>/rest/v1/interview_turns",
+                "data": "{{7.json}}",
+                "gzip": true,
+                "method": "post",
+                "headers": [
+                  {
+                    "name": "apikey",
+                    "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Authorization",
+                    "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": false,
+                "stopOnHttpError": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2400,
+                  "y": 0,
+                  "name": "save Scout's question"
+                }
+              }
+            },
+            {
+              "id": 9,
+              "module": "json:CreateJSON",
+              "version": 1,
+              "parameters": {
+                "type": "<DS_scout_interview_response>",
+                "space": ""
+              },
+              "mapper": {
+                "ok": true,
+                "done": "{{6.done}}",
+                "turn_no": "{{3.data.next_turn_no}}",
+                "question": "{{6.question}}",
+                "kind": "{{6.kind}}",
+                "evidence": "{{6.evidence}}"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2700,
+                  "y": 0,
+                  "name": "build the reply"
+                }
+              }
+            },
+            {
+              "id": 10,
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "status": 200,
+                "body": "{{9.json}}",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 3000,
+                  "y": 0,
+                  "name": "answer the interface"
+                }
+              }
+            },
+            {
+              "id": 11,
+              "module": "http:ActionSendData",
+              "version": 3,
+              "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+              },
+              "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "<MAKE_WEBHOOK_SCOUT_5_DAY_SUMMARY>",
+                "data": "{\"check_in_id\":\"{{1.check_in_id}}\"}",
+                "gzip": true,
+                "method": "post",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": false,
+                "stopOnHttpError": false,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+              },
+              "metadata": {
+                "designer": {
+                  "x": 3300,
+                  "y": 0,
+                  "name": "start the day summary"
+                }
+              },
+              "filter": {
+                "name": "the interview is finished",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{6.done}}",
+                      "o": "boolean:equal",
+                      "b": "true"
+                    }
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 12,
+              "module": "json:CreateJSON",
+              "version": 1,
+              "parameters": {
+                "type": "<DS_scout_interview_turn_row>",
+                "space": ""
+              },
+              "mapper": {
+                "check_in_id": "{{1.check_in_id}}",
+                "turn_no": "{{3.data.next_turn_no}}",
+                "speaker": "scout",
+                "text": "Thank you {{3.data.first_name}}, that gives me a clear picture of your day and your summary is ready.",
+                "kind": "closing",
+                "evidence": ""
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1200,
+                  "y": 300,
+                  "name": "build the closing line"
+                }
+              },
+              "filter": {
+                "name": "the six question cap is reached",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{3.data.scout_turns_asked}}",
+                      "o": "number:greaterorequal",
+                      "b": "6"
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              "id": 13,
+              "module": "http:ActionSendData",
+              "version": 3,
+              "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+              },
+              "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "<SUPABASE_URL>/rest/v1/interview_turns",
+                "data": "{{12.json}}",
+                "gzip": true,
+                "method": "post",
+                "headers": [
+                  {
+                    "name": "apikey",
+                    "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Authorization",
+                    "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": false,
+                "stopOnHttpError": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1500,
+                  "y": 300,
+                  "name": "save the closing line"
+                }
+              }
+            },
+            {
+              "id": 14,
+              "module": "json:CreateJSON",
+              "version": 1,
+              "parameters": {
+                "type": "<DS_scout_interview_response>",
+                "space": ""
+              },
+              "mapper": {
+                "ok": true,
+                "done": true,
+                "turn_no": "{{3.data.next_turn_no}}",
+                "question": "Thank you {{3.data.first_name}}, that gives me a clear picture of your day and your summary is ready.",
+                "kind": "closing",
+                "evidence": ""
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1800,
+                  "y": 300,
+                  "name": "build the reply"
+                }
+              }
+            },
+            {
+              "id": 19,
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "status": 200,
+                "body": "{{14.json}}",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2100,
+                  "y": 300,
+                  "name": "answer the interface"
+                }
+              }
+            },
+            {
+              "id": 23,
+              "module": "http:ActionSendData",
+              "version": 3,
+              "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+              },
+              "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "<MAKE_WEBHOOK_SCOUT_5_DAY_SUMMARY>",
+                "data": "{\"check_in_id\":\"{{1.check_in_id}}\"}",
+                "gzip": true,
+                "method": "post",
+                "headers": [
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": false,
+                "stopOnHttpError": false,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2400,
+                  "y": 300,
+                  "name": "start the day summary"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": {
+      "orphans": []
+    },
+    "zone": "eu1.make.com"
+  }
+}

@@ -1,0 +1,625 @@
+{
+  "_readme": "Exported from the live scenario with every key, token, webhook address and private id replaced by a named placeholder. Started by Scout 4, so there is no shared secret filter. The prompt text is not repeated here: it is the file named in the Set variable module, word for word. Data structure ids are the account's own and are written as <DS_...>.",
+  "name": "Scout 5: Day summary",
+  "flow": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": {
+        "hook": "<HOOK_ID>",
+        "maxResults": 1
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0,
+          "name": "Scout 5 day summary"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "json:CreateJSON",
+      "version": 1,
+      "parameters": {
+        "type": "<DS_scout_rpc_summary_request>",
+        "space": ""
+      },
+      "mapper": {
+        "p_check_in_id": "{{1.check_in_id}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0,
+          "name": "build the database call"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": {
+        "handleErrors": false,
+        "useNewZLibDeCompress": true
+      },
+      "mapper": {
+        "ca": "",
+        "qs": [],
+        "url": "<SUPABASE_URL>/rest/v1/rpc/scout_summary_context",
+        "data": "{{2.json}}",
+        "gzip": true,
+        "method": "post",
+        "headers": [
+          {
+            "name": "apikey",
+            "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Authorization",
+            "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "timeout": "",
+        "useMtls": false,
+        "authPass": "",
+        "authUser": "",
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "serializeUrl": false,
+        "shareCookies": false,
+        "parseResponse": true,
+        "stopOnHttpError": true,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "followAllRedirects": false,
+        "rejectUnauthorized": true
+      },
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0,
+          "name": "read the day and the interview"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "module": "util:SetVariable2",
+      "version": 1,
+      "parameters": {},
+      "mapper": {
+        "name": "summary_prompt",
+        "scope": "roundtrip",
+        "value": "<THE WHOLE OF prompts/03_day_summary.md>"
+      },
+      "metadata": {
+        "designer": {
+          "x": 900,
+          "y": 0,
+          "name": "the summary prompt"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "module": "anthropic-claude:createAMessage",
+      "version": 1,
+      "parameters": {
+        "__IMTCONN__": "<ANTHROPIC_CONNECTION_ID>"
+      },
+      "mapper": {
+        "model": "claude-sonnet-4-5",
+        "max_tokens": 4000,
+        "temperature": 0.2,
+        "metadata": {},
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "{{15.summary_prompt}}\n\nHere is the input:\n\n{{3.data.prompt_input}}"
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "designer": {
+          "x": 1200,
+          "y": 0,
+          "name": "write the day summary"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "module": "json:ParseJSON",
+      "version": 1,
+      "parameters": {
+        "type": "<DS_scout_day_summary>"
+      },
+      "mapper": {
+        "json": "{{trim(replace(first(map(4.content; \"text\"; \"type\"; \"text\")); \"/```(json)?/g\"; emptystring))}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 1500,
+          "y": 0,
+          "name": "read the model's reply"
+        }
+      },
+      "onerror": [
+        {
+          "id": 16,
+          "module": "anthropic-claude:createAMessage",
+          "version": 1,
+          "parameters": {
+            "__IMTCONN__": "<ANTHROPIC_CONNECTION_ID>"
+          },
+          "mapper": {
+            "model": "claude-sonnet-4-5",
+            "max_tokens": 4000,
+            "temperature": 0.2,
+            "metadata": {},
+            "messages": [
+              {
+                "role": "user",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "{{15.summary_prompt}}\n\nReturn valid JSON only, no commentary\n\nHere is the input:\n\n{{3.data.prompt_input}}"
+                  }
+                ]
+              }
+            ]
+          },
+          "metadata": {
+            "designer": {
+              "x": 1500,
+              "y": 400,
+              "name": "ask again, JSON only"
+            }
+          }
+        },
+        {
+          "id": 17,
+          "module": "json:ParseJSON",
+          "version": 1,
+          "parameters": {
+            "type": "<DS_scout_day_summary>"
+          },
+          "mapper": {
+            "json": "{{trim(replace(first(map(16.content; \"text\"; \"type\"; \"text\")); \"/```(json)?/g\"; emptystring))}}"
+          },
+          "metadata": {
+            "designer": {
+              "x": 1800,
+              "y": 400,
+              "name": "read the second reply"
+            }
+          }
+        },
+        {
+          "id": 18,
+          "module": "builtin:Resume",
+          "version": 1,
+          "parameters": {},
+          "mapper": {
+            "allocations": "{{17.allocations}}",
+            "summary_text": "{{17.summary_text}}"
+          },
+          "metadata": {
+            "designer": {
+              "x": 2100,
+              "y": 400,
+              "name": "carry on with the second reply"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": {
+        "handleErrors": false,
+        "useNewZLibDeCompress": true
+      },
+      "mapper": {
+        "ca": "",
+        "qs": [],
+        "url": "<SUPABASE_URL>/rest/v1/day_allocations?check_in_id=eq.{{1.check_in_id}}",
+        "data": "",
+        "gzip": true,
+        "method": "delete",
+        "headers": [
+          {
+            "name": "apikey",
+            "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Authorization",
+            "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "timeout": "",
+        "useMtls": false,
+        "authPass": "",
+        "authUser": "",
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "serializeUrl": false,
+        "shareCookies": false,
+        "parseResponse": false,
+        "stopOnHttpError": true,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "followAllRedirects": false,
+        "rejectUnauthorized": true
+      },
+      "metadata": {
+        "designer": {
+          "x": 1800,
+          "y": 0,
+          "name": "clear the old allocations"
+        }
+      },
+      "filter": {
+        "name": "the minutes are close enough",
+        "conditions": [
+          [
+            {
+              "a": "{{abs((3.data.working_minutes - sum(map(5.allocations; \"minutes\"))))}}",
+              "o": "number:lessorequal",
+              "b": "60"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": {
+        "handleErrors": false,
+        "useNewZLibDeCompress": true
+      },
+      "mapper": {
+        "ca": "",
+        "qs": [],
+        "url": "<SUPABASE_URL>/rest/v1/activities?person_id=eq.{{3.data.person_id}}&day=eq.{{3.data.day}}&source=eq.interview",
+        "data": "",
+        "gzip": true,
+        "method": "delete",
+        "headers": [
+          {
+            "name": "apikey",
+            "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Authorization",
+            "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "timeout": "",
+        "useMtls": false,
+        "authPass": "",
+        "authUser": "",
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "serializeUrl": false,
+        "shareCookies": false,
+        "parseResponse": false,
+        "stopOnHttpError": true,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "followAllRedirects": false,
+        "rejectUnauthorized": true
+      },
+      "metadata": {
+        "designer": {
+          "x": 2100,
+          "y": 0,
+          "name": "clear the old interview activities"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "module": "builtin:BasicFeeder",
+      "version": 1,
+      "mapper": {
+        "array": "{{5.allocations}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 2400,
+          "y": 0,
+          "name": "each allocation"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "module": "json:CreateJSON",
+      "version": 1,
+      "parameters": {
+        "type": "<DS_scout_day_allocation_row>",
+        "space": ""
+      },
+      "mapper": {
+        "day": "{{3.data.day}}",
+        "label": "{{8.label}}",
+        "in_role": "{{8.in_role}}",
+        "minutes": "{{if(8.label = get(first(sort(5.allocations; \"desc\"; \"minutes\")); \"label\"); 8.minutes + (3.data.working_minutes - sum(map(5.allocations; \"minutes\"))); 8.minutes)}}",
+        "percent": "{{round((if(8.label = get(first(sort(5.allocations; \"desc\"; \"minutes\")); \"label\"); 8.minutes + (3.data.working_minutes - sum(map(5.allocations; \"minutes\"))); 8.minutes)) / 3.data.working_minutes * 10000) / 100}}",
+        "evidence": "{{8.evidence}}",
+        "topic_id": "{{if(8.in_role; first(map(3.data.topic_map; \"topic_id\"; \"name\"; 8.topic_name)); null)}}",
+        "person_id": "{{3.data.person_id}}",
+        "check_in_id": "{{1.check_in_id}}",
+        "employee_adjusted": false
+      },
+      "metadata": {
+        "designer": {
+          "x": 2700,
+          "y": 0,
+          "name": "build the allocation row"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": {
+        "handleErrors": false,
+        "useNewZLibDeCompress": true
+      },
+      "mapper": {
+        "ca": "",
+        "qs": [],
+        "url": "<SUPABASE_URL>/rest/v1/day_allocations",
+        "data": "{{9.json}}",
+        "gzip": true,
+        "method": "post",
+        "headers": [
+          {
+            "name": "apikey",
+            "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Authorization",
+            "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "timeout": "",
+        "useMtls": false,
+        "authPass": "",
+        "authUser": "",
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "serializeUrl": false,
+        "shareCookies": false,
+        "parseResponse": false,
+        "stopOnHttpError": true,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "followAllRedirects": false,
+        "rejectUnauthorized": true
+      },
+      "metadata": {
+        "designer": {
+          "x": 3000,
+          "y": 0,
+          "name": "save one allocation"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "module": "json:CreateJSON",
+      "version": 1,
+      "parameters": {
+        "type": "<DS_scout_activity_row>",
+        "space": ""
+      },
+      "mapper": {
+        "day": "{{3.data.day}}",
+        "title": "{{8.label}}",
+        "source": "interview",
+        "minutes": "{{if(8.label = get(first(sort(5.allocations; \"desc\"; \"minutes\")); \"label\"); 8.minutes + (3.data.working_minutes - sum(map(5.allocations; \"minutes\"))); 8.minutes)}}",
+        "person_id": "{{3.data.person_id}}",
+        "description": "{{8.evidence}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 3300,
+          "y": 0,
+          "name": "build the activity row"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": {
+        "handleErrors": false,
+        "useNewZLibDeCompress": true
+      },
+      "mapper": {
+        "ca": "",
+        "qs": [],
+        "url": "<SUPABASE_URL>/rest/v1/activities",
+        "data": "{{11.json}}",
+        "gzip": true,
+        "method": "post",
+        "headers": [
+          {
+            "name": "apikey",
+            "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Authorization",
+            "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "timeout": "",
+        "useMtls": false,
+        "authPass": "",
+        "authUser": "",
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "serializeUrl": false,
+        "shareCookies": false,
+        "parseResponse": false,
+        "stopOnHttpError": true,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "followAllRedirects": false,
+        "rejectUnauthorized": true
+      },
+      "metadata": {
+        "designer": {
+          "x": 3600,
+          "y": 0,
+          "name": "save one activity"
+        }
+      }
+    },
+    {
+      "id": 13,
+      "module": "builtin:BasicAggregator",
+      "version": 1,
+      "parameters": {
+        "feeder": 8
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 3900,
+          "y": 0,
+          "name": "wait for every allocation"
+        }
+      }
+    },
+    {
+      "id": 19,
+      "module": "json:CreateJSON",
+      "version": 1,
+      "parameters": {
+        "type": "<DS_scout_check_in_summary_patch>",
+        "space": ""
+      },
+      "mapper": {
+        "summary_text": "{{5.summary_text}}",
+        "status": "summarised"
+      },
+      "metadata": {
+        "designer": {
+          "x": 4200,
+          "y": 0,
+          "name": "build the summary row"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": {
+        "handleErrors": false,
+        "useNewZLibDeCompress": true
+      },
+      "mapper": {
+        "ca": "",
+        "qs": [],
+        "url": "<SUPABASE_URL>/rest/v1/check_ins?id=eq.{{1.check_in_id}}",
+        "data": "{{19.json}}",
+        "gzip": true,
+        "method": "patch",
+        "headers": [
+          {
+            "name": "apikey",
+            "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Authorization",
+            "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "timeout": "",
+        "useMtls": false,
+        "authPass": "",
+        "authUser": "",
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "serializeUrl": false,
+        "shareCookies": false,
+        "parseResponse": false,
+        "stopOnHttpError": true,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "followAllRedirects": false,
+        "rejectUnauthorized": true
+      },
+      "metadata": {
+        "designer": {
+          "x": 4500,
+          "y": 0,
+          "name": "mark the check in summarised"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": {
+      "orphans": []
+    },
+    "zone": "eu1.make.com"
+  }
+}

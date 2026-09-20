@@ -1,0 +1,843 @@
+{
+  "_readme": "Exported from the live scenario with every key, token, webhook address and private id replaced by a named placeholder. The step that creates the draft scenario is added by scripts/set_scout8_token.mjs, which puts the make.com token straight into that one header. It is not in this export. The prompt text is not repeated here: it is the file named in the Set variable module, word for word. Data structure ids are the account's own and are written as <DS_...>.",
+  "name": "Scout 8: Decision and draft creation",
+  "flow": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": {
+        "hook": "<HOOK_ID>",
+        "maxResults": 1
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0,
+          "name": "Scout 8 decision and draft"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": {
+        "handleErrors": false,
+        "useNewZLibDeCompress": true
+      },
+      "mapper": {
+        "ca": "",
+        "qs": [],
+        "url": "<SUPABASE_URL>/rest/v1/candidates?id=eq.{{1.candidate_id}}&select=*",
+        "data": "",
+        "gzip": true,
+        "method": "get",
+        "headers": [
+          {
+            "name": "apikey",
+            "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Authorization",
+            "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "timeout": "",
+        "useMtls": false,
+        "authPass": "",
+        "authUser": "",
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "serializeUrl": false,
+        "shareCookies": false,
+        "parseResponse": true,
+        "stopOnHttpError": true,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "followAllRedirects": false,
+        "rejectUnauthorized": true
+      },
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0,
+          "name": "read the suggestion"
+        }
+      },
+      "filter": {
+        "name": "only our own interface",
+        "conditions": [
+          [
+            {
+              "a": "{{first(map(1.__IMTHEADERS__; \"value\"; \"name\"; \"x-scout-key\"))}}",
+              "o": "text:equal",
+              "b": "<SCOUT_SHARED_SECRET>"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "module": "builtin:BasicRouter",
+      "version": 1,
+      "mapper": null,
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0,
+          "name": "what kind of decision is this"
+        }
+      },
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 4,
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "status": 200,
+                "body": "{\"ok\":false,\"message\":\"There is no suggestion with that id.\"}",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 900,
+                  "y": -450,
+                  "name": "tell the interface it is not there"
+                }
+              },
+              "filter": {
+                "name": "the suggestion is not there",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{length(2.data)}}",
+                      "o": "number:equal",
+                      "b": "0"
+                    }
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 5,
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "status": 200,
+                "body": "{\"ok\": true, \"make_scenario_url\": \"{{get(first(2.data); \\\"make_scenario_url\\\")}}\"}",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 900,
+                  "y": -250,
+                  "name": "hand back the draft that exists"
+                }
+              },
+              "filter": {
+                "name": "there is already a draft",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{length(2.data)}}",
+                      "o": "number:greater",
+                      "b": "0"
+                    },
+                    {
+                      "a": "{{ifempty(get(first(2.data); \"make_scenario_url\"); \"none\")}}",
+                      "o": "text:notequal",
+                      "b": "none"
+                    }
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 6,
+              "module": "json:CreateJSON",
+              "version": 1,
+              "parameters": {
+                "type": "<DS_scout_approval_row>",
+                "space": ""
+              },
+              "mapper": {
+                "candidate_id": "{{1.candidate_id}}",
+                "approver_id": "{{1.approver_id}}",
+                "decision": "rejected",
+                "comment": "{{1.comment}}"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 900,
+                  "y": 0,
+                  "name": "build the approval row"
+                }
+              },
+              "filter": {
+                "name": "not now",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{length(2.data)}}",
+                      "o": "number:greater",
+                      "b": "0"
+                    },
+                    {
+                      "a": "{{ifempty(get(first(2.data); \"make_scenario_url\"); \"none\")}}",
+                      "o": "text:equal",
+                      "b": "none"
+                    },
+                    {
+                      "a": "{{1.decision}}",
+                      "o": "text:equal",
+                      "b": "rejected"
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              "id": 7,
+              "module": "http:ActionSendData",
+              "version": 3,
+              "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+              },
+              "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "<SUPABASE_URL>/rest/v1/approvals",
+                "data": "{{6.json}}",
+                "gzip": true,
+                "method": "post",
+                "headers": [
+                  {
+                    "name": "apikey",
+                    "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Authorization",
+                    "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": false,
+                "stopOnHttpError": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1200,
+                  "y": 0,
+                  "name": "record the decision"
+                }
+              }
+            },
+            {
+              "id": 8,
+              "module": "http:ActionSendData",
+              "version": 3,
+              "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+              },
+              "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "<SUPABASE_URL>/rest/v1/candidates?id=eq.{{1.candidate_id}}",
+                "data": "{\"status\":\"rejected\"}",
+                "gzip": true,
+                "method": "patch",
+                "headers": [
+                  {
+                    "name": "apikey",
+                    "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Authorization",
+                    "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": false,
+                "stopOnHttpError": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1500,
+                  "y": 0,
+                  "name": "mark the suggestion rejected"
+                }
+              }
+            },
+            {
+              "id": 9,
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "status": 200,
+                "body": "{\"ok\": true}",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1800,
+                  "y": 0,
+                  "name": "answer the interface"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 10,
+              "module": "json:CreateJSON",
+              "version": 1,
+              "parameters": {
+                "type": "<DS_scout_approval_row>",
+                "space": ""
+              },
+              "mapper": {
+                "candidate_id": "{{1.candidate_id}}",
+                "approver_id": "{{1.approver_id}}",
+                "decision": "approved",
+                "comment": "{{1.comment}}"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 900,
+                  "y": 300,
+                  "name": "build the approval row"
+                }
+              },
+              "filter": {
+                "name": "approved",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{length(2.data)}}",
+                      "o": "number:greater",
+                      "b": "0"
+                    },
+                    {
+                      "a": "{{ifempty(get(first(2.data); \"make_scenario_url\"); \"none\")}}",
+                      "o": "text:equal",
+                      "b": "none"
+                    },
+                    {
+                      "a": "{{1.decision}}",
+                      "o": "text:equal",
+                      "b": "approved"
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              "id": 11,
+              "module": "http:ActionSendData",
+              "version": 3,
+              "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+              },
+              "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "<SUPABASE_URL>/rest/v1/approvals",
+                "data": "{{10.json}}",
+                "gzip": true,
+                "method": "post",
+                "headers": [
+                  {
+                    "name": "apikey",
+                    "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Authorization",
+                    "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": false,
+                "stopOnHttpError": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1200,
+                  "y": 300,
+                  "name": "record the decision"
+                }
+              }
+            },
+            {
+              "id": 12,
+              "module": "http:ActionSendData",
+              "version": 3,
+              "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+              },
+              "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "<SUPABASE_URL>/rest/v1/candidates?id=eq.{{1.candidate_id}}",
+                "data": "{\"status\":\"approved\"}",
+                "gzip": true,
+                "method": "patch",
+                "headers": [
+                  {
+                    "name": "apikey",
+                    "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Authorization",
+                    "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": false,
+                "stopOnHttpError": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1500,
+                  "y": 300,
+                  "name": "mark the suggestion approved"
+                }
+              }
+            },
+            {
+              "id": 13,
+              "module": "http:ActionSendData",
+              "version": 3,
+              "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+              },
+              "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "<SUPABASE_URL>/rest/v1/people?company_id=eq.{{get(first(2.data); \"company_id\")}}&app_role=eq.employee&select=full_name,email&order=full_name",
+                "data": "",
+                "gzip": true,
+                "method": "get",
+                "headers": [
+                  {
+                    "name": "apikey",
+                    "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Authorization",
+                    "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": true,
+                "stopOnHttpError": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1800,
+                  "y": 300,
+                  "name": "read the people who do this work"
+                }
+              }
+            },
+            {
+              "id": 14,
+              "module": "util:SetVariable2",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "name": "draft_prompt",
+                "scope": "roundtrip",
+                "value": "<THE WHOLE OF prompts/05_draft_workflow_fill.md>"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2100,
+                  "y": 300,
+                  "name": "the draft filling prompt"
+                }
+              }
+            },
+            {
+              "id": 15,
+              "module": "json:CreateJSON",
+              "version": 1,
+              "parameters": {
+                "type": "<DS_scout_draft_prompt_input>",
+                "space": ""
+              },
+              "mapper": {
+                "candidate": {
+                  "title": "{{get(first(2.data); \"title\")}}",
+                  "description": "{{get(first(2.data); \"description\")}}",
+                  "source_label": "{{get(first(2.data); \"source_label\")}}",
+                  "people_affected": "{{get(first(2.data); \"people_affected\")}}",
+                  "hours_per_week": "{{get(first(2.data); \"hours_per_week\")}}",
+                  "reasoning": "{{get(first(2.data); \"reasoning\")}}",
+                  "proposed_steps": "{{get(first(2.data); \"proposed_steps\")}}"
+                },
+                "template_description": "Weekly schedule. Google Sheets Search rows reads every row of one sheet. Anthropic Claude Create a message writes a summary of those rows following summary_prompt. Gmail Create a draft puts the summary in a draft email to recipients. The scenario is created switched off.",
+                "contacts": "{{13.data}}"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2400,
+                  "y": 300,
+                  "name": "build the input for Claude"
+                }
+              }
+            },
+            {
+              "id": 16,
+              "module": "anthropic-claude:createAMessage",
+              "version": 1,
+              "parameters": {
+                "__IMTCONN__": "<ANTHROPIC_CONNECTION_ID>"
+              },
+              "mapper": {
+                "model": "claude-sonnet-4-5",
+                "max_tokens": 1500,
+                "temperature": 0.2,
+                "system": "{{14.draft_prompt}}",
+                "messages": [
+                  {
+                    "role": "user",
+                    "inputType": "single",
+                    "content": "{{15.json}}"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2700,
+                  "y": 300,
+                  "name": "fill the template"
+                }
+              },
+              "onerror": [
+                {
+                  "id": 30,
+                  "module": "gateway:WebhookRespond",
+                  "version": 1,
+                  "parameters": {},
+                  "mapper": {
+                    "status": 200,
+                    "body": "{\"ok\":false,\"message\":\"Claude could not be reached, so no draft was made. The approval is saved, so you can try again.\"}",
+                    "headers": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ]
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 2700,
+                      "y": 600,
+                      "name": "tell the interface it failed"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": 17,
+              "module": "json:ParseJSON",
+              "version": 1,
+              "parameters": {
+                "type": "<DS_scout_draft_fill_reply>"
+              },
+              "mapper": {
+                "json": "{{trim(replace(first(map(16.content; \"text\"; \"type\"; \"text\")); \"/```(json)?/g\"; emptystring))}}"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 3000,
+                  "y": 300,
+                  "name": "read Claude's reply"
+                }
+              },
+              "onerror": [
+                {
+                  "id": 18,
+                  "module": "anthropic-claude:createAMessage",
+                  "version": 1,
+                  "parameters": {
+                    "__IMTCONN__": "<ANTHROPIC_CONNECTION_ID>"
+                  },
+                  "mapper": {
+                    "model": "claude-sonnet-4-5",
+                    "max_tokens": 1500,
+                    "temperature": 0.2,
+                    "system": "{{14.draft_prompt}}\n\nReturn valid JSON only, no commentary",
+                    "messages": [
+                      {
+                        "role": "user",
+                        "inputType": "single",
+                        "content": "{{15.json}}"
+                      }
+                    ]
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 3000,
+                      "y": 600,
+                      "name": "ask again, JSON only"
+                    }
+                  }
+                },
+                {
+                  "id": 19,
+                  "module": "json:ParseJSON",
+                  "version": 1,
+                  "parameters": {
+                    "type": "<DS_scout_draft_fill_reply>"
+                  },
+                  "mapper": {
+                    "json": "{{trim(replace(first(map(18.content; \"text\"; \"type\"; \"text\")); \"/```(json)?/g\"; emptystring))}}"
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 3300,
+                      "y": 600,
+                      "name": "read the second reply"
+                    }
+                  },
+                  "onerror": [
+                    {
+                      "id": 31,
+                      "module": "gateway:WebhookRespond",
+                      "version": 1,
+                      "parameters": {},
+                      "mapper": {
+                        "status": 200,
+                        "body": "{\"ok\":false,\"message\":\"Claude did not return valid values for the draft twice. The approval is saved, so you can try again.\"}",
+                        "headers": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ]
+                      },
+                      "metadata": {
+                        "designer": {
+                          "x": 3300,
+                          "y": 850,
+                          "name": "tell the interface it failed"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": 20,
+                  "module": "builtin:Resume",
+                  "version": 1,
+                  "parameters": {},
+                  "mapper": {
+                    "scenario_name": "{{19.scenario_name}}",
+                    "schedule": "{{19.schedule}}",
+                    "source_sheet_name": "{{19.source_sheet_name}}",
+                    "recipients": "{{19.recipients}}",
+                    "summary_prompt": "{{19.summary_prompt}}"
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 3600,
+                      "y": 600,
+                      "name": "carry on with the second reply"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": 21,
+              "module": "json:CreateJSON",
+              "version": 1,
+              "parameters": {
+                "type": "<DS_scout_draft_fill_reply>",
+                "space": ""
+              },
+              "mapper": {
+                "scenario_name": "{{17.scenario_name}}",
+                "schedule": {
+                  "day": "{{17.schedule.day}}",
+                  "time": "{{17.schedule.time}}"
+                },
+                "source_sheet_name": "{{17.source_sheet_name}}",
+                "recipients": "{{17.recipients}}",
+                "summary_prompt": "{{17.summary_prompt}}"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 3300,
+                  "y": 300,
+                  "name": "the values for the draft"
+                }
+              }
+            },
+            {
+              "id": 32,
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "status": 200,
+                "body": "{\"ok\": true, \"draft_values\": {{21.json}}}",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 3600,
+                  "y": 300,
+                  "name": "answer the interface"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": {
+      "orphans": []
+    },
+    "zone": "eu1.make.com"
+  }
+}

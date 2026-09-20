@@ -1,0 +1,388 @@
+{
+  "_readme": "Exported from the live scenario with every key, token, webhook address and private id replaced by a named placeholder. Shares are written in one upsert, because a role must always add up to 100. The prompt text is not repeated here: it is the file named in the Set variable module, word for word. Data structure ids are the account's own and are written as <DS_...>.",
+  "name": "Scout 2: Split approval",
+  "flow": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": {
+        "hook": "<HOOK_ID>",
+        "maxResults": 1
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0,
+          "name": "Scout 2 split approval"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": {
+        "handleErrors": false,
+        "useNewZLibDeCompress": true
+      },
+      "mapper": {
+        "ca": "",
+        "qs": [],
+        "url": "<SUPABASE_URL>/rest/v1/topics?role_id=eq.{{1.role_id}}&select=id,name,role_id&order=sort_order",
+        "data": "",
+        "gzip": true,
+        "method": "get",
+        "headers": [
+          {
+            "name": "apikey",
+            "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Authorization",
+            "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "timeout": "",
+        "useMtls": false,
+        "authPass": "",
+        "authUser": "",
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "serializeUrl": false,
+        "shareCookies": false,
+        "parseResponse": true,
+        "stopOnHttpError": true,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "followAllRedirects": false,
+        "rejectUnauthorized": true
+      },
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0,
+          "name": "read the role's topics"
+        }
+      },
+      "filter": {
+        "name": "only our own interface",
+        "conditions": [
+          [
+            {
+              "a": "{{first(map(1.__IMTHEADERS__; \"value\"; \"name\"; \"x-scout-key\"))}}",
+              "o": "text:equal",
+              "b": "<SCOUT_SHARED_SECRET>"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "module": "builtin:BasicRouter",
+      "version": 1,
+      "mapper": null,
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0,
+          "name": "do the numbers add up"
+        }
+      },
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 4,
+              "module": "builtin:BasicFeeder",
+              "version": 1,
+              "mapper": {
+                "array": "{{1.topics}}"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 900,
+                  "y": 0,
+                  "name": "each topic"
+                }
+              },
+              "filter": {
+                "name": "the split is valid",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{sum(map(1.topics; \"expected_percent\"))}}",
+                      "o": "number:equal",
+                      "b": "100"
+                    },
+                    {
+                      "a": "{{length(1.topics)}}",
+                      "o": "number:equal",
+                      "b": "{{length(2.data)}}"
+                    },
+                    {
+                      "a": "{{length(distinct(merge(map(1.topics; \"topic_id\"); map(2.data; \"id\"))))}}",
+                      "o": "number:equal",
+                      "b": "{{length(2.data)}}"
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              "id": 5,
+              "module": "json:CreateJSON",
+              "version": 1,
+              "parameters": {
+                "type": "<DS_scout_topic_row>",
+                "space": ""
+              },
+              "mapper": {
+                "id": "{{4.topic_id}}",
+                "role_id": "{{1.role_id}}",
+                "name": "{{first(map(2.data; \"name\"; \"id\"; 4.topic_id))}}",
+                "expected_percent": "{{4.expected_percent}}"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1200,
+                  "y": 0,
+                  "name": "build the topic row"
+                }
+              }
+            },
+            {
+              "id": 6,
+              "module": "util:TextAggregator",
+              "version": 1,
+              "parameters": {
+                "feeder": 4,
+                "rowSeparator": "other",
+                "otherRowSeparator": ","
+              },
+              "mapper": {
+                "value": "{{5.json}}"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1500,
+                  "y": 0,
+                  "name": "all the rows in one list"
+                }
+              }
+            },
+            {
+              "id": 7,
+              "module": "http:ActionSendData",
+              "version": 3,
+              "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+              },
+              "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "<SUPABASE_URL>/rest/v1/topics?on_conflict=id",
+                "data": "[{{6.text}}]",
+                "gzip": true,
+                "method": "post",
+                "headers": [
+                  {
+                    "name": "apikey",
+                    "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Authorization",
+                    "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "name": "Prefer",
+                    "value": "resolution=merge-duplicates"
+                  }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": false,
+                "stopOnHttpError": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1800,
+                  "y": 0,
+                  "name": "save every share in one call"
+                }
+              }
+            },
+            {
+              "id": 8,
+              "module": "http:ActionSendData",
+              "version": 3,
+              "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+              },
+              "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "<SUPABASE_URL>/rest/v1/roles?id=eq.{{1.role_id}}",
+                "data": "{\"split_status\":\"approved\",\"split_approved_by\":\"{{1.approver_id}}\",\"split_approved_at\":\"{{formatDate(now; \\\"YYYY-MM-DD\\\")}}T{{formatDate(now; \\\"HH:mm:ss\\\")}}Z\"}",
+                "gzip": true,
+                "method": "patch",
+                "headers": [
+                  {
+                    "name": "apikey",
+                    "value": "<SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Authorization",
+                    "value": "Bearer <SUPABASE_SERVICE_ROLE_KEY>"
+                  },
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": false,
+                "stopOnHttpError": true,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2100,
+                  "y": 0,
+                  "name": "mark the role approved"
+                }
+              }
+            },
+            {
+              "id": 9,
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "status": 200,
+                "body": "{\"ok\": true}",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2400,
+                  "y": 0,
+                  "name": "answer the interface"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 10,
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "status": 200,
+                "body": "{\"ok\":false,\"message\":\"The shares must add up to 100 and every topic must belong to this role.\"}",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 900,
+                  "y": 300,
+                  "name": "tell the interface the numbers are wrong"
+                }
+              },
+              "filter": {
+                "name": "the split is not valid",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{sum(map(1.topics; \"expected_percent\"))}}",
+                      "o": "number:notequal",
+                      "b": "100"
+                    }
+                  ],
+                  [
+                    {
+                      "a": "{{length(1.topics)}}",
+                      "o": "number:notequal",
+                      "b": "{{length(2.data)}}"
+                    }
+                  ],
+                  [
+                    {
+                      "a": "{{length(distinct(merge(map(1.topics; \"topic_id\"); map(2.data; \"id\"))))}}",
+                      "o": "number:notequal",
+                      "b": "{{length(2.data)}}"
+                    }
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": {
+      "orphans": []
+    },
+    "zone": "eu1.make.com"
+  }
+}
