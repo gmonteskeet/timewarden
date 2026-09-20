@@ -1,31 +1,82 @@
 @import "tailwindcss";
 
-/* Workflow Scout: one accent colour (teal) for everything the person can act on, slate for
-   expected time, amber for time outside the role. Light theme only.
-   Colours that carry words have at least 4.5 to 1 contrast on white and on the track grey. */
+/* A single indigo accent, neutral expected time and warm amber outside the role.
+   Text colours are chosen for projector contrast on their light surfaces. */
 @theme {
-  --color-accent: #0f766e;
-  --color-accent-dark: #115e59;
-  --color-actual: #0f766e;
-  --color-expected: #94a3b8;
-  --color-outside: #b45309;
-  --color-warn: #92400e;
-  --color-danger: #b91c1c;
-  --color-ink: #0f172a;
-  --color-muted: #475569;
-  --color-line: #e2e8f0;
-  --color-track: #f1f5f9;
-  --color-note: #fef3c7;
-  --color-page: #f8fafc;
+  --color-accent: #4355b9;
+  --color-accent-dark: #334294;
+  --color-accent-soft: #eef0ff;
+  --color-actual: #4355b9;
+  --color-expected: #9ca9bc;
+  --color-outside: #ad570f;
+  --color-warn: #85420b;
+  --color-danger: #b02535;
+  --color-ink: #19243b;
+  --color-muted: #536078;
+  --color-line: #dce2ed;
+  --color-track: #f0f3f8;
+  --color-note: #fff3df;
+  --color-page: #f6f8fc;
+  --color-success: #21644e;
+  --color-success-soft: #edf8f2;
   --font-sans: var(--font-geist-sans);
 }
 
-html {
-  font-size: 18px;
-}
-
+html { font-size: 18px; scroll-padding-top: 8rem; }
 body {
-  background: var(--color-page);
+  background: radial-gradient(ellipse 75% 28rem at 65% 0%, #e9edfc 0%, transparent 100%), var(--color-page);
   color: var(--color-ink);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+::selection { background: #dce2ff; color: var(--color-ink); }
+@layer base {
+  h1 { font-size: clamp(2rem, 3.5vw, 2.8rem); letter-spacing: -0.045em; line-height: 1.12; }
+  h2, h3 { letter-spacing: -0.025em; }
+  button:not(:disabled), summary { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+  input, textarea { border-radius: 0.75rem; }
+  input:focus, textarea:focus { border-color: var(--color-accent); }
+  :focus-visible { outline: 3px solid #8391de; outline-offset: 3px; }
+}
+
+.scout-card {
+  border-radius: 1rem;
+  box-shadow: 0 2px 3px #19243b03, 0 8px 26px -12px #19243b16;
+}
+.scout-card-highlighted {
+  border-radius: 1rem;
+  box-shadow: 0 3px 6px #4355b906, 0 16px 38px -16px #4355b933;
+}
+.scout-button { border-radius: 0.7rem; }
+.scout-primary {
+  background-image: linear-gradient(180deg, #ffffff0d, transparent);
+  box-shadow: inset 0 1px 0 #ffffff24, 0 4px 9px -4px #4355b95c;
+}
+.scout-topbar { background: #ffffffed; backdrop-filter: blur(18px); }
+.scout-nav { border-radius: 0.65rem; }
+.scout-nav[aria-current="page"] { box-shadow: inset 0 -2px 0 var(--color-accent); }
+.scout-footer::before {
+  content: ""; display: inline-block; width: 0.45rem; height: 0.45rem;
+  border-radius: 50%; background: var(--color-accent); margin-right: 0.6rem;
+}
+.scout-bar-line { display: grid; grid-template-columns: minmax(0, 1fr) 17rem; align-items: center; gap: 1.2rem; }
+.scout-bar-fill { transform-origin: left; }
+.scout-outside { background: #fff7ea; border: 1px solid #eed7b6; border-radius: 0.8rem; padding: 1.2rem; margin-top: 1.25rem; }
+.scout-stepper { display: inline-flex; gap: 0; border: 1px solid var(--color-line); border-radius: 0.7rem; background: white; }
+.scout-stepper > button { border: 0; border-radius: 0; box-shadow: none; }
+.scout-stepper > button:first-of-type { border-radius: 0.65rem 0 0 0.65rem; }
+.scout-stepper > button:last-child { border-radius: 0 0.65rem 0.65rem 0; border-left: 1px solid var(--color-line); }
+@media (max-width: 640px) {
+  .scout-bar-line { grid-template-columns: minmax(0, 1fr); gap: 0.2rem; }
+  .scout-bar-line > span { text-align: right; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scout-button, .scout-nav { transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
+  .scout-button:active:not(:disabled) { transform: translateY(1px); }
+  .scout-bar-fill { animation: scout-grow 600ms cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+  @keyframes scout-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
