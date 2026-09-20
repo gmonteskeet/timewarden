@@ -55,3 +55,48 @@ It prints what it changed, with counts.
   `node scripts/seed.mjs` first and then this.
 - It does not touch Priya's or Jonas's days. Only Elena has a live check in for
   the demo day.
+
+## Giving scenario 8 its token
+
+Scenario eight records the manager's decision and has Claude fill the draft
+template, but the last step, the one that creates the draft scenario in
+make.com, needs a make.com API token. No assistant has ever had that token and
+none should: you add it yourself, in your own terminal.
+
+```
+node scripts/set_scout8_token.mjs
+```
+
+It asks for the token with the echo switched off, so it never appears on
+screen. The token is held in memory, used against the make.com API, and written
+into one header inside the scenario in make.com, which is where every other
+credential in this project lives. It is never printed, never logged and never
+written to a file.
+
+What it does, in order:
+
+1. Finds the scenario named `Scout 8: Decision and draft creation`.
+2. Saves its current blueprint to `../make_backups/`, outside this repository,
+   because that file holds keys.
+3. Adds the last steps: build the draft blueprint, build the schedule, build
+   the make.com request, create the draft scenario in the folder
+   `Workflow Scout drafts`, save the draft on the suggestion, and reply with the
+   link. If those steps are already there with an empty header, it only fills
+   the header.
+4. Reads the scenario back and says whether the step is there and whether the
+   header is set, without printing the header.
+
+To see what it would do without a token:
+
+```
+node scripts/set_scout8_token.mjs --dry-run
+```
+
+**To undo:** open the backup file the script names, copy the blueprint, and
+paste it over the scenario in the make.com editor: the three dots, then Import
+Blueprint.
+
+Once it has run, approving a suggestion creates a real draft scenario, switched
+off, and the link appears on the Suggestions screen. Until then, approving a
+suggestion records the decision and leaves it at "approved", and the demo shows
+the draft that is already in the folder.
