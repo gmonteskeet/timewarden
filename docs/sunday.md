@@ -17,7 +17,7 @@ Both, together, on the live database and live make.com.
 
 ## What the Sunday morning run actually proved (written 08:30)
 
-Run end to end on the live database and the live scenarios, through the interface's own server routes. Twenty of twenty one steps passed.
+Run end to end on the live database and the live scenarios, through the interface's own server routes. Twenty of twenty one steps passed at 08:30, and the twenty first passed at 07:54 once the make.com API token was in the account.
 
 | Step | Where it runs | Measured |
 |---|---|---|
@@ -32,7 +32,7 @@ Run end to end on the live database and the live scenarios, through the interfac
 
 The summary was 480 minutes exactly, with manual status reporting at 230, and the review ranked "Weekly client status report" first.
 
-**The one step that did not pass:** creating the draft scenario in make.com from inside Scout 8. It needs a make.com API token, which was not in the account. Everything before it works: the approval is recorded, the suggestion is marked approved and Claude fills the draft template. `scripts/set_scout8_token.mjs` lets Marcus add the token himself, in his own terminal, in about a minute. Until then the demo shows the real draft that is already in the folder `Workflow Scout drafts`.
+**The step that did not pass at 08:30, and passes now:** creating the draft scenario in make.com from inside Scout 8. It needed a make.com API token that was not in the account. Marcus added it himself with `scripts/set_scout8_token.mjs` at 07:51. Scout 8 ran end to end at 07:54, took 3.4 seconds, and a real draft scenario appeared in the folder `Workflow Scout drafts`. Approving a suggestion now creates a real draft scenario in make.com, switched off, for a person to finish.
 
 **Cut, and said so plainly:** reading the role documents live from Google Drive (the seed script loads them), the morning email (the link is opened by hand), and SLNG voice (typing and the browser's own voice are in).
 
@@ -91,6 +91,6 @@ Agree the two sentences we use if make.com is slow in the room, and who says the
 
 ## After submission
 
-- Reset before each judging round at 14:00 and 16:00: `supabase/reset.sql`, delete old draft scenarios, run the morning routine once so a fresh email is waiting.
+- Reset before each judging round at 14:00 and 16:00: `node --env-file=frontend/.env.local scripts/reset_demo.mjs`, delete old draft scenarios, run the morning routine once so a fresh email is waiting.
 - Keep make.com and the deployment running until 18:00.
 - Nobody touches `main` between rounds.

@@ -1,5 +1,5 @@
 {
-  "_readme": "Exported from the live scenario with every key, token, webhook address and private id replaced by a named placeholder. The prompt is held once in a Set variable and used by both Claude calls. The prompt text is not repeated here: it is the file named in the Set variable module, word for word. Data structure ids are the account's own and are written as <DS_...>.",
+  "_readme": "Exported from the live scenario with every key, token, webhook address and private id replaced by a named placeholder. The prompt is held once in a Set variable and used by both Claude calls. The prompt text is not repeated here: it is the file named in the Set variable module, word for word. Data structure ids are the account's own and are written as <DS_...>. Checked against the live scenario on Sunday 20 September after the Galtea evaluation: apart from the placeholders above, this file and the live blueprint are identical, including the Parse JSON expression on the first route and on the retry, which picks the text block by type and strips markdown code fences.",
   "name": "Scout 4: Interview turn",
   "flow": [
     {

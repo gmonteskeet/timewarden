@@ -4,11 +4,11 @@ What the code scanner found on Workflow Scout, what we fixed, what we left and w
 
 ## Fixed
 
-PENDING: the scanner has not been run yet. One line goes here per rule we fixed, in the form "Fixed: [rule] in [file]".
+The Quality Clouds Norma scan had not been run when the code was frozen at 10:30 on Sunday 20 September.
 
 ## Left
 
-PENDING: the scanner has not been run yet. One line goes here per rule we left, in the form "Left: [rule] in [file]", each with a sentence saying why it is safe to leave for a hackathon demo.
+The Quality Clouds Norma scan had not been run when the code was frozen at 10:30 on Sunday 20 September.
 
 ## Why
 
