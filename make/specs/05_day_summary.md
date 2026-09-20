@@ -314,3 +314,22 @@ The prompt already tells it to check the sum. If it still drifts:
 Never move the arithmetic into the prompt. The employee can correct any number
 on the summary screen before submitting, which is the real safety net and one
 worth pointing at during the demo.
+
+## Sunday 20 September: hardened for the demo
+
+1. **The prompt is held once** in a `Tools > Set variable` module named `the
+   summary prompt`, so the first call and the retry use the same text.
+2. **The summary is written through a `JSON > Create JSON` module** (data
+   structure `scout_check_in_summary_patch`) instead of a hand written body, so
+   a summary containing a quotation mark cannot break the call that marks the
+   check in `summarised`.
+3. **The one retry is in place** on `read the model's reply`: ask Claude again
+   with `Return valid JSON only, no commentary`, read that reply, and hand it
+   back to the main flow with a `Resume` directive. If the second reply is
+   broken too the run ends quietly and the check in stays as it was, which is
+   what the interface polls on. There is no `make_errors` data store in the
+   account.
+4. Every database module stops the run on an HTTP error.
+
+Proved live on Sunday 20 September: the summary landed 11 seconds after the
+interview closed, with the exact table above and 480 minutes.

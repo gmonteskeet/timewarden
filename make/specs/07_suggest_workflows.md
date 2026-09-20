@@ -146,7 +146,7 @@ Exactly as in scenario four:
 | Body type | Raw, JSON |
 | Request content | `{"p_company_id": "{{1.company_id}}", "p_period_start": "{{1.period_start}}", "p_period_end": "{{1.period_end}}"}` |
 | Parse response | **Yes** |
-| Evaluate all states as errors | No, as in scenario four |
+| Stop on an HTTP error | **Yes**, as Gerson's decision 23 requires |
 
 Writing the body by hand is safe: a uuid and two dates hold nothing that needs
 escaping. The service key sits in the headers, the same way scenario four holds
@@ -178,7 +178,7 @@ first call and the retry use exactly the same text.
 | Field | Value |
 |---|---|
 | Connection | the existing Anthropic Claude connection, as scenario four |
-| Model | `claude-sonnet-5`, as scenario four |
+| Model | `claude-sonnet-4-5`, as scenario four and five |
 | Max tokens | 4000 |
 | Temperature | 0.2 |
 | System prompt | `{{22.suggest_prompt}}` |
@@ -193,7 +193,7 @@ reached, so no suggestions were made. Try again in a minute." }`.
 
 ### 5. JSON > Parse JSON
 
-JSON string `{{4.content[1].text}}`. Data structure `scout_suggest_reply`:
+JSON string `{{trim(replace(first(map(4.content; "text"; "type"; "text")); "/```(json)?/g"; emptystring))}}`: the text block is picked by its type, not its position, and any markdown fences are stripped first. Gerson's decisions 19 and 22 explain why. Data structure `scout_suggest_reply`:
 
 | Field | Type |
 |---|---|
@@ -304,6 +304,8 @@ suggestions are still saved and appear on the next load.
 - [ ] Running it again replaces the proposed rows, with no duplicates.
 - [ ] The blueprint is exported to `make/blueprints/` and holds no key, token or
       webhook address.
+
+Proved live on Sunday 20 September: 2 candidates saved in 10.5 seconds, "Weekly client status report" first from "Manual status reporting", 3 people, 6.4 hours a week, about 19,000 euro a year.
 
 Worth knowing: the period to 18 September has 15 working days, but the
 approved history ends on 17 September, so the hours per week come out a little

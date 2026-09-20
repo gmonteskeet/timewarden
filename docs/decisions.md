@@ -310,3 +310,27 @@ The same table as the bottom of `data/interview_script.md`, to the minute. The
 percentages add to exactly 100, so decision 12's worry about a hundredth of a
 point did not arise here. Run twice, the row counts do not move and the
 calendar activities are untouched.
+
+## 25. Scenario eight uses plain database calls, and its last step waits for a token (Sunday 20 September, Marcus's side)
+Task G12 assumed two things the account does not have on Sunday morning:
+migration `0005` applied, and a Make connection built from a make.com API
+token. Gerson is away, nobody can open the Supabase SQL editor, and there is no
+Make connection in the account.
+
+So scenario eight reads and writes the database with plain HTTP calls to the
+REST interface, exactly as `make/specs/README.md` section 3 describes, and
+needs no database function at all. It reads the suggestion, refuses politely
+when there is none, hands back the existing link when a draft already exists,
+records the approval, marks the suggestion approved or rejected, reads the
+people who do the work, and asks Claude to fill the draft template.
+
+**What is missing:** the call that creates the draft scenario in make.com. It
+is one HTTP call to `https://eu1.make.com/api/v2/scenarios` with a token in the
+header, and the token is the one thing this session cannot obtain: reading it
+from the local settings file was refused, and the account has no keychain entry
+holding it. The scenario therefore stops one step short, replies `{ "ok": true,
+"draft_values": ... }`, and leaves the suggestion `approved` rather than
+`drafted`, so it can be tried again the moment the token is in place.
+
+Migration `0005_decision_and_draft.sql` stays in pull request 23 as the tidier
+version for after the hackathon. Nothing in the live scenario depends on it.

@@ -174,7 +174,7 @@ The last module of a webhook scenario is **Webhook response**, status 200,
 | `Scout 4: Interview turn` | `{ "ok": true, "done": false, "turn_no": 3, "question": "...", "kind": "calendar_gap", "evidence": "..." }` |
 | `Scout 6`, submit and day approval | `{ "ok": true }` |
 | `Scout 7: Suggest workflows` | `{ "ok": true, "candidates_created": 4 }` |
-| `Scout 8: Decision and draft creation` | `{ "ok": true, "make_scenario_url": "https://..." }` |
+| `Scout 8: Decision and draft creation` | `{ "ok": true, "make_scenario_url": "https://..." }`, or `{ "ok": true, "draft_values": { ... } }` until the draft creating step has its token. See `08_decision_and_draft.md`. |
 
 **Timing.** The interview turn must reply within **12 seconds**. Everything else
 has 40 seconds. If a scenario cannot finish in time, reply early with what is
