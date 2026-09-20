@@ -5,6 +5,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { btnLink, btnPrimary, card, errorPanel, focusRing, waiting } from '@/components/ui';
 import { defaultVoiceMode, getVoice } from '@/lib/voice';
 
 export interface InterviewTurnView {
@@ -202,7 +203,7 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
         </ol>
       )}
 
-      <section aria-live="polite" className="min-h-56 rounded-lg border border-line bg-white p-8">
+      <section aria-live="polite" className={`min-h-64 ${card}`}>
         {current ? (
           <>
             {!finished && <p className="mb-3 text-lg font-medium text-accent">{`Question ${questionNumber} of about ${Math.max(ABOUT_QUESTIONS, questionNumber)}`}</p>}
@@ -215,7 +216,7 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
             )}
           </>
         ) : (
-          <p className="text-2xl text-muted">Scout is reading your calendar and calls for the day.</p>
+          <p className={`animate-pulse text-2xl ${waiting}`}>Scout is reading your calendar and your recorded calls for the day, and writing its first question.</p>
         )}
         {(phase === 'thinking' || phase === 'failed') && shownAnswer && (
           <p className="mt-6 ml-10 rounded-lg bg-track px-5 py-3 text-lg">
@@ -223,31 +224,23 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
             {shownAnswer}
           </p>
         )}
-        {busy && <p className="mt-6 animate-pulse text-xl font-medium text-accent">Scout is thinking</p>}
-        {phase === 'preparing' && <p className="mt-6 animate-pulse text-xl font-medium text-accent">Scout is preparing your summary</p>}
+        {busy && current && <p className={`mt-6 animate-pulse text-xl ${waiting}`}>Scout is reading your answer and working out what to ask next.</p>}
+        {phase === 'preparing' && <p className={`mt-6 animate-pulse text-xl ${waiting}`}>Scout is adding up your day and writing your summary. It opens on its own in a moment.</p>}
       </section>
 
       {phase === 'failed' && (
-        <div role="alert" className="flex flex-wrap items-center gap-4 rounded-lg bg-note px-6 py-4 text-lg">
+        <div role="alert" className={errorPanel}>
           <p>{problem} Your answer is safe.</p>
-          <button
-            type="button"
-            onClick={() => void send(lastSent)}
-            className="rounded bg-accent px-5 py-2 font-semibold text-white hover:bg-accent-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
+          <button type="button" onClick={() => void send(lastSent)} className={btnPrimary}>
             Try again
           </button>
         </div>
       )}
 
       {phase === 'preparing_slow' && (
-        <div role="alert" className="flex flex-wrap items-center gap-4 rounded-lg bg-note px-6 py-4 text-lg">
+        <div role="alert" className={errorPanel}>
           <p>Your summary is taking longer than usual. Your answers are saved.</p>
-          <button
-            type="button"
-            onClick={() => void pollUntilSummarised()}
-            className="rounded bg-accent px-5 py-2 font-semibold text-white hover:bg-accent-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
+          <button type="button" onClick={() => void pollUntilSummarised()} className={btnPrimary}>
             Try again
           </button>
         </div>
@@ -262,7 +255,7 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
                 type="button"
                 aria-pressed={inputMode === mode}
                 onClick={() => switchMode(mode)}
-                className={`rounded-md px-5 py-2 text-lg font-medium focus-visible:outline-3 focus-visible:outline-accent ${inputMode === mode ? 'bg-accent text-white' : 'text-ink hover:bg-track'}`}
+                className={`rounded-md px-5 py-2 text-lg font-medium ${focusRing} ${inputMode === mode ? 'bg-accent text-white' : 'text-ink hover:bg-track'}`}
               >
                 {mode === 'type' ? 'Type' : 'Speak'}
               </button>
@@ -277,7 +270,7 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
                 type="button"
                 onClick={listening ? stopListening : startListening}
                 disabled={busy}
-                className={`rounded-full px-7 py-3 text-xl font-semibold focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50 ${listening ? 'bg-outside text-white' : 'border-2 border-accent bg-white text-accent hover:bg-track'}`}
+                className={`inline-flex items-center justify-center rounded-lg border-2 px-6 py-3 text-lg font-semibold ${focusRing} disabled:opacity-50 ${listening ? 'border-accent-dark bg-accent-dark text-white' : 'border-accent bg-white text-accent hover:bg-track'}`}
               >
                 {listening ? 'Stop listening' : 'Start speaking'}
               </button>
@@ -300,16 +293,11 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
               }
             }}
             rows={4}
-            className="w-full resize-y rounded-lg border border-line bg-white px-5 py-4 text-xl leading-relaxed focus-visible:outline-3 focus-visible:outline-accent"
+            className={`w-full resize-y rounded-lg border border-line bg-white px-5 py-4 text-xl leading-relaxed ${focusRing}`}
           />
           <div className="flex flex-wrap items-center justify-between gap-4">
             <p className="text-base text-muted">Enter sends. Shift and Enter starts a new line.</p>
-            <button
-              type="button"
-              onClick={submitDraft}
-              disabled={busy || draft.trim().length === 0}
-              className="rounded-lg bg-accent px-10 py-4 text-xl font-semibold text-white hover:bg-accent-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
-            >
+            <button type="button" onClick={submitDraft} disabled={busy || draft.trim().length === 0} className={btnPrimary}>
               Send
             </button>
           </div>
@@ -320,7 +308,7 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
                 setDraft(suggestion);
                 inputRef.current?.focus();
               }}
-              className="text-base font-medium text-accent underline focus-visible:outline-3 focus-visible:outline-accent"
+              className={btnLink}
             >
               Use Elena&apos;s scripted answer
             </button>

@@ -4,6 +4,7 @@
 
 import { useMemo, useState } from 'react';
 import AllocationBars from '@/components/AllocationBars';
+import { btnLink, btnPrimary, card, errorPanel, waiting as waitingWords, warning } from '@/components/ui';
 import { formatMinutes, type AllocationRow } from '@/lib/allocation-rows';
 import type { CheckInStatus } from '@/lib/contract';
 
@@ -49,6 +50,10 @@ export default function SummaryClient(props: Props) {
     };
   });
 
+  // Scout's sentence still quotes the minutes Scout worked out, so say plainly that the bars no
+  // longer match it. Scout's own words are left exactly as they were.
+  const corrected = rows.some((r) => r.employeeAdjusted);
+
   const difference = total - workingMinutes;
   const blockedReason =
     difference === 0
@@ -67,12 +72,12 @@ export default function SummaryClient(props: Props) {
       });
       const data = (await res.json()) as { ok: boolean; message?: string };
       if (!res.ok || !data.ok) {
-        setProblem(data.message ?? 'Your day could not be sent just now. Please try again.');
+        setProblem(data.message ?? 'Your day could not be sent just now. Your corrections are safe.');
         return;
       }
       setStatus('submitted');
     } catch {
-      setProblem('Your day could not be sent just now. Your corrections are safe. Please try again.');
+      setProblem('Your day could not be sent just now. Your corrections are safe.');
     } finally {
       setSending(false);
     }
@@ -94,6 +99,11 @@ export default function SummaryClient(props: Props) {
       )}
       {summaryText && <p className="max-w-4xl text-xl leading-relaxed">{summaryText}</p>}
 
+      {/* Kept at a steady height so nothing on the page moves the moment a correction is made. */}
+      <div aria-live="polite" className={readOnly ? undefined : 'min-h-8'}>
+        {corrected && <p className="text-lg font-medium text-accent">You have corrected this day. The bars show your numbers.</p>}
+      </div>
+
       {!readOnly && (
         <p className="text-lg text-muted">
           If something is not right, correct it in steps of 15 minutes. The day must still add up to {formatMinutes(workingMinutes)}.
@@ -109,38 +119,37 @@ export default function SummaryClient(props: Props) {
       />
 
       {!readOnly && (
-        <div className="sticky bottom-0 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-line bg-white px-6 py-4 shadow-sm">
+        <div className={`sticky bottom-0 flex flex-wrap items-center justify-between gap-4 ${card} shadow-[0_-6px_16px_rgba(15,23,42,0.10)]`}>
           <div className="space-y-1">
             <p className="text-xl font-semibold tabular-nums">
               {formatMinutes(total)} of {formatMinutes(workingMinutes)}
             </p>
             {changed.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setMinutes(new Map(original))}
-                className="text-base font-medium text-accent underline focus-visible:outline-3 focus-visible:outline-accent"
-              >
+              <button type="button" onClick={() => setMinutes(new Map(original))} className={btnLink}>
                 Put it back
               </button>
             )}
           </div>
           <div className="flex flex-wrap items-center gap-4">
-            {blockedReason && <p className="max-w-md text-lg text-outside">{blockedReason}</p>}
-            <button
-              type="button"
-              onClick={() => void submit()}
-              disabled={blockedReason !== null || sending}
-              className="rounded-lg bg-accent px-10 py-4 text-xl font-semibold text-white hover:bg-accent-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
-            >
+            {blockedReason && <p className={`max-w-md ${warning}`}>{blockedReason}</p>}
+            {sending && !blockedReason && (
+              <p aria-live="polite" className={`max-w-md animate-pulse ${waitingWords}`}>
+                Scout is saving your corrections and putting the day in front of {managerFirstName}.
+              </p>
+            )}
+            <button type="button" onClick={() => void submit()} disabled={blockedReason !== null || sending} className={btnPrimary}>
               {sending ? 'Sending' : 'Submit'}
             </button>
           </div>
         </div>
       )}
       {problem && (
-        <p role="alert" className="rounded-lg bg-note px-6 py-4 text-lg">
-          {problem}
-        </p>
+        <div role="alert" className={errorPanel}>
+          <p>{problem}</p>
+          <button type="button" onClick={() => void submit()} disabled={sending} className={btnPrimary}>
+            Try again
+          </button>
+        </div>
       )}
     </div>
   );

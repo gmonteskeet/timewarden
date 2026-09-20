@@ -4,6 +4,7 @@
 
 import { useState } from 'react';
 import AllocationBars from '@/components/AllocationBars';
+import { btnPrimary, btnQuiet, buttonRow, card, errorPanel, focusRing } from '@/components/ui';
 import type { AllocationRow } from '@/lib/allocation-rows';
 
 export interface DayCard {
@@ -25,7 +26,7 @@ export interface WeekCard {
   approved_count: number;
 }
 
-const EMPTY = 'No days are waiting for you. Days appear here once an employee has submitted them.';
+const EMPTY = 'No days are waiting for you. A day appears here the moment one of your team submits it, usually during the morning.';
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 async function decide(ids: string[], decision: 'approved' | 'returned', comment: string | null): Promise<string | null> {
@@ -37,28 +38,25 @@ async function decide(ids: string[], decision: 'approved' | 'returned', comment:
       signal: AbortSignal.timeout(40_000),
     });
     const data = (await res.json()) as { ok: boolean; message?: string };
-    return res.ok && data.ok ? null : (data.message ?? 'That could not be saved just now. Please try again.');
+    return res.ok && data.ok ? null : (data.message ?? 'That could not be saved just now. Nothing has been lost.');
   } catch {
-    return 'That could not be saved just now. Please try again.';
+    return 'That could not be saved just now. Nothing has been lost.';
   }
 }
-
-const primary =
-  'rounded-lg bg-accent px-7 py-3 text-lg font-semibold text-white hover:bg-accent-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50';
-const secondary =
-  'rounded-lg border-2 border-line bg-white px-6 py-3 text-lg font-semibold hover:bg-track focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50';
 
 function Day({ day, onDone }: { day: DayCard; onDone: (id: string, message: string) => void }) {
   const [returning, setReturning] = useState(false);
   const [comment, setComment] = useState('');
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
+  const [lastTried, setLastTried] = useState<'approved' | 'returned'>('approved');
 
   async function run(decision: 'approved' | 'returned') {
     if (decision === 'returned' && comment.trim() === '') {
       setProblem(`Please tell ${day.first_name} what needs changing before you return the day.`);
       return;
     }
+    setLastTried(decision);
     setBusy(true);
     setProblem(null);
     const error = await decide([day.id], decision, decision === 'returned' ? comment.trim() : null);
@@ -68,9 +66,15 @@ function Day({ day, onDone }: { day: DayCard; onDone: (id: string, message: stri
   }
 
   return (
-    <article className="space-y-4 rounded-lg border border-line bg-white p-6">
+    <article className={`space-y-4 ${card}`}>
       <h3 className="text-2xl font-semibold">{day.day_label}</h3>
-      {day.summary_text && <p className="max-w-4xl text-lg leading-relaxed">{day.summary_text}</p>}
+      {day.summary_text && (
+        <div className="max-w-4xl space-y-1">
+          {/* Scout writes the summary to the employee, so the manager sees who it is addressed to. */}
+          <p className="text-base text-muted">Scout&apos;s summary, as written to {day.first_name}:</p>
+          <p className="text-lg leading-relaxed">{day.summary_text}</p>
+        </div>
+      )}
       <AllocationBars rows={day.rows} periodLabel={day.day_label} audience="manager" />
       {returning && (
         <div className="space-y-2">
@@ -82,26 +86,26 @@ function Day({ day, onDone }: { day: DayCard; onDone: (id: string, message: stri
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             rows={3}
-            className="w-full rounded-lg border border-line px-4 py-3 text-lg focus-visible:outline-3 focus-visible:outline-accent"
+            className={`w-full rounded-lg border border-line bg-white px-4 py-3 text-lg ${focusRing}`}
           />
         </div>
       )}
-      <div className="flex flex-wrap items-center gap-4">
+      <div className={buttonRow}>
         {!returning ? (
           <>
-            <button type="button" className={primary} disabled={busy} onClick={() => void run('approved')}>
+            <button type="button" className={btnPrimary} disabled={busy} onClick={() => void run('approved')}>
               {busy ? 'Saving' : 'Approve'}
             </button>
-            <button type="button" className={secondary} disabled={busy} onClick={() => setReturning(true)}>
+            <button type="button" className={btnQuiet} disabled={busy} onClick={() => setReturning(true)}>
               Return
             </button>
           </>
         ) : (
           <>
-            <button type="button" className={primary} disabled={busy || comment.trim() === ''} onClick={() => void run('returned')}>
+            <button type="button" className={btnPrimary} disabled={busy || comment.trim() === ''} onClick={() => void run('returned')}>
               {busy ? 'Saving' : `Return to ${day.first_name}`}
             </button>
-            <button type="button" className={secondary} disabled={busy} onClick={() => setReturning(false)}>
+            <button type="button" className={btnQuiet} disabled={busy} onClick={() => setReturning(false)}>
               Cancel
             </button>
             {comment.trim() === '' && <p className="text-lg text-muted">Write a comment to return the day.</p>}
@@ -109,9 +113,12 @@ function Day({ day, onDone }: { day: DayCard; onDone: (id: string, message: stri
         )}
       </div>
       {problem && (
-        <p role="alert" className="rounded bg-note px-5 py-3 text-lg">
-          {problem}
-        </p>
+        <div role="alert" className={errorPanel}>
+          <p>{problem}</p>
+          <button type="button" className={btnPrimary} disabled={busy} onClick={() => void run(lastTried)}>
+            Try again
+          </button>
+        </div>
       )}
     </article>
   );
@@ -132,7 +139,7 @@ function Week({ week, onDone }: { week: WeekCard; onDone: (ids: string[], messag
   }
 
   return (
-    <article className="space-y-4 rounded-lg border border-line bg-white p-6">
+    <article className={`space-y-4 ${card}`}>
       <h3 className="text-2xl font-semibold">
         {week.person_name}: {week.week_label}
       </h3>
@@ -143,14 +150,17 @@ function Week({ week, onDone }: { week: WeekCard; onDone: (ids: string[], messag
       {waiting.length === 0 ? (
         <p className="text-lg font-medium">Nothing is waiting for approval in this week.</p>
       ) : (
-        <button type="button" className={primary} disabled={busy} onClick={() => void approveWeek()}>
+        <button type="button" className={btnPrimary} disabled={busy} onClick={() => void approveWeek()}>
           {busy ? 'Saving' : 'Approve the week'}
         </button>
       )}
       {problem && (
-        <p role="alert" className="rounded bg-note px-5 py-3 text-lg">
-          {problem}
-        </p>
+        <div role="alert" className={errorPanel}>
+          <p>{problem}</p>
+          <button type="button" className={btnPrimary} disabled={busy} onClick={() => void approveWeek()}>
+            Try again
+          </button>
+        </div>
       )}
     </article>
   );
@@ -183,7 +193,7 @@ export default function ApprovalsClient({ days, weeks }: { days: DayCard[]; week
       )}
 
       {openDays.length === 0 ? (
-        <p className="text-xl text-muted">{EMPTY}</p>
+        <p className="max-w-3xl text-xl text-muted">{EMPTY}</p>
       ) : (
         <>
           <div role="group" aria-label="Show days" className="inline-flex rounded-lg border border-line bg-white p-1">
@@ -193,7 +203,7 @@ export default function ApprovalsClient({ days, weeks }: { days: DayCard[]; week
                 type="button"
                 aria-pressed={view === v}
                 onClick={() => setView(v)}
-                className={`rounded-md px-5 py-2 text-lg font-medium focus-visible:outline-3 focus-visible:outline-accent ${view === v ? 'bg-accent text-white' : 'text-ink hover:bg-track'}`}
+                className={`rounded-md px-5 py-2 text-lg font-medium ${focusRing} ${view === v ? 'bg-accent text-white' : 'text-ink hover:bg-track'}`}
               >
                 {v === 'daily' ? 'Daily' : 'Weekly'}
               </button>
@@ -202,7 +212,7 @@ export default function ApprovalsClient({ days, weeks }: { days: DayCard[]; week
 
           {view === 'daily' &&
             people.map((name) => (
-              <section key={name} className="space-y-4" aria-label={name}>
+              <section key={name} className="space-y-4 pt-2" aria-label={name}>
                 <h2 className="text-3xl font-bold">{name}</h2>
                 {openDays
                   .filter((d) => d.person_name === name)

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Link from "next/link";
 import NavLinks from "@/components/NavLinks";
+import Wordmark from "@/components/Wordmark";
+import { btnQuiet, focusRing } from "@/components/ui";
 import { dataModeLabel, getCurrentPerson } from "@/lib/data";
 import "./globals.css";
 
@@ -28,23 +30,25 @@ async function TopBar() {
         ? [{ href: "/check-in/current", label: "My check in" }]
         : [];
 
+  // min-h and items-center keep the tallest thing in the bar, the person's name and role,
+  // off the top edge however long the name is. Long names are shortened, never cut by the edge.
   return (
     <header className="border-b border-line bg-white">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-8 py-4">
-        <div className="flex items-center gap-8">
-          <Link href="/" className="text-2xl font-bold text-accent">
-            Workflow Scout
+      <div className="mx-auto flex min-h-24 max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-3 px-8 py-4">
+        <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+          <Link href="/" className={`rounded text-accent ${focusRing}`} aria-label="Workflow Scout, home">
+            <Wordmark />
           </Link>
           <NavLinks links={links} />
         </div>
         {current && (
-          <div className="flex items-center gap-5">
-            <p className="text-right leading-tight">
-              <span className="block text-lg font-semibold">{current.person.full_name}</span>
-              <span className="block text-base text-muted">{current.role.title}</span>
+          <div className="flex min-w-0 items-center gap-5">
+            <p className="min-w-0 text-right leading-snug">
+              <span className="block truncate text-lg font-semibold">{current.person.full_name}</span>
+              <span className="block truncate text-base text-muted">{current.role.title}</span>
             </p>
             <form action="/signout" method="post">
-              <button type="submit" className="rounded border border-line px-4 py-2 text-base font-medium hover:bg-track">
+              <button type="submit" className={btnQuiet}>
                 Sign out
               </button>
             </form>

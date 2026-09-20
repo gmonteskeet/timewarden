@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import SummaryClient from "@/components/SummaryClient";
+import { btnPrimary } from "@/components/ui";
 import { rowsFromAllocations } from "@/lib/allocation-rows";
 import { getCheckIn } from "@/lib/data";
 import { dayLabel } from "@/lib/dates";
@@ -32,10 +33,12 @@ export default async function SummaryPage({ params }: PageProps<"/check-in/[id]/
       </header>
 
       {view.allocations.length === 0 ? (
-        <div className="space-y-3">
-          <p className="text-xl text-muted">Scout has not written a summary for this day yet.</p>
+        <div className="space-y-4">
+          <p className="max-w-3xl text-xl text-muted">
+            Scout has not written a summary for this day yet. The bars appear here, one per topic, as soon as the check in has finished.
+          </p>
           {own && (
-            <Link href={`/check-in/${encodeURIComponent(id)}`} className="text-xl font-medium text-accent underline">
+            <Link href={`/check-in/${encodeURIComponent(id)}`} className={btnPrimary}>
               Back to the check in
             </Link>
           )}

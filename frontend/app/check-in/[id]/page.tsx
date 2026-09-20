@@ -16,7 +16,9 @@ export default async function CheckInPage({ params }: PageProps<"/check-in/[id]"
       return (
         <div className="max-w-3xl space-y-4">
           <h1 className="text-4xl font-bold">My check in</h1>
-          <p className="text-xl">There is no check in for you yet. It arrives with your morning email.</p>
+          <p className="max-w-3xl text-xl text-muted">
+            There is no check in for you yet. Your check in appears here each working morning, with a personal link in your morning email.
+          </p>
         </div>
       );
     }
