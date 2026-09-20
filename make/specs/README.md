@@ -8,9 +8,23 @@ blueprint to `make/blueprints/` under the same name.
 ## The model we use
 `AGENTS.md` section 3 says the model is recorded here.
 
-**Model: `claude-sonnet-4-5`.** Set it in every Anthropic Claude module. If the
-account offers a newer Sonnet, take it, change this line, and add a note to
-`docs/decisions.md`.
+**Model: `claude-sonnet-4-5`.** Set it in every Anthropic Claude module.
+`claude-sonnet-5` was tried and taken back out: it thinks before it answers,
+which put one interview turn at 118 seconds against a 12 second limit. Measured
+both ways in decision 21.
+
+Three things to get right, all found the hard way:
+
+- `messages[].content[]` must carry `"type": "text"`. make.com's own public
+  template leaves it out and Anthropic refuses the call. Decision 18.
+- `max_tokens` and `temperature` must be numbers, not strings. Same template,
+  same problem. Decision 18.
+- Read the reply out of the `content` list **by block type**, not by position:
+  `{{first(map(5.content; "text"; "type"; "text"))}}`. A model that thinks puts
+  a `thinking` block first and `content[1].text` is then empty. Decision 19.
+
+Strip markdown fences before Parse JSON. Every prompt says JSON only and Claude
+almost always obeys, but "almost" is not a thing to demo on. Decision 21.
 
 ## The scenarios
 
@@ -61,17 +75,39 @@ Use the `Anthropic Claude` app, **Create a message**:
 |---|---|
 | Connection | `Scout Claude` |
 | Model | as at the top of this file |
-| Max tokens | 4000, except the interview turn, which is 600 |
+| Max tokens | 4000, except the interview turn, which is 1500 |
 | Temperature | 0.2 |
-| System prompt | the whole file from `prompts/`, pasted in |
-| User message | a JSON string of the inputs, built in a Set variable module first |
+| Messages | one message, role `User`. See below. |
+
+**There is no system prompt field.** The module takes `model`, `messages`,
+`max_tokens` and `temperature` and nothing else. So the whole prompt file goes
+at the top of the user message, then a blank line, then the inputs as JSON.
 
 `prompts/README.md` lists, for each prompt, exactly which inputs go in and what
-comes back. Build the Set variable module from that list. Do not invent field
-names.
+comes back. Do not invent field names.
 
 Follow every Claude call with a **Parse JSON** module, with a data structure
 set, so later modules map fields by name instead of by guesswork.
+
+### Reading the reply: the one that will catch you out
+
+**Never map `content[1].text`.** Claude returns `content` as a list of blocks,
+and a model that reasons puts a `thinking` block in front of the `text` one.
+`content[1]` is then the thinking block, its `text` is empty, and Parse JSON
+fails with `Validation failed for 1 parameter(s)`. It works on a short first
+call and breaks once there is anything to reason about, which makes it look
+intermittent. Read the block by **type**:
+
+```
+{{trim(replace(first(map(4.content; "text"; "type"; "text")); "/```(json)?/g"; emptystring))}}
+```
+
+That picks the text block wherever it sits and strips a markdown fence if the
+model adds one. Replace `4` with the number of your Claude module.
+
+**Check any scenario already built against this.** `Scout 7: Suggest workflows`
+was written with `content[1].text` and `claude-sonnet-5` and will fail on a real
+run for exactly this reason.
 
 **When Claude returns something that is not valid JSON.** Put an error handler
 route on the Parse JSON module:
@@ -88,9 +124,22 @@ If Claude starts failing on size rather than format, cut the input down: for the
 interview, activity titles, times and minutes only.
 
 ### 3. Reading and writing the database
-Use the `Supabase` app modules where they exist: **Select rows**, **Insert a
-row**, **Update a row**. They read clearly in the run history, which matters
-when something breaks in front of judges.
+The `HTTP` app needs no connection at all, so scenarios four and five use it for
+every read and write. That is the only reason they could be built before anyone
+had set a Supabase connection up. The Supabase app modules read a little more
+clearly in the run history, and either is fine.
+
+**Three things that will waste your evening if you write a body by hand:**
+
+- Switch **stop on HTTP error** on. Without it a 4xx is ignored, the run goes
+  green and nothing is written.
+- A uuid column written as `{{ifempty(<expression>; null)}}` in a raw body comes
+  out as `""`, and Postgres answers `400 invalid input syntax for type uuid`.
+  Build the row with a **Create JSON** module instead, where the IML keyword
+  `null` really does become a JSON null. `emptystring` does not.
+- `map(list; "id"; "name"; <empty>)` has nothing to filter on and returns
+  **every** row, so `first()` gives you a plausible wrong answer rather than
+  nothing. Guard it.
 
 For bulk inserts use the `HTTP` app against the Supabase REST address instead,
 posting an array in one call. One HTTP call beats twenty iterations.

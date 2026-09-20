@@ -16,7 +16,7 @@ Times are Madrid time, Saturday 19 September unless stated.
 
 ## Where we are
 
-Updated Saturday 19 September, 18:25. Checkpoint one is at 20:00.
+Updated Sunday 20 September, 03:45. Submission is at 11:30.
 
 **Done and merged**
 
@@ -26,19 +26,25 @@ Updated Saturday 19 September, 18:25. Checkpoint one is at 20:00.
 - Connection notes, for the accounts and keys you set up by hand.
 - Build sheets for five scenarios: the interview, the day summary, the morning run, the calendar intake and the call intake.
 
-**Waiting on you, in the make.com editor. Nothing runs until these are clicked.**
+**Working on the real database, end to end**
 
-- The connections themselves: Claude, Google Calendar, Google Drive, Gmail, Supabase, and the API token.
+- Supabase is up, all three migrations are in and the seed has run.
+- The interview and the day summary are built, live and proved against Elena's Friday.
+- The Anthropic connection exists. The model is `claude-sonnet-4-5`.
+
+**Waiting on you, because they need a browser**
+
+- Google Drive, Google Calendar and Gmail connections. None exist yet.
 - Elena's calendar id, copied into the database. Without it the calendar intake skips her.
-- Build the calendar intake, then the first half of the morning run. That is what puts 18 September in the database.
-- Build the interview turn and the day summary. **This is checkpoint one.**
+- **`Scout 7: Suggest workflows` needs a fix before it will run.** It reads
+  Claude's reply as `content[1].text` and uses `claude-sonnet-5`. Both are wrong
+  for the reason in `make/specs/README.md` under "Reading the reply".
 
 **Still to write, in order**
 
 - Reading the role documents and proposing each role's time split, plus the manager approving it.
 - The employee submitting a day and the manager approving it.
-- Reviewing the history and suggesting workflows worth automating.
-- Turning an approved suggestion into a real draft scenario. This is the ending of the demo and the longest one.
+- Turning an approved suggestion into a real draft scenario. The template scenario exists; the scenario that fills it does not.
 - The agent that ties the scenarios together, only if there is time.
 - Deploying the interface.
 
@@ -87,8 +93,13 @@ Flags: `--with-splits` also loads `data/expected_splits.json` into `topics` as `
 At the end write `docs/demo_links.md`, **which must be in `.gitignore`**, listing each person's id and their `/enter/<access_token>` link for Marcus. Tokens are secrets.
 Checks: run twice, row counts unchanged. `git status` shows `docs/demo_links.md` ignored.
 
-### G7. Scenario 4: Interview turn, and scenario 5: Day summary (60 minutes). Build these first of all scenarios. They are the heart of the demo. [build sheets done, Gerson to do the clicking]
-Branch `gerson/g7-interview`. Both sheets are written and migration `0003_interview_context.sql` is tested. What is left is building the two scenarios in the make.com editor from the sheets, and the end to end check below. Needs `prompts/02_interview_turn.md` and `prompts/03_day_summary.md` from Marcus's task M4. If they are not merged yet, build against the input and output shapes in `docs/BUILD_MARCUS.md` task M4 and paste the prompts in when they land.
+### G7. Scenario 4: Interview turn, and scenario 5: Day summary (60 minutes). Build these first of all scenarios. They are the heart of the demo. [done, built and proved on the real database]
+Branch `gerson/g7-interview`. **Done.** Both scenarios are built and live in
+make.com, made through the API by `scripts/make_build.mjs` rather than clicked.
+Elena's Friday runs the whole way: five interview turns at 3.4, 2.5 and 2.4
+seconds, then the summary scenario starts itself and writes the exact table at
+the bottom of `data/interview_script.md`, 480 minutes and 100 percent with
+"Manual status reporting" outside the role at 230. Run twice, nothing doubles. Needs `prompts/02_interview_turn.md` and `prompts/03_day_summary.md` from Marcus's task M4. If they are not merged yet, build against the input and output shapes in `docs/BUILD_MARCUS.md` task M4 and paste the prompts in when they land.
 `make/specs/04_interview_turn.md`. Webhook `MAKE_WEBHOOK_INTERVIEW`, body `{ check_in_id, employee_text }`.
 1. Shared secret filter.
 2. Select the check in, the person, their role and approved topics, the day's `activities`, and all `interview_turns` so far in `turn_no` order.

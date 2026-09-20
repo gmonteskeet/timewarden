@@ -176,3 +176,137 @@ watch: the prompts were written and worked through against Claude, so a
 different model may follow the JSON rules less reliably, which makes the retry
 route matter more than it did; and "Claude" should come out of any slide that
 names it.
+
+## 17. Back to Claude, and the model is `claude-sonnet-5` (task G7, 19 September)
+Decision 16 put the interview on Make's own AI provider because there was no
+Anthropic key. Gerson got one at about 23:20 and the connection `Scout Claude`
+now exists in make.com, created through the API. Decision 16 is therefore
+reversed: `AGENTS.md` section 3 stands unchanged and nothing needs to come out
+of the pitch.
+
+`make/specs/00_connections.md` section 2 says to take a newer Sonnet than
+`claude-sonnet-4-5` if the module offers one, so the model is
+**`claude-sonnet-5`**. `make/specs/README.md` needs the same edit.
+
+It was worth the wait. On Make's provider the first question put the empty
+block at 11:00 to 12:00, which is actually the Northmere steering group, and a
+later turn asked about 12:00 to 13:00, which rule 2 of the prompt calls lunch
+and forbids asking about. On `claude-sonnet-5` the first question named the
+09:00 to 11:00 gap and Sophie Lindqvist's call, almost word for word like the
+worked example in the prompt. It was also faster: 3.9 seconds against 10.1.
+
+## 18. Two things make.com's own template gets wrong for the Anthropic module (task G7, 19 September)
+Both found by reading the error off a failed run, and both would waste anyone's
+evening:
+
+- `messages[].content[]` needs `"type": "text"`. The public template make.com
+  ships leaves it out and Anthropic answers
+  `messages.0.content.0.type: Field required`.
+- `max_tokens` and `temperature` must be numbers. The same template writes them
+  as strings and Anthropic answers
+  `max_tokens: Input should be a valid integer`.
+
+## 19. `claude-sonnet-5` returns a thinking block before the text (task G7, 20 September)
+The worst bug of the night, because it looked intermittent. The first turn of
+an interview worked and every later turn failed with
+`BundleValidationError: Validation failed for 1 parameter(s)`.
+
+The Anthropic module returns `content` as a list of blocks. With a short
+context `claude-sonnet-5` answers with one `text` block, so `content[1].text`
+is the reply. Once there is an interview to reason about, it puts a `thinking`
+block first, `content[1]` is that block, its `text` is empty, and the Parse JSON
+module is handed nothing.
+
+Echoed straight off a real run: `LEN=[2] TYPES=[thinking,text]`.
+
+So the reply is picked by block type rather than by position:
+`{{first(map(5.content; "text"; "type"; "text"))}}`. That works whether or not
+a thinking block is there, and it is the same `map` trick that reads the shared
+secret out of the request headers.
+
+Worth knowing for scenarios five, seven and eight: they all parse a Claude
+reply and all need this, not `content[1].text`.
+
+## 20. `DEBUG_RAW` in the builder (task G7, 20 September)
+`node scripts/make_build.mjs` with `DEBUG_RAW=1` rebuilds the interview with a
+cut down route that answers with whatever the model said, unparsed. make.com's
+API does not hand back the bundles of a finished run, so without this there is
+no way to see what a model actually replied when the parse step rejects it.
+Decision 19 was found in one run with it. Leave it in.
+
+## 21. Back to `claude-sonnet-4-5`, because `claude-sonnet-5` thinks (task G7, 20 September)
+Decision 17 took `claude-sonnet-5` because `00_connections.md` section 2 says to
+take the newest Sonnet. Measured on the real interview, it is the wrong choice
+here, and decision 17 is reversed.
+
+`claude-sonnet-5` reasons before it answers, and those thinking tokens come out
+of `max_tokens` and out of the clock. At 600 tokens it ran out mid thought and
+returned no text block at all. Raised to 2000 it answered correctly but one turn
+took **118 seconds** against a 12 second limit, and another took 17.
+
+`claude-sonnet-4-5` returns a single `text` block, no thinking. The same
+interview, same prompt, same answers:
+
+| Turn | `claude-sonnet-5` | `claude-sonnet-4-5` |
+|---|---|---|
+| 1, the 09:00 to 11:00 gap | 3.8s | 5.7s |
+| 3, the Friday report block | 118.8s | 2.7s |
+| 5, closing | 17.3s | 2.3s |
+
+Both get the content right and both finish in five turns. Only one of them can
+be demoed. `max_tokens` is 1500, set with `MAKE_MAX_TOKENS`, which is more than
+600 because nothing is gained by cutting it fine and a truncated reply is a dead
+interview.
+
+The note in `00_connections.md` about taking the newest Sonnet should be read as
+"if it is faster", not "always".
+
+## 22. Markdown fences are stripped before Parse JSON (task G7, 20 September)
+Every prompt ends by saying to reply with JSON only, and Claude almost always
+does. Once in about five runs `claude-sonnet-4-5` wrapped the object in a
+markdown fence anyway, and Parse JSON answered "Source is not valid JSON".
+
+So the parse reads
+`{{trim(replace(<the text block>; "/```(json)?/g"; emptystring))}}`.
+
+This is not a replacement for the retry route in the shared pattern, which is
+still to build. It removes the common case for the cost of one function call.
+
+## 23. Rows are built with Create JSON, not written into a raw body (task G7, 20 September)
+Scenario five's inserts ran, the run went green, and nothing appeared in
+`day_allocations`. Three things were wrong at once and each hid the next.
+
+1. `http:ActionSendData` does not stop on a 4xx unless it is told to, so five
+   failed inserts per run looked like a success. `stopOnHttpError` is now on
+   everywhere.
+2. A `topic_id` written into a raw JSON body as
+   `{{ifempty(<expression>; null)}}` comes out as `""`, and Postgres answers
+   `400 invalid input syntax for type uuid: ""`. The row is now built by a
+   **Create JSON** module against a data structure, where the IML keyword
+   `null` really does become a JSON null. `emptystring` does not: it produces
+   `""` again and the row is refused.
+3. `map(topic_map; "topic_id"; "name"; <empty>)` has nothing to filter on and
+   returns **every** topic, so `first()` quietly gave work outside the role the
+   first topic of the role. It is now guarded on `in_role`.
+
+The third was the dangerous one. It did not fail, it wrote a plausible wrong
+answer, and the only reason it was caught is that the check reads `topic_id`
+rather than trusting the row count.
+
+## 24. Scenario five is proved against the demo day (task G7, 20 September)
+Elena's Friday, interviewed with the answers in `data/interview_script.md` and
+summarised:
+
+| Label | In role | Minutes | Percent |
+|---|---|---|---|
+| Client delivery and workshops | yes | 60 | 12.5 |
+| Client relationships | yes | 40 | 8.33 |
+| Coaching juniors | yes | 60 | 12.5 |
+| Internal meetings and administration | yes | 90 | 18.75 |
+| Manual status reporting | **no** | 230 | 47.92 |
+| | | **480** | **100.00** |
+
+The same table as the bottom of `data/interview_script.md`, to the minute. The
+percentages add to exactly 100, so decision 12's worry about a hundredth of a
+point did not arise here. Run twice, the row counts do not move and the
+calendar activities are untouched.
