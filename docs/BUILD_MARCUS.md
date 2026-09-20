@@ -85,6 +85,7 @@ Branch `marcus/m7-manager`.
 ### M8. Real data (30 minutes, as soon as Gerson's webhooks exist)
 **Code written. Live test pending.**
 Branch `marcus/m8-real-data`. Marcus puts real values in `frontend/.env.local`. Set `NEXT_PUBLIC_USE_FIXTURES=false`. Only `frontend/lib/data.ts` and `frontend/lib/make.ts` should need changes. Run the whole story twice. Fixtures mode must still work: it is the safety net for the live demo.
+Submit and day approval can write straight to the database when scenario 6 is absent.
 
 ### M9. SLNG voice (time boxed to 45 minutes, first thing to cut)
 Only start if tasks M6 to M8 are merged before 22:00, or on Sunday before 09:45. Marcus gets an SLNG key from the SLNG team at the event. Read `https://docs.slng.ai/llms.txt`. Add `frontend/lib/voice/slng.ts` plus server routes `/api/voice/transcribe` and `/api/voice/speak` that hold the key. If it is not working after 45 minutes, stop, leave `browser` as the default and say so.
