@@ -69,9 +69,9 @@ ts-generic-secret-assignment in frontend/lib/session.ts: the value is a delibera
 
 js-mnt-double-negation in frontend/lib/make.ts: it is cosmetic and low, and we are not touching working code during a freeze for a style point.
 
-js-mnt-double-negation in scripts/set_scout8_token.mjs: the same, and that file belongs to Gerson.
+js-mnt-double-negation in scripts/set_scout8_token.mjs: the same, a cosmetic low finding in a command line tool that is working, and the code is frozen.
 
-js-no-error-handling-async in scripts/reset_demo.mjs: the script already stops on every database refusal through its own `call` helper and belongs to Gerson, whose ownership of scripts/ is set in AGENTS.md.
+js-no-error-handling-async in scripts/reset_demo.mjs: the script already stops on every database refusal through its own `call` helper, which reports what failed and exits, so a wrapper around each await would add nothing a person running it would see.
 
 js-fetch-no-timeout in scripts/reset_demo.mjs: it is a command line tool a person runs and watches, not a screen that can freeze on a spinner.
 
@@ -95,7 +95,7 @@ rct-open-redirect in scripts/seed.mjs: both findings are false positives, becaus
 
 ### Choices Norma did not flag but a reviewer should know
 
-**Personal links instead of passwords.** There are no passwords anywhere in Workflow Scout. Each person has one secret link, which arrives in their morning email; opening it sets a signed, http only session cookie holding who they are and whether they are a manager. We chose this because the product has to work in one tap from a phone at 08:00, and because a password nobody wants would be the reason people stop doing their check in. The trade off is real and we state it: anyone holding the link is that person until the cookie is cleared. What makes that acceptable here is that the link gives no more than the person's own days. Every server route checks the session before it reads anything: an employee can read and change only their own check ins, a manager only the people whose manager is them. For a real deployment the next step is one sign in through the company's own identity provider, with the link kept only as the way into a single day.
+**Personal links instead of passwords.** There are no passwords anywhere in Workflow Scout. Each person is given one secret link; opening it sets a signed, http only session cookie holding who they are and whether they are a manager. For the demo the home page offers a clearly labelled demo sign in for the four people, which uses the same mechanism, so a judge can look around without a link being sent to them. We chose this because the product has to work in one tap from a phone at 08:00, and because a password nobody wants would be the reason people stop doing their check in. The trade off is real and we state it: anyone holding the link is that person until the cookie is cleared. What makes that acceptable here is that the link gives no more than the person's own days. Every server route checks the session before it reads anything: an employee can read and change only their own check ins, a manager only the people whose manager is them. For a real deployment the next step is one sign in through the company's own identity provider, with the link kept only as the way into a single day.
 
 **The service key stays on the server and inside make.com, and the database has no public access.** Only two things ever hold the Supabase service key: our own Next.js server, and the make.com connections. The browser holds none of it: no database key, no webhook address, no voice key. Row level security is on across the database with no policies for the anonymous role, so a key that did leak into a page would still read nothing. Every read the server makes is filtered by who is signed in, in one place rather than screen by screen. We chose the service key over per user database credentials because the agent itself is a make.com scenario rather than a signed in person, and two keys for one job is how keys get left in the wrong place.
 
