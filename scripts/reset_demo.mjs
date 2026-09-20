@@ -34,13 +34,29 @@ if (!url || !key) {
 
 const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' };
 
+/** How long to wait for the database before giving up, in milliseconds. */
+const TIMEOUT_MS = 20_000;
+
 /** One call to the database. Returns the rows, and stops the script on any refusal. */
-async function call(what, path, { method = 'GET', body, count = false } = {}) {
-  const response = await fetch(`${url}/rest/v1/${path}`, {
-    method,
-    headers: { ...headers, Prefer: count ? 'return=representation' : 'return=representation' },
-    body: body ? JSON.stringify(body) : undefined,
-  });
+async function call(what, path, { method = 'GET', body, prefer = 'return=representation' } = {}) {
+  let response;
+  try {
+    response = await fetch(`${url}/rest/v1/${path}`, {
+      method,
+      headers: { ...headers, Prefer: prefer },
+      body: body ? JSON.stringify(body) : undefined,
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+  } catch (error) {
+    // The message names the step, never the address or the key.
+    const timedOut = error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError');
+    console.error(
+      timedOut
+        ? `Could not ${what}: the database did not answer within ${TIMEOUT_MS / 1000} seconds. Check that the Supabase project is awake, then run this again.`
+        : `Could not ${what}: the database could not be reached.`,
+    );
+    process.exit(1);
+  }
   const text = await response.text();
   if (!response.ok) {
     // The message can name a column or a constraint, never a key.
@@ -112,15 +128,10 @@ if (toReset.length > 0) {
     const rows = topics
       .filter((t) => t.role_id === roleId)
       .map((t) => ({ id: t.id, role_id: t.role_id, name: t.name, expected_percent: t.proposed_percent }));
-    await fetch(`${url}/rest/v1/topics?on_conflict=id`, {
+    await call("put a role's shares back", 'topics?on_conflict=id', {
       method: 'POST',
-      headers: { ...headers, Prefer: 'resolution=merge-duplicates,return=representation' },
-      body: JSON.stringify(rows),
-    }).then(async (r) => {
-      if (!r.ok) {
-        console.error(`Could not put a role's shares back: the database replied ${r.status}. ${(await r.text()).slice(0, 200)}`);
-        process.exit(1);
-      }
+      body: rows,
+      prefer: 'resolution=merge-duplicates,return=representation',
     });
     topicsChanged += rows.filter((row) => toReset.some((t) => t.id === row.id)).length;
   }
