@@ -2,7 +2,8 @@
 // an employee can read and change only their own check ins; a manager can read the people whose
 // manager_id is them, approve their days, approve role splits and decide on suggestions.
 // Fixtures mode returns fake data; real data mode reads Supabase with the service key and writes
-// through the make.com webhooks.
+// through the make.com webhooks, except submit and day approval, which the server writes itself
+// when their webhook is not set (AGENTS.md section 6 allows this).
 //
 // Fixtures mode cannot keep anything in server memory (each request may run separately), so demo
 // progress lives in one small signed cookie, scout_demo_state, read and written only here. Screens
@@ -1123,13 +1124,6 @@ async function liveSendAnswer(session: Session, checkInId: Uuid, text: string | 
   return { reply, suggested_answer: liveSuggestion(person, checkIn, await liveTurns(checkInId)) };
 }
 
-function requireSetting(name: string, message: string): void {
-  if (!process.env[name]) {
-    console.error(`[data] ${name} is not set, so this action cannot run yet.`);
-    throw new InvalidRequest(message);
-  }
-}
-
 async function liveSubmit(session: Session, checkInId: Uuid, adjustments: { allocation_id: Uuid; minutes: number }[]): Promise<void> {
   const checkIn = await liveOwnCheckIn(session, checkInId);
   if (checkIn.status !== 'summarised' && checkIn.status !== 'returned') {
@@ -1147,20 +1141,92 @@ async function liveSubmit(session: Session, checkInId: Uuid, adjustments: { allo
   if (total !== person.working_minutes_per_day) {
     throw new InvalidRequest(`The day adds up to ${total} minutes, but it needs to add up to ${person.working_minutes_per_day} minutes.`);
   }
-  // Submit goes through make.com. No decision lets the interface write it to the database itself.
-  requireSetting('MAKE_WEBHOOK_SUBMIT', 'Sending your day is not switched on yet. Your corrections are safe on this screen. Please tell the person running the demo.');
-  await make.submitDay({ check_in_id: checkInId, adjustments });
+  // Through make.com when scenario six exists. Without it, AGENTS.md section 6 lets the server write
+  // the day straight to the database.
+  if (make.hasWebhook('MAKE_WEBHOOK_SUBMIT')) {
+    await make.submitDay({ check_in_id: checkInId, adjustments });
+    return;
+  }
+  await liveWriteSubmit(checkInId, allocations, byId, person.working_minutes_per_day);
+}
+
+/**
+ * Percent of the working day for each row, to two decimal places, with the largest row taking the
+ * rounding so the day adds up to exactly 100 (the rule in docs/decisions.md decision 12).
+ */
+function dayPercents(rows: { id: Uuid; minutes: number }[], workingMinutes: number): Map<Uuid, number> {
+  const out = new Map(rows.map((r) => [r.id, Math.round((r.minutes / workingMinutes) * 10000) / 100]));
+  if (rows.length === 0) return out;
+  const largest = rows.reduce((a, b) => (b.minutes > a.minutes ? b : a));
+  const others = rows.filter((r) => r.id !== largest.id).reduce((s, r) => s + out.get(r.id)!, 0);
+  out.set(largest.id, Math.round((100 - others) * 100) / 100);
+  return out;
+}
+
+/**
+ * Submit written straight to the database. The corrected rows first, then the status. The rows are
+ * written with the same values whoever clicks, so a double click is harmless, and the status only
+ * moves when it is still summarised or returned, so the day is sent once.
+ */
+async function liveWriteSubmit(checkInId: Uuid, allocations: DayAllocation[], byId: Map<Uuid, number>, workingMinutes: number): Promise<void> {
+  const rows = allocations.map((a) => ({ ...a, newMinutes: byId.get(a.id) ?? a.minutes }));
+  const percents = dayPercents(rows.map((r) => ({ id: r.id, minutes: r.newMinutes })), workingMinutes);
+  for (const r of rows) {
+    const changed = r.newMinutes !== r.minutes;
+    const percent = percents.get(r.id)!;
+    if (!changed && percent === r.percent) continue;
+    const patch: Row = { percent };
+    if (changed) {
+      patch.minutes = r.newMinutes;
+      patch.employee_adjusted = true;
+    }
+    await run('save a corrected row', db().from('day_allocations').update(patch).eq('id', r.id).eq('check_in_id', checkInId));
+  }
+  const updated = await run<Row[]>(
+    'send the day',
+    db()
+      .from('check_ins')
+      // A comment from an earlier return belongs to the old version of the day, as in fixtures mode.
+      .update({ status: 'submitted', submitted_at: new Date().toISOString(), manager_comment: null })
+      .eq('id', checkInId)
+      .in('status', ['summarised', 'returned'])
+      .select('id'),
+  );
+  if (updated.length === 0) throw new InvalidRequest('This day has already been sent.');
 }
 
 async function liveDecideDays(session: Session, checkInIds: Uuid[], decision: DayDecision, comment: string | null): Promise<void> {
   const team = new Set((await liveTeam(session.person_id)).map((p) => p.id));
   for (const id of checkInIds) {
     const checkIn = await liveCheckInRow(id);
-    if (!checkIn || !team.has(checkIn.person_id) || checkIn.status !== 'submitted') throw new AccessDenied();
+    if (!checkIn || !team.has(checkIn.person_id) || checkIn.person_id === session.person_id || checkIn.status !== 'submitted') throw new AccessDenied();
   }
-  // Day approval goes through make.com. No decision lets the interface write it to the database itself.
-  requireSetting('MAKE_WEBHOOK_DAY_APPROVAL', 'Approving days is not switched on yet. Nothing has changed. Please tell the person running the demo.');
-  await make.decideDays({ check_in_ids: checkInIds, approver_id: session.person_id, decision, comment });
+  // Through make.com when scenario six exists. Without it, AGENTS.md section 6 lets the server write
+  // the decision straight to the database.
+  if (make.hasWebhook('MAKE_WEBHOOK_DAY_APPROVAL')) {
+    await make.decideDays({ check_in_ids: checkInIds, approver_id: session.person_id, decision, comment });
+    return;
+  }
+  await liveWriteDayDecision(session, checkInIds, decision, comment);
+}
+
+/**
+ * Day approval written straight to the database. Only days still waiting for approval change, so a
+ * double click cannot approve a day twice or undo a decision made a moment earlier.
+ */
+async function liveWriteDayDecision(session: Session, checkInIds: Uuid[], decision: DayDecision, comment: string | null): Promise<void> {
+  const patch: Row =
+    decision === 'approved'
+      ? { status: 'approved', approved_by: session.person_id, approved_at: new Date().toISOString(), manager_comment: comment }
+      : { status: 'returned', manager_comment: comment };
+  const updated = await run<Row[]>(
+    'save the decision',
+    db().from('check_ins').update(patch).in('id', checkInIds).eq('status', 'submitted').select('id'),
+  );
+  if (updated.length === 0) throw new InvalidRequest('These days have already been decided. Please reload the page.');
+  if (updated.length < checkInIds.length) {
+    throw new InvalidRequest('Some of these days had already been decided. The others are done. Please reload the page.');
+  }
 }
 
 async function liveRolesWithTopics(session: Session): Promise<RoleWithTopics[]> {

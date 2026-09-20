@@ -69,6 +69,14 @@ async function callWebhook<Reply>(envName: WebhookEnv, body: unknown, timeoutMs:
 const SLOW = 40_000;
 const INTERVIEW = 12_000;
 
+/**
+ * Whether a webhook address is configured. Submit and day approval may be written straight to the
+ * database when their scenario does not exist (AGENTS.md section 6); the caller decides.
+ */
+export function hasWebhook(envName: WebhookEnv): boolean {
+  return !!process.env[envName];
+}
+
 export async function syncRoles(body: RolesSyncRequest): Promise<RolesSyncReply> {
   if (fixturesMode()) {
     await pause();
