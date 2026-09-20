@@ -104,7 +104,7 @@ export default function AllocationBars({ rows, periodLabel, audience = 'self', e
         </div>
       </div>
 
-      <ul>
+      <ul className="scout-role-rows">
         {inRole.map((row) => (
           <Row key={row.key} row={row} editable={editable} step={stepMinutes} audience={audience} onMinutesChange={onMinutesChange} />
         ))}

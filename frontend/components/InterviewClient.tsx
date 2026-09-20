@@ -213,7 +213,7 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
               <p className="text-lg font-medium text-accent">{`Question ${questionNumber} of about ${Math.max(ABOUT_QUESTIONS, questionNumber)}`}</p>
               <span aria-hidden="true" className="h-1.5 w-28 rounded-full bg-track"><span className="block h-full rounded-full bg-accent" style={{ width: `${questionNumber / Math.max(ABOUT_QUESTIONS, questionNumber) * 100}%` }} /></span>
             </div>}
-            <p className="scout-question-text text-3xl font-semibold leading-snug">{current.text}</p>
+            <p key={current.turn_no} className="scout-question-text text-3xl font-semibold leading-snug">{current.text}</p>
             {current.evidence && (
               <p className="scout-evidence mt-6 rounded-xl border border-line bg-track px-5 py-4 text-lg text-muted">
                 <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="mr-2 inline-block h-5 w-5 align-[-3px]" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" /><circle cx="12" cy="12" r="2.5" /></svg>

@@ -11,7 +11,7 @@ export const card = 'scout-card border border-line bg-white p-5 sm:p-7';
 export const cardHighlighted = 'scout-card-highlighted border border-accent bg-white p-5 sm:p-7';
 
 // Every button is the same height: same border width, same padding, same text size.
-const button = `scout-button inline-flex items-center justify-center border px-6 py-3 text-lg font-semibold ${focusRing} disabled:opacity-50`;
+const button = `scout-button inline-flex items-center justify-center border px-6 py-3 text-lg font-semibold ${focusRing}`;
 
 /** The one main action of a screen or a card. */
 export const btnPrimary = `${button} scout-primary border-accent bg-accent text-white hover:border-accent-dark hover:bg-accent-dark`;
@@ -23,7 +23,7 @@ export const btnQuiet = `${button} border-line bg-white text-ink hover:border-ac
 export const btnDanger = `${button} border-danger bg-white text-danger hover:bg-[#fff0f1]`;
 
 // The same three styles again, one size down, for the small controls inside a row of a card.
-const buttonSmall = `scout-button inline-flex items-center justify-center border px-4 py-2 text-lg font-medium ${focusRing} disabled:opacity-50`;
+const buttonSmall = `scout-button inline-flex items-center justify-center border px-4 py-2 text-lg font-medium ${focusRing}`;
 
 /** The small main action inside a row. */
 export const btnPrimarySmall = `${buttonSmall} scout-primary border-accent bg-accent text-white hover:border-accent-dark hover:bg-accent-dark`;

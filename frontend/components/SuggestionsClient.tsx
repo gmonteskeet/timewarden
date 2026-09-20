@@ -60,7 +60,7 @@ function Card({ c, state, draftingElsewhere, onChange }: { c: Candidate; state: 
 
   const greyed = state.kind === 'not_now';
   return (
-    <article className={`space-y-5 ${state.kind === 'ready' || c.rank === 1 ? cardHighlighted : card} ${greyed ? 'opacity-50' : ''}`} aria-labelledby={`cand-${c.id}`}>
+    <article className={`space-y-5 ${state.kind === 'ready' || c.rank === 1 ? cardHighlighted : card} ${greyed ? 'scout-muted-card' : ''}`} aria-labelledby={`cand-${c.id}`}>
       <header className="flex flex-wrap items-start gap-5">
         <p className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-accent-soft text-3xl font-bold tabular-nums text-accent" aria-label={`Rank ${c.rank}`}>
           {c.rank}

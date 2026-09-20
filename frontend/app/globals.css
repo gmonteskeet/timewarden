@@ -31,7 +31,6 @@ body {
 }
 ::selection { background: #dce2ff; color: var(--color-ink); }
 @layer base {
-  h1 { font-size: clamp(2rem, 3.5vw, 2.8rem); letter-spacing: -0.045em; line-height: 1.12; }
   h2, h3 { letter-spacing: -0.025em; }
   button:not(:disabled), summary { cursor: pointer; }
   button:disabled { cursor: not-allowed; }
@@ -124,3 +123,9 @@ main h1 { font-size: clamp(2rem, 3.5vw, 2.8rem); letter-spacing: -0.045em; line-
 .scout-role-stepper > input { height: 2.85rem; }
 .scout-role-stepper > input + span { height: 2.85rem; display: flex; align-items: center; padding-right: 0.5rem; border-block: 1px solid var(--color-line); background: white; }
 .scout-role-stepper > button { min-height: 2.85rem; }
+
+/* Muted actions keep readable text rather than fading the entire surface. */
+.scout-button:disabled { opacity: 1; background: var(--color-track); color: var(--color-muted); border-color: var(--color-line); box-shadow: none; }
+.scout-muted-card { background: var(--color-track); border-style: dashed; box-shadow: none; }
+/* Every allocation uses exactly the same track width, including the warm panel. */
+.scout-role-rows { padding-inline: calc(1.2rem + 1px); }
