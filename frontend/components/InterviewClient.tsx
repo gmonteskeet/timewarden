@@ -300,7 +300,7 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
               }
             }}
             rows={4}
-            className={`w-full resize-y rounded-lg border border-line bg-white px-5 py-4 text-xl leading-relaxed ${focusRing}`}
+            className={`w-full resize-y rounded-xl border border-line bg-white px-5 py-4 text-xl leading-relaxed ${focusRing}`}
           />
           <div className="flex flex-wrap items-center justify-between gap-4">
             <p className="text-base text-muted">Enter sends. Shift and Enter starts a new line.</p>

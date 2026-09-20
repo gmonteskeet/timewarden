@@ -86,7 +86,7 @@ function Day({ day, onDone }: { day: DayCard; onDone: (id: string, message: stri
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             rows={3}
-            className={`w-full rounded-lg border border-line bg-white px-4 py-3 text-lg ${focusRing}`}
+            className={`w-full rounded-xl border border-line bg-white px-4 py-3 text-lg ${focusRing}`}
           />
         </div>
       )}
