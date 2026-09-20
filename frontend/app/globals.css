@@ -118,3 +118,9 @@ main h1 { font-size: clamp(2rem, 3.5vw, 2.8rem); letter-spacing: -0.045em; line-
   .scout-person { transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, border-color 180ms ease; }
   .scout-person:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -12px #4355b947; }
 }
+
+.scout-role-stepper > button:first-of-type { border-radius: 0.65rem 0 0 0.65rem; }
+.scout-role-stepper > button:last-child { border-radius: 0 0.65rem 0.65rem 0; }
+.scout-role-stepper > input { height: 2.85rem; }
+.scout-role-stepper > input + span { height: 2.85rem; display: flex; align-items: center; padding-right: 0.5rem; border-block: 1px solid var(--color-line); background: white; }
+.scout-role-stepper > button { min-height: 2.85rem; }

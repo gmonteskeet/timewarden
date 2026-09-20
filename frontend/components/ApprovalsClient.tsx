@@ -185,8 +185,8 @@ export default function ApprovalsClient({ days, weeks }: { days: DayCard[]; week
       {messages.length > 0 && (
         <ul aria-live="polite" className="space-y-1">
           {messages.map((m) => (
-            <li key={m} className="text-lg text-muted">
-              {m}
+            <li key={m} className="w-fit rounded-full border border-success/15 bg-success-soft px-4 py-2 text-lg text-success">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20" className="mr-2 inline-block h-5 w-5 align-[-3px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m4 10 4 4 8-8" /></svg>{m}
             </li>
           ))}
         </ul>
@@ -196,14 +196,14 @@ export default function ApprovalsClient({ days, weeks }: { days: DayCard[]; week
         <p className="max-w-3xl text-xl text-muted">{EMPTY}</p>
       ) : (
         <>
-          <div role="group" aria-label="Show days" className="inline-flex rounded-lg border border-line bg-white p-1">
+          <div role="group" aria-label="Show days" className="scout-segments inline-flex rounded-xl border border-line bg-track p-1">
             {(['daily', 'weekly'] as const).map((v) => (
               <button
                 key={v}
                 type="button"
                 aria-pressed={view === v}
                 onClick={() => setView(v)}
-                className={`rounded-md px-5 py-2 text-lg font-medium ${focusRing} ${view === v ? 'bg-accent text-white' : 'text-ink hover:bg-track'}`}
+                className={`rounded-lg px-5 py-2 text-lg font-medium ${focusRing} ${view === v ? 'bg-accent text-white shadow-sm' : 'text-ink hover:bg-track'}`}
               >
                 {v === 'daily' ? 'Daily' : 'Weekly'}
               </button>
