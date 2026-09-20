@@ -66,6 +66,10 @@ STATUS: which two tests count for the sponsor prizes is to be confirmed by Marcu
 
 Marcus, on the interface only, no new features. Anything found during the two live runs: wording, spacing, a waiting state that does not say what Scout is doing, an error without a Try again. `npm run lint` and `npm run build` must pass before every merge.
 
+## After the freeze, waiting for review
+
+- **An employee can add time to a topic Scout recorded nothing for.** On the summary page a role topic with no minutes now gets the same minus and plus buttons as any other row, and the server creates the allocation row on submit. Marcus found this on the live site and chose the full fix. It is on the branch `marcus/s9-add-time-to-empty-topic` and waits for the development manager to read it line by line: it touches the submit path the judges watch, so it is not merged or deployed.
+
 ## 10:15 to 10:30, secrets sweep and freeze
 
 Gerson searches the repository, its history and every exported blueprint for keys, tokens, webhook addresses and personal access tokens. Marcus reads the README and `DEFENCE.md` one last time for anything that claims something works live when it has not been tested live.

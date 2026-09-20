@@ -5,7 +5,7 @@
 import { useMemo, useState } from 'react';
 import AllocationBars from '@/components/AllocationBars';
 import { btnLink, btnPrimary, card, errorPanel, waiting as waitingWords, warning } from '@/components/ui';
-import { formatMinutes, type AllocationRow } from '@/lib/allocation-rows';
+import { formatMinutes, NEW_TOPIC_PREFIX, type AllocationRow } from '@/lib/allocation-rows';
 import type { CheckInStatus } from '@/lib/contract';
 
 interface Props {
@@ -42,11 +42,14 @@ export default function SummaryClient(props: Props) {
   const rows: AllocationRow[] = props.rows.map((r) => {
     const m = minutes.get(r.key) ?? r.minutes;
     const edited = m !== original.get(r.key);
+    // A topic Scout recorded nothing for has no evidence to show, so say where the time came from.
+    const added = r.allocationId?.startsWith(NEW_TOPIC_PREFIX) === true && m > 0;
     return {
       ...r,
       minutes: m,
       percent: edited || changed.length > 0 ? Math.round((m / workingMinutes) * 1000) / 10 : r.percent,
       employeeAdjusted: r.employeeAdjusted || edited,
+      evidence: added ? ['You added this time yourself.'] : r.evidence,
     };
   });
 

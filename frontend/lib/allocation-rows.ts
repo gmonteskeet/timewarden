@@ -15,9 +15,16 @@ export interface AllocationRow {
   percent: number;
   evidence: string[];
   employeeAdjusted: boolean;
-  /** Set for a single day, so a correction can name the allocation. */
+  /**
+   * Set for a single day, so a correction can name the allocation. For a role topic the day has no
+   * row for, this is the text `topic:` followed by the topic's id: the employee can still add time
+   * to it, and the server creates the row on submit. See the note on `SubmitRequest`.
+   */
   allocationId?: string;
 }
+
+/** The `topic:<id>` form above, for a role topic the day has no allocation row for. */
+export const NEW_TOPIC_PREFIX = 'topic:';
 
 /**
  * Every topic of the role gets a row, even with no time, so the layout never changes.
@@ -43,7 +50,8 @@ export function rowsFromAllocations(topics: Topic[], allocations: DayAllocation[
         percent: single && mine.length === 1 ? mine[0].percent : pct(minutes),
         evidence: mine.map((a) => a.evidence).filter(Boolean),
         employeeAdjusted: mine.some((a) => a.employee_adjusted),
-        allocationId: single && mine.length === 1 ? mine[0].id : undefined,
+        // A topic with no row for this day can still be corrected: the id names the topic instead.
+        allocationId: !single ? undefined : mine.length === 1 ? mine[0].id : mine.length === 0 ? `${NEW_TOPIC_PREFIX}${t.id}` : undefined,
       };
     });
 
