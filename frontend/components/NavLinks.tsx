@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
 export default function NavLinks({ links }: { links: { href: string; label: string }[] }) {
   const pathname = usePathname();
   return (
-    <nav aria-label="Main" className="flex gap-6 text-lg">
+    <nav aria-label="Main" className="flex flex-wrap gap-1 text-lg">
       {links.map((l) => {
         const base = l.href === '/check-in/current' ? '/check-in' : l.href;
         const current = pathname === base || pathname.startsWith(`${base}/`);
@@ -17,7 +17,7 @@ export default function NavLinks({ links }: { links: { href: string; label: stri
             key={l.href}
             href={l.href}
             aria-current={current ? 'page' : undefined}
-            className={`border-b-4 pb-1 font-medium focus-visible:outline-3 focus-visible:outline-accent ${current ? 'border-accent text-accent' : 'border-transparent text-ink hover:text-accent'}`}
+            className={`scout-nav px-3 py-2 font-medium focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#8391de] ${current ? 'bg-accent-soft text-accent' : 'text-muted hover:bg-track hover:text-accent'}`}
           >
             {l.label}
           </Link>

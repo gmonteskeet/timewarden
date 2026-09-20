@@ -88,8 +88,8 @@ export default function SummaryClient(props: Props) {
   return (
     <div className="space-y-6">
       {words && (
-        <p role="status" className="rounded-lg border-2 border-accent bg-white px-6 py-4 text-2xl font-semibold text-accent">
-          {words}
+        <p role="status" className="rounded-2xl border border-success/20 bg-success-soft px-6 py-4 text-2xl font-semibold text-success">
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20" className="mr-2 inline-block h-5 w-5 align-[-3px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m4 10 4 4 8-8" /></svg>{words}
         </p>
       )}
       {status === 'returned' && managerComment && (
@@ -119,7 +119,7 @@ export default function SummaryClient(props: Props) {
       />
 
       {!readOnly && (
-        <div className={`sticky bottom-0 flex flex-wrap items-center justify-between gap-4 ${card} shadow-[0_-6px_16px_rgba(15,23,42,0.10)]`}>
+        <div className={`sticky bottom-3 z-20 flex flex-wrap items-center justify-between gap-4 ${card} shadow-[0_8px_32px_rgba(25,36,59,0.12)]`}>
           <div className="space-y-1">
             <p className="text-xl font-semibold tabular-nums">
               {formatMinutes(total)} of {formatMinutes(workingMinutes)}

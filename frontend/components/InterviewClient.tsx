@@ -5,7 +5,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { btnLink, btnPrimary, card, errorPanel, focusRing, waiting } from '@/components/ui';
+import { btnLink, btnPrimary, cardHighlighted, errorPanel, focusRing, waiting } from '@/components/ui';
 import { defaultVoiceMode, getVoice } from '@/lib/voice';
 
 export interface InterviewTurnView {
@@ -195,7 +195,7 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
       {earlier.length > 0 && (
         <ol aria-label="Earlier in this conversation" className="space-y-3">
           {earlier.map((t) => (
-            <li key={t.turn_no} className={t.speaker === 'scout' ? 'text-lg text-muted' : 'ml-10 rounded-lg bg-track px-5 py-3 text-lg text-ink'}>
+            <li key={t.turn_no} className={t.speaker === 'scout' ? 'mr-8 max-w-[90%] rounded-2xl rounded-tl-sm border border-line bg-white/75 px-5 py-4 text-lg text-muted' : 'ml-auto max-w-[90%] rounded-2xl rounded-tr-sm bg-accent-soft px-5 py-4 text-lg text-ink'}>
               <span className="font-semibold">{t.speaker === 'scout' ? 'Scout: ' : 'You: '}</span>
               {t.text}
             </li>
@@ -203,29 +203,36 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
         </ol>
       )}
 
-      <section aria-live="polite" className={`min-h-64 ${card}`}>
+      <section aria-live="polite" className={`scout-question min-h-64 ${cardHighlighted}`}>
         {current ? (
           <>
-            {!finished && <p className="mb-3 text-lg font-medium text-accent">{`Question ${questionNumber} of about ${Math.max(ABOUT_QUESTIONS, questionNumber)}`}</p>}
-            <p className="text-3xl font-semibold leading-snug">{current.text}</p>
+            {!finished && <div className="mb-5 flex flex-wrap items-center gap-4">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="h-10 w-10 shrink-0 rounded-xl bg-accent-soft p-2 text-accent">
+                <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeDasharray="43 8" transform="rotate(-55 12 12)" />
+              </svg>
+              <p className="text-lg font-medium text-accent">{`Question ${questionNumber} of about ${Math.max(ABOUT_QUESTIONS, questionNumber)}`}</p>
+              <span aria-hidden="true" className="h-1.5 w-28 rounded-full bg-track"><span className="block h-full rounded-full bg-accent" style={{ width: `${questionNumber / Math.max(ABOUT_QUESTIONS, questionNumber) * 100}%` }} /></span>
+            </div>}
+            <p key={current.turn_no} className="scout-question-text text-3xl font-semibold leading-snug">{current.text}</p>
             {current.evidence && (
-              <p className="mt-4 text-lg text-muted">
+              <p className="scout-evidence mt-6 rounded-xl border border-line bg-track px-5 py-4 text-lg text-muted">
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="mr-2 inline-block h-5 w-5 align-[-3px]" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" /><circle cx="12" cy="12" r="2.5" /></svg>
                 <span className="font-semibold">What Scout saw: </span>
                 {current.evidence}
               </p>
             )}
           </>
         ) : (
-          <p className={`animate-pulse text-2xl ${waiting}`}>Scout is reading your calendar and your recorded calls for the day, and writing its first question.</p>
+          <p className={`scout-thinking text-2xl ${waiting}`}>Scout is reading your calendar and your recorded calls for the day, and writing its first question.<span aria-hidden="true" className="scout-dots"><i /><i /><i /></span></p>
         )}
         {(phase === 'thinking' || phase === 'failed') && shownAnswer && (
-          <p className="mt-6 ml-10 rounded-lg bg-track px-5 py-3 text-lg">
+          <p className="mt-6 ml-10 rounded-2xl rounded-tr-sm bg-accent-soft px-5 py-4 text-lg">
             <span className="font-semibold">You: </span>
             {shownAnswer}
           </p>
         )}
-        {busy && current && <p className={`mt-6 animate-pulse text-xl ${waiting}`}>Scout is reading your answer and working out what to ask next.</p>}
-        {phase === 'preparing' && <p className={`mt-6 animate-pulse text-xl ${waiting}`}>Scout is adding up your day and writing your summary. It opens on its own in a moment.</p>}
+        {busy && current && <p className={`mt-6 scout-thinking text-xl ${waiting}`}>Scout is reading your answer and working out what to ask next.<span aria-hidden="true" className="scout-dots"><i /><i /><i /></span></p>}
+        {phase === 'preparing' && <p className={`mt-6 scout-thinking text-xl ${waiting}`}>Scout is adding up your day and writing your summary. It opens on its own in a moment.<span aria-hidden="true" className="scout-dots"><i /><i /><i /></span></p>}
       </section>
 
       {phase === 'failed' && (
@@ -248,14 +255,14 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
 
       {!finished && (
         <section aria-label="Your answer" className="space-y-4">
-          <div role="group" aria-label="How to answer" className="inline-flex rounded-lg border border-line bg-white p-1">
+          <div role="group" aria-label="How to answer" className="scout-segments inline-flex rounded-xl border border-line bg-track p-1">
             {(['type', 'speak'] as const).map((mode) => (
               <button
                 key={mode}
                 type="button"
                 aria-pressed={inputMode === mode}
                 onClick={() => switchMode(mode)}
-                className={`rounded-md px-5 py-2 text-lg font-medium ${focusRing} ${inputMode === mode ? 'bg-accent text-white' : 'text-ink hover:bg-track'}`}
+                className={`rounded-lg px-5 py-2 text-lg font-medium ${focusRing} ${inputMode === mode ? 'bg-accent text-white shadow-sm' : 'text-ink hover:bg-track'}`}
               >
                 {mode === 'type' ? 'Type' : 'Speak'}
               </button>
@@ -293,7 +300,7 @@ export default function InterviewClient({ checkInId, initialTurns, initialSugges
               }
             }}
             rows={4}
-            className={`w-full resize-y rounded-lg border border-line bg-white px-5 py-4 text-xl leading-relaxed ${focusRing}`}
+            className={`w-full resize-y rounded-xl border border-line bg-white px-5 py-4 text-xl leading-relaxed ${focusRing}`}
           />
           <div className="flex flex-wrap items-center justify-between gap-4">
             <p className="text-base text-muted">Enter sends. Shift and Enter starts a new line.</p>

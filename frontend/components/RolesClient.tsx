@@ -86,7 +86,7 @@ function RoleCard({ role }: { role: RoleCardData }) {
         </div>
         {approvedLabel && !editing && (
           <div className="text-right">
-            <p className="rounded bg-track px-4 py-2 text-lg font-semibold text-accent">{approvedLabel}</p>
+            <p className="rounded-full border border-success/15 bg-success-soft px-4 py-2 text-lg font-semibold text-success"><svg aria-hidden="true" focusable="false" viewBox="0 0 20 20" className="mr-2 inline-block h-5 w-5 align-[-3px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m4 10 4 4 8-8" /></svg>{approvedLabel}</p>
             {role.topics.length > 0 && (
               <button type="button" onClick={() => setEditing(true)} className={`mt-2 ${btnLink}`}>
                 Edit again
@@ -112,7 +112,7 @@ function RoleCard({ role }: { role: RoleCardData }) {
                 {t.reasoning && <p className="text-base text-muted">{t.reasoning}</p>}
               </div>
               {editing ? (
-                <div className="flex items-center gap-2">
+                <div className="scout-role-stepper flex flex-wrap items-center gap-0">
                   {value !== t.proposed && <span className="mr-2 text-base text-muted">Scout proposed {t.proposed}</span>}
                   <button type="button" onClick={() => set(t.id, value - STEP)} aria-label={`Take ${STEP} off ${t.name}`} className={btnQuietSmall}>
                     − {STEP}
@@ -127,7 +127,7 @@ function RoleCard({ role }: { role: RoleCardData }) {
                     step={1}
                     value={value}
                     onChange={(e) => set(t.id, Number(e.target.value || 0))}
-                    className={`w-20 rounded-lg border-2 border-line bg-white px-2 py-2 text-center text-xl font-semibold tabular-nums ${focusRing}`}
+                    className={`w-20 rounded-none border-y border-line bg-white px-2 py-2 text-center text-xl font-semibold tabular-nums ${focusRing}`}
                   />
                   <span className="text-xl font-semibold">%</span>
                   <button type="button" onClick={() => set(t.id, value + STEP)} aria-label={`Add ${STEP} to ${t.name}`} className={btnQuietSmall}>
@@ -146,7 +146,7 @@ function RoleCard({ role }: { role: RoleCardData }) {
 
       {role.topics.length > 0 && (
       <footer className="mt-2 flex flex-wrap items-center justify-between gap-4 border-t-2 border-line pt-4">
-        <p className={`text-xl font-semibold tabular-nums ${total === 100 ? 'text-ink' : 'text-warn'}`}>Total {total}%</p>
+        <p className={`rounded-full px-4 py-2 text-xl font-semibold tabular-nums ${total === 100 ? 'bg-success-soft text-success' : 'bg-note text-warn'}`}>Total {total}%</p>
         {editing && (
           <div className="flex flex-wrap items-center gap-4">
             {reason && <p className={`max-w-md ${warning}`}>{reason}</p>}
