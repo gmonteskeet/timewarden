@@ -75,7 +75,7 @@ We do not claim a part works live until we have run it live. Everything in the t
 ## Running it locally on sample data
 
 ```
-git clone https://github.com/gmonteskeet/timewarden.git && cd timewarden/frontend
+git clone https://github.com/gmonteskeet/workflow-scout.git && cd workflow-scout/frontend
 npm install
 NEXT_PUBLIC_USE_FIXTURES=true npm run dev
 ```

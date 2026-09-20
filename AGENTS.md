@@ -5,7 +5,7 @@ Version 2, written Saturday 19 September 2026 at 17:00 Madrid time, after the se
 This file sits at the repository root. Every coding agent (Claude Code, Codex) reads it before doing anything. Human owners: Marcus (product, interface, demo data, prompts) and Gerson (database, make.com, deployment). Each has a build file: `docs/BUILD_MARCUS.md` and `docs/BUILD_GERSON.md`.
 
 ## 1. What we are building
-Product working name: **Workflow Scout**. Repository: `github.com/gmonteskeet/timewarden`. Hackathon: HackBarna 2026, make.com challenge. Deadline: Sunday 20 September 2026, 12:00 Madrid time. We submit at 11:30.
+Product working name: **Workflow Scout**. Repository: `github.com/gmonteskeet/workflow-scout` (called `timewarden` until it was renamed on Sunday 20 September 2026; the old address still redirects). Hackathon: HackBarna 2026, make.com challenge. Deadline: Sunday 20 September 2026, 12:00 Madrid time. We submit at 11:30.
 
 A web app with two kinds of user, manager and employee, sitting on top of a make.com agent.
 
