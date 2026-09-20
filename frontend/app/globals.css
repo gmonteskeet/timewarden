@@ -80,3 +80,5 @@ body {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+main h1 { font-size: clamp(2rem, 3.5vw, 2.8rem); letter-spacing: -0.045em; line-height: 1.12; }
