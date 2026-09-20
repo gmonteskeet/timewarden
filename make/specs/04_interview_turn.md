@@ -197,6 +197,27 @@ buys a slower reply.
 
 ### 6. JSON > Parse JSON
 
+JSON string, the same tolerant reading as scenario seven:
+
+```
+{{trim(replace(first(map(5.content; "text"; "type"; "text")); "/```(json)?/g"; emptystring))}}
+```
+
+Two things are going on, and both matter. `first(map(...; "type"; "text"))`
+picks the reply out of the `content` list **by block type** rather than by
+position, so a model that puts a `thinking` block first cannot empty it
+(decision 19). The `replace` then strips any markdown code fence before Parse
+JSON ever sees the text (decision 21). The retry route, module 16, carries the
+same expression against module 15.
+
+This is what Galtea's evaluation of the interview turn was checking. It found
+that 7 of 22 replies, about one in three, came back wrapped in a code fence.
+Every one of those 7 parses through the expression above, so the live scenario
+was already tolerant of the fault the evaluation found. The four new prompt
+rules written in answer to it, including "never a code fence", are in
+`prompts/02_interview_turn.md` and have **not** been pasted into the Set
+variable in make.com. `docs/galtea_findings.md` has the numbers.
+
 Data structure `scout_interview_reply`:
 
 | Field | Type |
@@ -406,3 +427,26 @@ Three changes, all proved with a live run of Elena's Friday (first question
 The model is `claude-sonnet-4-5` and the reply is read with
 `{{trim(replace(first(map(5.content; "text"; "type"; "text")); "/```(json)?/g"; emptystring))}}`,
 which picks the text block by its type and strips markdown fences.
+
+## Checked again on Sunday 20 September, after the Galtea evaluation
+
+The evaluation reported that Claude wraps its JSON reply in a markdown code
+fence in about one reply in three, so the reply reading was checked against the
+live scenario rather than against the repository copy. Module 6 and its retry,
+module 16, already carried the expression above, character for character the
+same as scenario seven's modules 5 and 12. Nothing in the scenario needed
+changing, so nothing was changed, and the backup taken before the check is at
+`../make_backups/Scout 4 Interview turn 0831.json`.
+
+Proved end to end afterwards: `scripts/reset_demo.mjs`, then one full interview
+as Elena through the live routes on `https://workflow-scout.vercel.app` with
+her scripted answers from `data/interview_script.md`. Three turns, every one a
+success, the slowest 6.9 seconds against the 12 second limit, and the summary
+arrived with 480 minutes split 230 outside the role and 250 in it, exactly the
+table in the interview script.
+
+Still open: the expression strips a fence, but it does not strip a sentence
+written either side of the JSON. Scenario seven does not either. If that is
+wanted, it is one more `replace` around the same expression,
+`"/^[^{]*|[^}]*$/g"` to `emptystring`, applied to all three scenarios together
+so they stay the same as each other.

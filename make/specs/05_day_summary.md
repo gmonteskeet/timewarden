@@ -114,6 +114,25 @@ learns the field names.
 
 ### 4. JSON > Parse JSON
 
+JSON string, the same tolerant reading as scenarios four and seven:
+
+```
+{{trim(replace(first(map(4.content; "text"; "type"; "text")); "/```(json)?/g"; emptystring))}}
+```
+
+`first(map(...; "type"; "text"))` picks the reply out of the `content` list by
+block type rather than by position, so a model that puts a `thinking` block
+first cannot empty it (decision 19). The `replace` strips any markdown code
+fence before Parse JSON sees the text (decision 21). The retry route, module
+17, carries the same expression against module 16.
+
+The summary is the one place a fence would cost the most, because the interview
+has already closed by the time this scenario runs: the employee would be left
+on a finished interview with no summary behind it. Galtea measured about one
+reply in three coming back fenced on the interview turn; the expression above
+is why neither scenario stops on one. `docs/galtea_findings.md` has the
+numbers.
+
 Data structure `scout_day_summary`:
 
 | Field | Type | |
@@ -333,3 +352,16 @@ worth pointing at during the demo.
 
 Proved live on Sunday 20 September: the summary landed 11 seconds after the
 interview closed, with the exact table above and 480 minutes.
+
+## Checked again on Sunday 20 September, after the Galtea evaluation
+
+The reply reading was checked against the live scenario, not the repository
+copy. Module 5 and its retry, module 17, already carried the tolerant
+expression above, character for character the same as scenario four's modules 6
+and 16 and scenario seven's modules 5 and 12. Nothing needed changing, so
+nothing was changed. The backup taken before the check is at
+`../make_backups/Scout 5 Day summary 0831.json`.
+
+Proved end to end in the same run as scenario four: after a full live interview
+as Elena, the summary arrived about 12 seconds after the interview closed, with
+480 minutes and the same five rows as the table above.
