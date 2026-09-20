@@ -190,7 +190,7 @@ async function waitForRead(startedAt: number): Promise<string | null> {
   return null;
 }
 
-export default function RolesClient({ roles }: { roles: RoleCardData[] }) {
+export default function RolesClient({ roles, canReread = true }: { roles: RoleCardData[]; canReread?: boolean }) {
   const router = useRouter();
   const [syncing, setSyncing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -227,7 +227,10 @@ export default function RolesClient({ roles }: { roles: RoleCardData[] }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex min-h-16 flex-wrap items-center gap-4">
+      {!canReread && (
+        <p className="text-lg text-muted">Scout read the role documents when the company was set up.</p>
+      )}
+      <div className={`flex min-h-16 flex-wrap items-center gap-4 ${canReread ? '' : 'hidden'}`}>
         <button type="button" onClick={() => void sync()} disabled={syncing} className={btnQuiet}>
           Read the role documents again
         </button>

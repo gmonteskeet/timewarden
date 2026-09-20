@@ -68,7 +68,13 @@ function Day({ day, onDone }: { day: DayCard; onDone: (id: string, message: stri
   return (
     <article className={`space-y-4 ${card}`}>
       <h3 className="text-2xl font-semibold">{day.day_label}</h3>
-      {day.summary_text && <p className="max-w-4xl text-lg leading-relaxed">{day.summary_text}</p>}
+      {day.summary_text && (
+        <div className="max-w-4xl space-y-1">
+          {/* Scout writes the summary to the employee, so the manager sees who it is addressed to. */}
+          <p className="text-base text-muted">Scout&apos;s summary, as written to {day.first_name}:</p>
+          <p className="text-lg leading-relaxed">{day.summary_text}</p>
+        </div>
+      )}
       <AllocationBars rows={day.rows} periodLabel={day.day_label} audience="manager" />
       {returning && (
         <div className="space-y-2">

@@ -10,10 +10,31 @@ The one rule for the morning: if something is not working by the time its slot e
 
 Both, together, on the live database and live make.com.
 
-1. Run `supabase/reset.sql` and delete any draft scenarios left in the make.com account from last night.
+1. Run `node --env-file=frontend/.env.local scripts/reset_demo.mjs` (see `docs/reset_the_demo.md`) and delete any draft scenarios left in the make.com account from last night.
 2. Run the morning routine so Elena's check in for Friday 18 September exists and her email has been sent.
 3. Walk the whole story: Tomas approves a role split, Elena takes the interview, corrects one row and submits, Tomas approves the day, reviews three weeks and approves the top suggestion, and the draft scenario opens in make.com.
 4. Write down every break, with the time it happened and the scenario it happened in. Fix nothing yet.
+
+## What the Sunday morning run actually proved (written 08:30)
+
+Run end to end on the live database and the live scenarios, through the interface's own server routes. Twenty of twenty one steps passed.
+
+| Step | Where it runs | Measured |
+|---|---|---|
+| The manager approves a role's split, two numbers changed | make.com, Scout 2 | 1.3 seconds |
+| Scout's first question | make.com, Scout 4 | 5.8 seconds |
+| Later interview turns | make.com, Scout 4 | 2.6 to 4.0 seconds |
+| The day summary appears | make.com, Scout 5 | 11 seconds after the interview closed |
+| The employee submits with a correction | the Next.js server | 0.7 seconds |
+| The manager approves the day | the Next.js server | 0.3 seconds |
+| Three weeks reviewed and ranked | make.com, Scout 7 | 19 seconds, two suggestions |
+| The decision on the top suggestion | make.com, Scout 8 | 3 seconds |
+
+The summary was 480 minutes exactly, with manual status reporting at 230, and the review ranked "Weekly client status report" first.
+
+**The one step that did not pass:** creating the draft scenario in make.com from inside Scout 8. It needs a make.com API token, which was not in the account. Everything before it works: the approval is recorded, the suggestion is marked approved and Claude fills the draft template. `scripts/set_scout8_token.mjs` lets Marcus add the token himself, in his own terminal, in about a minute. Until then the demo shows the real draft that is already in the folder `Workflow Scout drafts`.
+
+**Cut, and said so plainly:** reading the role documents live from Google Drive (the seed script loads them), the morning email (the link is opened by hand), and SLNG voice (typing and the browser's own voice are in).
 
 ## 08:30 to 09:15, fix and run it again
 

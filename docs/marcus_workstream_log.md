@@ -23,11 +23,13 @@ This file is the running record of Marcus's side of the Workflow Scout build. A 
 
 ## Earlier position (Saturday evening, kept for the record)
 - Last update: Saturday 19 September 2026, 19:00 Madrid (task M8 code reviewed).
+- Last update: Saturday 19 September 2026, 19:40 Madrid.
 - The plan changed to version 2 at 17:00 after the make.com mentor session. Read `docs/CHANGES_V2.md` first, then `AGENTS.md` and `docs/BUILD_MARCUS.md`.
-- Where we are: the whole story runs on fake data and Marcus has clicked through all of it in Chrome. The real data code is written. The live test is pending.
-- Next, in order: Marcus merges pull request 20. Marcus puts the Supabase address and service key into `frontend/.env.local` by hand, one step at a time with the development manager, and turns on real data mode locally. Read only test against the real database. Then, when Gerson's interview turn scenario answers, the interview webhook address, the shared secret and Elena's check in ID go in the same way, and Marcus does the first live interview turn. That completes checkpoint one.
-- Secrets rule: values go from Gerson's direct message into Marcus's note and then into `frontend/.env.local` only. Never into chat, the CLI, GitHub or this log.
-- Marcus has an SLNG API key in his own note for task M9, the voice upgrade.
+- Where we are: the whole story runs on fake data. On live data the home page, sign in, Approvals, Suggestions and Elena's check in page load from Gerson's database. The Roles page crashed on an empty date and is fixed on branch `marcus/m8b-empty-dates`.
+- Biggest risk: at about 19:25 Gerson's coding assistant ran out of allowance, with his make.com scenarios only partly built. No webhook answers yet. Agreed response: Gerson builds the interview turn and day summary scenarios by hand. Marcus's CLI builds scenario 7 (suggest workflows) and then scenario 8 (decision and draft creation) in Gerson's make.com account, zone eu1, through a token Gerson created. The token is stored in Marcus's user settings as the MCP server `make-gerson`, outside the repository. Gerson deletes the token on Sunday after the demo. The CLI must never use the other make.com connections on Marcus's machine.
+- Next: merge the empty dates fix, restart the CLI so it sees `make-gerson`, run `cli_prompts/g11_suggest_scenario.md`. That task needs one manual step from Gerson or Marcus: pasting `supabase/migrations/0004_team_history.sql` into the Supabase SQL editor.
+- Still to do after that: scenario 8, moving submit and day approval to direct database writes so scenario 6 can be dropped (needs Gerson to record it in `docs/decisions.md`), the first live interview turn once Gerson's scenario answers, then task M9 (SLNG voice) and task M10 (pitch) if time allows.
+- Secrets rule: values go from Gerson's direct message into Marcus's note and then into `frontend/.env.local` or the CLI's own settings only. Never into chat, GitHub or this log.
 - The long CLI prompts are kept outside the repository, in the workspace folder `02_projects/timewarden/cli_prompts/`, because long pastes into the CLI get cut off. Marcus pastes one line telling the CLI to read the file.
 
 ## Task record

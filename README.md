@@ -38,14 +38,38 @@ The browser never holds a database key, a webhook address or a voice key. There 
 
 ## What is live and what is sample data
 
-STATUS: to be confirmed by Marcus before submission.
+**Live at https://workflow-scout.vercel.app**, on the real database and the real make.com scenarios. Run end to end on Sunday morning, 20 September, through the interface's own server routes. Measured timings from that run:
+
+| Step | Runs in | Measured |
+|---|---|---|
+| The manager approves a role's expected split | make.com, Scout 2 | 1.3 seconds |
+| One interview turn | make.com, Scout 4 | 2.6 to 5.8 seconds, against a 12 second budget |
+| The day summary | make.com, Scout 5 | ready 11 seconds after the interview closed |
+| Three weeks reviewed and ranked | make.com, Scout 7 | 19 seconds, two suggestions |
+| The decision on a suggestion | make.com, Scout 8 | 3 seconds |
+| The employee submits, the manager approves the day | the Next.js server, straight to the database | under a second |
+
+For Elena's Friday the summary came out as 480 minutes exactly: manual status reporting 230, internal meetings and administration 90, client delivery and workshops 60, coaching juniors 60, client relationships 40. The review then ranked "Weekly client status report", from that same label, first.
+
+Submit and day approval are written by the server rather than by a scenario. `AGENTS.md` section 6 allows either, and the scenario for them was never built.
+
+**DRAFT STEP STATUS: to be set by Marcus.** Use whichever of these two is true at submission:
+
+- (a) Approving a suggestion creates a real draft scenario in make.com, switched off, for a person to finish.
+- (b) Scout fills the draft template and records the decision. Creating the scenario in make.com from inside the scenario needs an API token that was not in the account at submission time. The draft shown in the demo was created from the same filled template.
+
+**Cut, and we say so plainly:**
+
+- **Reading the role documents live from Google Drive.** The four role documents are loaded by the seed script instead. The scenario that reads them needs a person to connect Google Drive in the make.com editor.
+- **The morning email.** The check in link is opened by hand in the demo. The scenario that sends it is not built.
+- **SLNG voice.** Typing and the browser's own voice are in. The SLNG upgrade was first in the cut order and was not started.
 
 The interface runs in two modes, and the footer of every page says which one you are looking at.
 
 - **Sample data mode** (`NEXT_PUBLIC_USE_FIXTURES=true`) runs the whole story on the made up company in `frontend/lib/fixtures.ts`, with no database and no make.com. This is what the three commands below give you, and it is the safety net for the live demo.
 - **Live mode** (`NEXT_PUBLIC_USE_FIXTURES=false`) reads and writes Supabase and calls the make.com scenarios for the interview, the role splits, the suggestions and the draft creation.
 
-We will not claim a part works live until we have run it live. The line above is replaced with the honest list before we submit.
+We do not claim a part works live until we have run it live. Everything in the table above was run live on Sunday morning.
 
 ## Running it locally on sample data
 
@@ -67,10 +91,9 @@ Open http://localhost:3000 and choose a person under "Demo sign in". No keys, no
 
 ## Sponsors' tools used
 
-STATUS: to be confirmed by Marcus before submission.
-
-- **make.com**: the agent itself. Every scenario, the Anthropic Claude app inside make.com for the model, and the make.com API for creating the draft scenario.
-- Others to be listed here once confirmed.
+- **make.com**: the agent itself. Six scenarios, all live: the interview turn, the day summary, the split approval, the three week review and ranking, the decision on a suggestion, and the draft template.
+- **Anthropic Claude**, called through the Anthropic Claude app inside make.com, model `claude-sonnet-4-5`. Every prompt is a file in `prompts/`, pasted into the scenario that uses it.
+- **SPONSOR TESTS: to be named by Marcus.** The two tests that count for the sponsor prizes go on this line once the organisers confirm them.
 
 ## Where to look in the code
 

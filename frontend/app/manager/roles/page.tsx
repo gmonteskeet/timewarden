@@ -1,5 +1,5 @@
 import RolesClient, { type RoleCardData } from "@/components/RolesClient";
-import { listRolesWithTopics } from "@/lib/data";
+import { canRereadRoleDocuments, listRolesWithTopics } from "@/lib/data";
 import { approvedText, timeLabel } from "@/lib/dates";
 import { orRefuse } from "@/lib/guard";
 import { requireManager } from "@/lib/session";
@@ -32,7 +32,7 @@ export default async function RolesPage() {
           Scout reads each role&apos;s document and proposes how that role&apos;s time should divide across its main topics. You have the last word: adjust any number, then approve.
         </p>
       </header>
-      <RolesClient roles={cards} />
+      <RolesClient roles={cards} canReread={canRereadRoleDocuments()} />
     </div>
   );
 }
