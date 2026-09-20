@@ -109,3 +109,12 @@ main h1 { font-size: clamp(2rem, 3.5vw, 2.8rem); letter-spacing: -0.045em; line-
   .scout-check { stroke-dasharray: 28; animation: scout-check 500ms ease-out both; }
   @keyframes scout-check { from { stroke-dashoffset: 28; } to { stroke-dashoffset: 0; } }
 }
+
+.scout-home .scout-hero-sentence { font-size: clamp(1.5rem, 2.45vw, 2rem); letter-spacing: -0.03em; line-height: 1.35; }
+.scout-home-steps > li:not(:last-child)::after { content: ""; position: absolute; width: 1.3rem; height: 1px; background: #c6cee8; right: -1.3rem; top: 2.8rem; }
+.scout-person:hover .scout-avatar { background: white; }
+@media (max-width: 640px) { .scout-home-steps > li:not(:last-child)::after { display: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  .scout-person { transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, border-color 180ms ease; }
+  .scout-person:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -12px #4355b947; }
+}
